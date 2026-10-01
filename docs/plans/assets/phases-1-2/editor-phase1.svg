@@ -1,0 +1,290 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" width="1440" height="900" font-family="-apple-system, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif">
+  <title>Galley editor — Phase 1 target (InDesign-style layout)</title>
+  <defs>
+    <pattern id="rulerTop" x="375" y="72" width="41.2" height="18" patternUnits="userSpaceOnUse">
+      <line x1="0.5" y1="0" x2="0.5" y2="18" stroke="#8a8a8e" stroke-width="1"/>
+      <line x1="10.8" y1="13" x2="10.8" y2="18" stroke="#6c6c70" stroke-width="1"/>
+      <line x1="21.1" y1="9" x2="21.1" y2="18" stroke="#7a7a7e" stroke-width="1"/>
+      <line x1="31.4" y1="13" x2="31.4" y2="18" stroke="#6c6c70" stroke-width="1"/>
+    </pattern>
+    <pattern id="rulerLeft" x="44" y="125" width="18" height="41.2" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0.5" x2="18" y2="0.5" stroke="#8a8a8e" stroke-width="1"/>
+      <line x1="13" y1="10.8" x2="18" y2="10.8" stroke="#6c6c70" stroke-width="1"/>
+      <line x1="9" y1="21.1" x2="18" y2="21.1" stroke="#7a7a7e" stroke-width="1"/>
+      <line x1="13" y1="31.4" x2="18" y2="31.4" stroke="#6c6c70" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4f7fc4"/>
+      <stop offset="1" stop-color="#a8c6ea"/>
+    </linearGradient>
+    <clipPath id="photoClip"><rect x="396" y="420" width="411" height="220"/></clipPath>
+    <clipPath id="sheetClip"><rect x="370" y="120" width="463" height="710"/></clipPath>
+  </defs>
+
+  <!-- window -->
+  <rect x="0" y="0" width="1440" height="900" rx="10" fill="#1d1d1f"/>
+
+  <!-- title bar -->
+  <path d="M10 0 H1430 A10 10 0 0 1 1440 10 V28 H0 V10 A10 10 0 0 1 10 0 Z" fill="#2a2a2c"/>
+  <circle cx="18" cy="14" r="6" fill="#ff5f57"/>
+  <circle cx="38" cy="14" r="6" fill="#febc2e"/>
+  <circle cx="58" cy="14" r="6" fill="#28c840"/>
+  <text x="720" y="18" font-size="12" fill="#b8b8bc" text-anchor="middle">Spring Poster.galley @ 50%</text>
+
+  <!-- control strip -->
+  <rect x="0" y="28" width="1440" height="44" fill="#323234"/>
+  <line x1="0" y1="71.5" x2="1440" y2="71.5" stroke="#1d1d1f"/>
+  <!-- reference point -->
+  <g fill="none" stroke="#9a9a9e" stroke-width="1">
+    <rect x="60" y="38" width="24" height="24" rx="2"/>
+  </g>
+  <g fill="#9a9a9e">
+    <rect x="63" y="41" width="4" height="4"/><rect x="70" y="41" width="4" height="4"/><rect x="77" y="41" width="4" height="4"/>
+    <rect x="63" y="48" width="4" height="4"/><rect x="77" y="48" width="4" height="4"/>
+    <rect x="63" y="55" width="4" height="4"/><rect x="70" y="55" width="4" height="4"/><rect x="77" y="55" width="4" height="4"/>
+  </g>
+  <rect x="69" y="47" width="6" height="6" fill="#4da3ff"/>
+  <!-- X/Y -->
+  <g font-size="11" fill="#c8c8cc">
+    <text x="98" y="47">X:</text><text x="98" y="65">Y:</text>
+    <text x="214" y="47">W:</text><text x="214" y="65">H:</text>
+  </g>
+  <g fill="#1f1f21" stroke="#4a4a4e">
+    <rect x="114" y="36" width="88" height="16" rx="3"/><rect x="114" y="54" width="88" height="16" rx="3"/>
+    <rect x="232" y="36" width="88" height="16" rx="3"/><rect x="232" y="54" width="88" height="16" rx="3"/>
+  </g>
+  <g font-size="11" fill="#ececf0">
+    <text x="120" y="48">36 pt</text><text x="120" y="66">516 pt</text>
+    <text x="238" y="48">720 pt</text><text x="238" y="66">384 pt</text>
+  </g>
+  <!-- link proportions -->
+  <path d="M326 46 q6 -6 12 0 M326 60 q6 6 12 0" fill="none" stroke="#9a9a9e" stroke-width="1.2"/>
+  <!-- rotation -->
+  <line x1="352" y1="34" x2="352" y2="66" stroke="#4a4a4e"/>
+  <path d="M368 52 a8 8 0 1 1 8 8" fill="none" stroke="#c8c8cc" stroke-width="1.3"/>
+  <path d="M374 57 l3 3 l-3 3" fill="none" stroke="#c8c8cc" stroke-width="1.3"/>
+  <rect x="388" y="44" width="60" height="16" rx="3" fill="#1f1f21" stroke="#4a4a4e"/>
+  <text x="394" y="56" font-size="11" fill="#ececf0">0°</text>
+  <!-- fill / stroke -->
+  <line x1="462" y1="34" x2="462" y2="66" stroke="#4a4a4e"/>
+  <text x="476" y="56" font-size="11" fill="#c8c8cc">Fill</text>
+  <rect x="500" y="43" width="18" height="18" fill="#ffffff" stroke="#6c6c70"/>
+  <line x1="501" y1="60" x2="517" y2="44" stroke="#e5352b" stroke-width="2"/>
+  <text x="530" y="56" font-size="11" fill="#c8c8cc">Stroke</text>
+  <rect x="570" y="43" width="18" height="18" fill="none" stroke="#6c6c70"/>
+  <rect x="574" y="47" width="10" height="10" fill="none" stroke="#d0d0d4" stroke-width="2"/>
+  <line x1="571" y1="60" x2="587" y2="44" stroke="#e5352b" stroke-width="2"/>
+  <rect x="598" y="44" width="58" height="16" rx="3" fill="#1f1f21" stroke="#4a4a4e"/>
+  <text x="604" y="56" font-size="11" fill="#ececf0">1 pt</text>
+  <!-- image fitting -->
+  <line x1="672" y1="34" x2="672" y2="66" stroke="#4a4a4e"/>
+  <text x="686" y="56" font-size="11" fill="#c8c8cc">Fitting</text>
+  <rect x="728" y="44" width="150" height="16" rx="3" fill="#1f1f21" stroke="#4a4a4e"/>
+  <text x="734" y="56" font-size="11" fill="#ececf0">Fill Frame Proportionally</text>
+  <path d="M866 50 l4 4 l4 -4" fill="none" stroke="#9a9a9e" stroke-width="1.2"/>
+  <text x="1420" y="56" font-size="11" fill="#8a8a8e" text-anchor="end">Image frame · photo.jpg · 300 ppi effective</text>
+
+  <!-- tools panel -->
+  <rect x="0" y="72" width="44" height="800" fill="#2a2a2c"/>
+  <line x1="43.5" y1="72" x2="43.5" y2="872" stroke="#1d1d1f"/>
+  <!-- selection (active) -->
+  <rect x="6" y="82" width="32" height="30" rx="4" fill="#4a4a4e"/>
+  <path d="M17 88 L17 106 L21.5 101.5 L24.5 108 L27 107 L24 100.5 L30 100.5 Z" fill="#f2f2f6"/>
+  <!-- direct selection -->
+  <path d="M17 120 L17 138 L21.5 133.5 L24.5 140 L27 139 L24 132.5 L30 132.5 Z" fill="none" stroke="#c8c8cc" stroke-width="1.2"/>
+  <!-- type -->
+  <text x="22" y="170" font-size="20" fill="#c8c8cc" text-anchor="middle" font-family="Georgia, serif">T</text>
+  <!-- line -->
+  <line x1="14" y1="200" x2="30" y2="184" stroke="#c8c8cc" stroke-width="1.6"/>
+  <!-- rectangle frame (image) -->
+  <rect x="13" y="214" width="18" height="16" fill="none" stroke="#c8c8cc" stroke-width="1.3"/>
+  <line x1="13" y1="214" x2="31" y2="230" stroke="#c8c8cc"/><line x1="31" y1="214" x2="13" y2="230" stroke="#c8c8cc"/>
+  <!-- rectangle -->
+  <rect x="13" y="246" width="18" height="16" fill="none" stroke="#c8c8cc" stroke-width="1.3"/>
+  <!-- ellipse -->
+  <ellipse cx="22" cy="286" rx="10" ry="8" fill="none" stroke="#c8c8cc" stroke-width="1.3"/>
+  <!-- hand -->
+  <path d="M15 322 v-10 a2 2 0 0 1 4 0 v-3 a2 2 0 0 1 4 0 v1 a2 2 0 0 1 4 0 v3 a2 2 0 0 1 4 0 v9 a7 7 0 0 1 -7 7 h-2 a7 7 0 0 1 -7 -7 z" fill="none" stroke="#c8c8cc" stroke-width="1.2"/>
+  <!-- zoom -->
+  <circle cx="20" cy="348" r="6.5" fill="none" stroke="#c8c8cc" stroke-width="1.4"/>
+  <line x1="25" y1="353" x2="31" y2="359" stroke="#c8c8cc" stroke-width="2"/>
+  <line x1="8" y1="376" x2="36" y2="376" stroke="#3a3a3e"/>
+  <!-- fill / stroke proxy -->
+  <rect x="18" y="398" width="16" height="16" fill="none" stroke="#c8c8cc" stroke-width="3"/>
+  <rect x="9" y="389" width="16" height="16" fill="#ffffff" stroke="#6c6c70"/>
+  <line x1="10" y1="404" x2="24" y2="390" stroke="#e5352b" stroke-width="2"/>
+
+  <!-- rulers -->
+  <rect x="44" y="72" width="1096" height="18" fill="#2f2f31"/>
+  <rect x="44" y="90" width="18" height="782" fill="#2f2f31"/>
+  <rect x="62" y="72" width="1078" height="18" fill="url(#rulerTop)"/>
+  <rect x="44" y="90" width="18" height="782" fill="url(#rulerLeft)"/>
+  <rect x="44" y="72" width="18" height="18" fill="#2a2a2c"/>
+  <g font-size="8" fill="#9a9a9e">
+    <text x="378" y="81">0</text><text x="419" y="81">1</text><text x="460" y="81">2</text><text x="502" y="81">3</text>
+    <text x="543" y="81">4</text><text x="584" y="81">5</text><text x="625" y="81">6</text><text x="666" y="81">7</text>
+    <text x="708" y="81">8</text><text x="749" y="81">9</text><text x="790" y="81">10</text><text x="831" y="81">11</text>
+  </g>
+  <g font-size="8" fill="#9a9a9e">
+    <text x="46" y="134">0</text><text x="46" y="216">2</text><text x="46" y="299">4</text><text x="46" y="381">6</text>
+    <text x="46" y="463">8</text><text x="46" y="546">10</text><text x="46" y="628">12</text><text x="46" y="710">14</text><text x="46" y="793">16</text>
+  </g>
+
+  <!-- pasteboard -->
+  <rect x="62" y="90" width="1078" height="782" fill="#3b3b3e"/>
+  <!-- ruler guide on pasteboard -->
+  <line x1="62" y1="405" x2="1140" y2="405" stroke="#31c4f3" stroke-width="1"/>
+
+  <!-- page shadow + sheet -->
+  <rect x="378" y="129" width="453" height="700" fill="#000000" opacity="0.35"/>
+  <rect x="375" y="125" width="453" height="700" fill="#ffffff"/>
+
+  <!-- page artwork (clipped to bleed) -->
+  <g clip-path="url(#sheetClip)">
+    <rect x="370" y="120" width="463" height="270" fill="#f0731f"/>
+    <text x="394" y="248" font-size="92" font-weight="900" fill="#1f3c88" letter-spacing="-2">SPRING</text>
+    <text x="396" y="306" font-size="40" font-weight="800" fill="#231f20" letter-spacing="-0.5">OPEN STUDIO</text>
+    <text x="397" y="342" font-size="13" fill="#231f20">Saturday, May 16 · 10am–4pm · 412 Grove Street</text>
+    <g clip-path="url(#photoClip)">
+      <rect x="396" y="420" width="411" height="220" fill="url(#sky)"/>
+      <circle cx="702" cy="500" r="30" fill="#f6d27a" opacity="0.9"/>
+      <path d="M396 560 C470 520 560 530 640 548 S770 560 807 540 V640 H396 Z" fill="#b3262e"/>
+      <path d="M396 600 C480 580 600 590 700 600 S790 596 807 590 V640 H396 Z" fill="#2f6b34"/>
+    </g>
+    <g font-size="10.5" fill="#231f20">
+      <text x="396" y="680">Twenty studios open their doors for one day.</text>
+      <text x="396" y="695">Watch screen printing, letterpress and riso</text>
+      <text x="396" y="710">demos, browse prints, and meet the people</text>
+      <text x="396" y="725">who make them. Free entry, all ages.</text>
+      <text x="396" y="752" font-weight="700">galleystudio.example/spring</text>
+    </g>
+    <circle cx="752" cy="712" r="46" fill="#e4002b"/>
+    <text x="752" y="720" font-size="22" font-weight="900" fill="#ffffff" text-anchor="middle">FREE</text>
+  </g>
+
+  <!-- bleed, margin and column guides -->
+  <rect x="370" y="120" width="463" height="710" fill="none" stroke="#ff3b30" stroke-width="1"/>
+  <rect x="395.6" y="145.6" width="411.8" height="658.8" fill="none" stroke="#e040fb" stroke-width="1"/>
+  <g stroke="#8e7cff" stroke-width="1">
+    <line x1="528.9" y1="145.6" x2="528.9" y2="804.4"/><line x1="535.9" y1="145.6" x2="535.9" y2="804.4"/>
+    <line x1="667.2" y1="145.6" x2="667.2" y2="804.4"/><line x1="674.2" y1="145.6" x2="674.2" y2="804.4"/>
+  </g>
+
+  <!-- smart guide: frame centered on page -->
+  <line x1="601.5" y1="398" x2="601.5" y2="660" stroke="#33d17a" stroke-width="1"/>
+  <rect x="566" y="648" width="71" height="15" rx="3" fill="#33d17a"/>
+  <text x="601.5" y="659" font-size="9.5" fill="#0d2614" text-anchor="middle">center X</text>
+
+  <!-- selection on the image frame -->
+  <rect x="396" y="420" width="411" height="220" fill="none" stroke="#4da3ff" stroke-width="1.5"/>
+  <g fill="#ffffff" stroke="#4da3ff" stroke-width="1.2">
+    <rect x="392.5" y="416.5" width="7" height="7"/><rect x="598" y="416.5" width="7" height="7"/><rect x="803.5" y="416.5" width="7" height="7"/>
+    <rect x="392.5" y="526.5" width="7" height="7"/><rect x="803.5" y="526.5" width="7" height="7"/>
+    <rect x="392.5" y="636.5" width="7" height="7"/><rect x="598" y="636.5" width="7" height="7"/><rect x="803.5" y="636.5" width="7" height="7"/>
+  </g>
+  <rect x="598.5" y="527" width="6" height="6" fill="#4da3ff"/>
+
+  <!-- right dock -->
+  <rect x="1140" y="72" width="300" height="800" fill="#2a2a2c"/>
+  <line x1="1140.5" y1="72" x2="1140.5" y2="872" stroke="#1d1d1f"/>
+
+  <!-- Pages panel -->
+  <rect x="1140" y="72" width="300" height="24" fill="#323234"/>
+  <text x="1152" y="88" font-size="11" font-weight="600" fill="#ececf0">Pages</text>
+  <text x="1428" y="88" font-size="11" fill="#8a8a8e" text-anchor="end">≡</text>
+  <rect x="1262" y="110" width="56" height="86" fill="#ffffff" stroke="#4da3ff" stroke-width="2"/>
+  <rect x="1262" y="110" width="56" height="33" fill="#f0731f"/>
+  <rect x="1266" y="152" width="48" height="26" fill="#6f95cf"/>
+  <circle cx="1306" cy="186" r="6" fill="#e4002b"/>
+  <text x="1290" y="212" font-size="10" fill="#c8c8cc" text-anchor="middle">1</text>
+  <line x1="1140" y1="224" x2="1440" y2="224" stroke="#1d1d1f"/>
+  <text x="1152" y="240" font-size="10" fill="#8a8a8e">1 Page in 1 Spread</text>
+  <g fill="none" stroke="#9a9a9e" stroke-width="1.2">
+    <rect x="1392" y="231" width="10" height="12" rx="1"/><line x1="1397" y1="234" x2="1397" y2="240"/><line x1="1394" y1="237" x2="1400" y2="237"/>
+    <path d="M1412 233 h10 M1414 233 v10 h6 v-10 M1416 231 h2"/>
+  </g>
+
+  <!-- Layers panel -->
+  <rect x="1140" y="252" width="300" height="24" fill="#323234"/>
+  <text x="1152" y="268" font-size="11" font-weight="600" fill="#ececf0">Layers</text>
+  <text x="1428" y="268" font-size="11" fill="#8a8a8e" text-anchor="end">≡</text>
+  <g font-size="11" fill="#d8d8dc">
+    <!-- layer row -->
+    <rect x="1140" y="280" width="300" height="24" fill="#2f2f31"/>
+    <ellipse cx="1156" cy="292" rx="6" ry="3.5" fill="none" stroke="#c8c8cc"/><circle cx="1156" cy="292" r="1.5" fill="#c8c8cc"/>
+    <rect x="1170" y="286" width="8" height="10" rx="1" fill="none" stroke="#5a5a5e"/>
+    <text x="1188" y="296">▾</text>
+    <rect x="1200" y="287" width="10" height="10" fill="#4da3ff"/>
+    <text x="1218" y="296">Layer 1</text>
+    <!-- items -->
+    <rect x="1140" y="306" width="300" height="22" fill="#3d5a80"/>
+    <text x="1218" y="321">&lt;photo.jpg&gt;</text>
+    <rect x="1414" y="312" width="9" height="9" fill="#4da3ff"/>
+    <text x="1218" y="343">&lt;FREE&gt;</text>
+    <text x="1218" y="365">&lt;Ellipse&gt;</text>
+    <text x="1218" y="387">&lt;Twenty studios open…&gt;</text>
+    <text x="1218" y="409">&lt;Saturday, May 16…&gt;</text>
+    <text x="1218" y="431">&lt;OPEN STUDIO&gt;</text>
+    <text x="1218" y="453">&lt;SPRING&gt;</text>
+    <text x="1218" y="475">&lt;Rectangle&gt;</text>
+  </g>
+  <g fill="none" stroke="#c8c8cc">
+    <ellipse cx="1156" cy="317" rx="6" ry="3.5"/><ellipse cx="1156" cy="339" rx="6" ry="3.5"/><ellipse cx="1156" cy="361" rx="6" ry="3.5"/>
+    <ellipse cx="1156" cy="383" rx="6" ry="3.5"/><ellipse cx="1156" cy="405" rx="6" ry="3.5"/><ellipse cx="1156" cy="427" rx="6" ry="3.5"/>
+    <ellipse cx="1156" cy="449" rx="6" ry="3.5"/><ellipse cx="1156" cy="471" rx="6" ry="3.5"/>
+  </g>
+  <!-- locked background rectangle -->
+  <rect x="1170" y="466" width="8" height="7" rx="1" fill="#c8c8cc"/><path d="M1171.5 466 v-2.5 a2.5 2.5 0 0 1 5 0 v2.5" fill="none" stroke="#c8c8cc"/>
+  <line x1="1140" y1="500" x2="1440" y2="500" stroke="#1d1d1f"/>
+  <text x="1152" y="516" font-size="10" fill="#8a8a8e">Page: 1, 1 Layer</text>
+
+  <!-- Swatches panel -->
+  <rect x="1140" y="528" width="300" height="24" fill="#323234"/>
+  <text x="1152" y="544" font-size="11" font-weight="600" fill="#ececf0">Swatches</text>
+  <text x="1428" y="544" font-size="11" fill="#8a8a8e" text-anchor="end">≡</text>
+  <text x="1152" y="572" font-size="10.5" fill="#c8c8cc">Tint:</text>
+  <rect x="1180" y="561" width="44" height="16" rx="3" fill="#1f1f21" stroke="#4a4a4e"/>
+  <text x="1186" y="573" font-size="10.5" fill="#ececf0">100 %</text>
+  <g font-size="11" fill="#d8d8dc">
+    <rect x="1152" y="590" width="14" height="14" fill="#ffffff"/><line x1="1153" y1="603" x2="1165" y2="591" stroke="#e5352b" stroke-width="1.6"/>
+    <text x="1176" y="601">[None]</text>
+    <rect x="1152" y="612" width="14" height="14" fill="#1d1d1f" stroke="#6c6c70"/>
+    <circle cx="1159" cy="619" r="4" fill="none" stroke="#e8e8ec"/><line x1="1154" y1="619" x2="1164" y2="619" stroke="#e8e8ec"/><line x1="1159" y1="614" x2="1159" y2="624" stroke="#e8e8ec"/>
+    <text x="1176" y="623">[Registration]</text>
+    <rect x="1152" y="634" width="14" height="14" fill="#ffffff"/>
+    <text x="1176" y="645">[Paper]</text>
+    <rect x="1152" y="656" width="14" height="14" fill="#231f20" stroke="#5a5a5e"/>
+    <text x="1176" y="667">[Black]</text>
+    <rect x="1152" y="678" width="14" height="14" fill="#f0731f"/>
+    <text x="1176" y="689">Warm Orange  C0 M60 Y100 K0</text>
+    <rect x="1152" y="700" width="14" height="14" fill="#1f3c88"/>
+    <text x="1176" y="711">Studio Blue  C100 M80 Y0 K20</text>
+    <rect x="1152" y="722" width="14" height="14" fill="#e4002b"/>
+    <text x="1176" y="733">PANTONE 185 C</text>
+    <rect x="1152" y="744" width="14" height="14" fill="#2a9d8f"/>
+    <text x="1176" y="755">Teal  C85 M10 Y40 K10</text>
+  </g>
+  <!-- swatch type icons: process square / spot circle -->
+  <g fill="none" stroke="#9a9a9e">
+    <rect x="1404" y="681" width="8" height="8"/><rect x="1404" y="703" width="8" height="8"/><rect x="1404" y="747" width="8" height="8"/>
+    <rect x="1404" y="659" width="8" height="8"/>
+  </g>
+  <circle cx="1408" cy="729" r="4.5" fill="#9a9a9e"/>
+  <g fill="none" stroke="#9a9a9e">
+    <rect x="1418" y="681" width="8" height="8"/><rect x="1418" y="703" width="8" height="8"/><rect x="1418" y="725" width="8" height="8"/><rect x="1418" y="747" width="8" height="8"/><rect x="1418" y="659" width="8" height="8"/>
+  </g>
+  <g fill="#e040fb" opacity="0.0"><rect x="0" y="0" width="1" height="1"/></g>
+  <line x1="1140" y1="846" x2="1440" y2="846" stroke="#1d1d1f"/>
+  <text x="1152" y="862" font-size="10" fill="#8a8a8e">Soft proof: Coated GRACoL 2006</text>
+
+  <!-- status bar -->
+  <rect x="0" y="872" width="1440" height="28" fill="#2a2a2c"/>
+  <path d="M0 872 H1440 V890 A10 10 0 0 1 1430 900 H10 A10 10 0 0 1 0 890 Z" fill="#2a2a2c"/>
+  <line x1="0" y1="872.5" x2="1440" y2="872.5" stroke="#1d1d1f"/>
+  <g font-size="11" fill="#b8b8bc">
+    <text x="16" y="890">50%</text>
+    <text x="64" y="890">◂  1  ▸</text>
+    <text x="130" y="890" fill="#8a8a8e">Tabloid 11 × 17 in · bleed 0.125 in · 3 columns</text>
+    <text x="1424" y="890" text-anchor="end" fill="#8a8a8e">File › Export › PDF/X-4…</text>
+  </g>
+</svg>

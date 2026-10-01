@@ -9,7 +9,10 @@ A desktop page-layout app built on web technology. Its main output is press-read
 | Who it's for | Me / my studio. Single user, local files, no accounts. |
 | Print bar | Commercial press-ready: CMYK, spot colors, bleed and marks, PDF/X. |
 | Web output | Shares content and styles with print. The web gets its own responsive layout, auto-drafted from print. |
-| Platform | Desktop app built on Electron. |
+| Platform | Desktop app built on Electron, **pinned to 44.5.1** (the version both Phase 0 spikes were verified on). |
+| Architecture | **Confirmed by Phase 0** (2026-10-01): Chromium renders both the editor and the PDF, and a sentinel-color prepress step makes the output press-ready. See `spikes/*/FINDINGS.md`. |
+| Editor UI | Familiar InDesign layout: dark theme, tools on the left, control strip on top, docked panels on the right. |
+| Tracking | One GitHub issue per plan in `shelbyklein/Galley`. No Tracker Trapper. |
 
 ---
 
@@ -69,13 +72,15 @@ For a layout tool, the line breaks on screen must exactly match the line breaks 
 
 | Problem | Approach |
 |---|---|
-| Threaded text frames (CSS has no native threading) | Lay the story out in a hidden DOM container, split it after the last line that fits, and continue in the next frame. Re-thread on every edit and show an overset indicator. |
-| Editing text that runs across frames | Each story's model lives in ProseMirror. Edit in place per frame, with the cursor able to cross frame boundaries. A Story Editor panel is the fallback. |
+| Threaded text frames (CSS has no native threading) | **Proven in Phase 0.** Each frame is laid out in a hidden measuring host; the story splits at the last line that fits and continues in the next frame. Incremental re-threading takes under 3 ms per key for brochure-length stories, and on-screen lines matched the PDF on 2,205 of 2,205 lines. |
+| Editing text that runs across frames | **Proven in Phase 0.** One ProseMirror view sits over a derived "view doc"; the story doc is the source of truth, and undo lives on the story. |
+| Geometry precision | **Found in Phase 0:** CSS boxes snap to whole CSS pixels (0.75 pt) in the PDF. Draw fills, strokes and rules as SVG, which is exact. Phase 1 decides how text-frame origins are positioned exactly. Page padding is a multiple of 0.24 pt, and the sheet is always clipped with `overflow: hidden`. |
+| Leading | **Found in Phase 0:** fixed leading that is a multiple of 0.75 pt gets exact line positions. Other values use a measured fallback, which Phase 2 must verify against print. |
 | Text wrap around objects | Inject invisible floats with `shape-outside` into the affected text frame (left and right sides). Jump-object wrap comes later. |
 | Baseline grid | Snap line-height to grid increments and use `text-box-trim` to put the first baseline on the grid. |
 | On-screen color accuracy | Soft proof: render CMYK swatches through the chosen press profile to display RGB with LittleCMS (WASM). |
 | Fonts | Scan system and document fonts in the main process with fontkit. Load them with `@font-face` from the exact files, so the editor and the export use the same font. Check fsType embedding permissions. |
-| Variable fonts in PDF | Chromium may emit them as Type 3 fonts. Test this in the spike. The fallback is to export static instances. |
+| Fonts in PDF | **Found in Phase 0:** only static TrueType embeds as a real font. Variable fonts and every CFF `.otf` come out as Type 3 (legal in PDF/X-4 and K-only, but unhinted, and some shops flag it). **Default:** allow any font. Variable fonts are pre-instanced to static fonts at export, and the export dialog warns about CFF `.otf`. A Type 3 → real-font rewrite is planned for Phase 4. |
 | Chromium upgrades changing line breaks | Store the engine version in each document and warn when text reflows after an Electron upgrade. InDesign has the same problem when its composer changes. |
 
 ---
@@ -144,14 +149,19 @@ apps/desktop        Electron main process + UI
 
 Each phase ends with a real job, not a feature checklist.
 
-### Phase 0: Prove the bet (spikes)
+### Phase 0: Prove the bet (spikes): done, 2026-10-01
+Both spikes hold, with caveats. Details: [press findings](spikes/press/FINDINGS.md) and [threading findings](spikes/threading/FINDINGS.md). The plates were confirmed in Acrobat Output Preview; the print shop's view of Type 3 fonts is still open.
+
 Two throwaway prototypes that decide whether the architecture holds:
 - **Press spike:** one page with CMYK text, a spot color, 100K black text, a gradient, a transparent object, a photo and a variable font. Run it through Electron `printToPDF`, then prepress, to get PDF/X-4. Check separations in Acrobat's Output Preview and send it to your print shop.
 - **Threading spike:** three linked frames of different widths, live re-threading while typing, and an overset marker.
 
 **Exit:** both spikes work, or we switch the export module to the fallback before building on top of it.
 
+Phases 1–2 are planned in detail in [docs/plans/phases-1-2.md](docs/plans/phases-1-2.md).
+
 ### Phase 1: Canvas foundation
+- Basic PDF/X-4 export with bleed and crop marks, ported from the press spike (moved up from Phase 4)
 - Electron shell; open and save `.galley` files
 - Pages with margins, columns, bleed and slug
 - Zoom and pan, rulers and guides
@@ -159,7 +169,7 @@ Two throwaway prototypes that decide whether the architecture holds:
 - Select, move, resize and rotate; smart guides and snapping
 - Layers; undo and redo
 
-**Milestone:** lay out a one-page poster (without text styling).
+**Milestone:** lay out a one-page poster (without text styling) and export it as press-ready PDF.
 
 ### Phase 2: Typography
 - Story editing
@@ -177,7 +187,8 @@ Two throwaway prototypes that decide whether the architecture holds:
 - Links panel and effective PPI
 
 ### Phase 4: Press output
-- PDF/X-4 export (with an X-1a option)
+- Export presets (PDF/X-4, plus an X-1a option), building on Phase 1's basic export
+- Type 3 → real-font rewrite for CFF `.otf` fonts
 - Bleed and marks
 - Preflight panel
 - Package
@@ -224,5 +235,6 @@ Two throwaway prototypes that decide whether the architecture holds:
 1. **IDML import:** how much existing InDesign work do you want to bring in? It's a big effort with high value.
 2. **Print profile:** which print shop or profile do you usually target? GRACoL/SWOP is common in the US, FOGRA in Europe.
 3. **Justified text:** is justified body text common in your work? That decides how much the paragraph-composer gap matters.
-4. **Threading:** is it essential on day one, or do most of your brochures work with single text frames first?
-5. **InDesign habits:** which InDesign workflows do you love or hate, and which should Galley do differently?
+4. ~~**Threading:**~~ Settled: it's in Phase 2, and Phase 0 proved it works.
+5. **Type 3 fonts:** what does your print shop say about Type 3? The answer sets how urgent the Phase 4 font rewrite is.
+6. **InDesign habits:** which InDesign workflows do you love or hate, and which should Galley do differently?
