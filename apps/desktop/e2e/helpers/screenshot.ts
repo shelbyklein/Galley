@@ -7,15 +7,15 @@ import { APP_DIR } from './launch';
 export const SCREENS_DIR = path.join(APP_DIR, 'test-results', 'screens');
 
 /**
- * Wait until what is on screen is final: web fonts loaded, every <img> decoded, and two animation frames painted.
+ * Wait until what is on screen is final: every rendered page has loaded its fonts and images (`data-ready="true"`, set
+ * by @galley/render's PageView), web fonts are loaded, every <img> is decoded, and two animation frames have painted.
  * Call before any screenshot; `snap` and `expectBaseline` do it for you.
  */
 export async function waitForStable(page: Page): Promise<void> {
+  await page.waitForFunction(() => Array.from(document.querySelectorAll('.galley-page')).every((el) => el.getAttribute('data-ready') === 'true'));
   await page.evaluate(async () => {
     await document.fonts.ready;
-    await Promise.all(
-      Array.from(document.images).map((img) => (img.decode ? img.decode().catch(() => undefined) : undefined)),
-    );
+    await Promise.all(Array.from(document.images).map((img) => (img.decode ? img.decode().catch(() => undefined) : undefined)));
     await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
   });
 }
