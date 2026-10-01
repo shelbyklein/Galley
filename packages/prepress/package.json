@@ -1,0 +1,19 @@
+{
+  "name": "@galley/prepress",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Galley prepress: sentinel colors to CMYK/spot, page boxes, marks, PDF/X-4. Empty stub until lane A (P1-05).",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "@galley/model": "*"
+  }
+}

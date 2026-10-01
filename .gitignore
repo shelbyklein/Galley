@@ -1,2 +1,16 @@
 .DS_Store
 node_modules/
+
+# build output
+/apps/*/out/
+/apps/*/dist/
+/packages/*/dist/
+/dist/
+/build/
+*.tsbuildinfo
+.vite/
+
+# test output (baseline screenshots under apps/desktop/e2e/__screenshots__ ARE committed)
+test-results/
+playwright-report/
+coverage/
