@@ -131,6 +131,20 @@ const makers: Record<string, { weight: number; make: Maker }> = {
       return { key: 'setFrameProps', args: { ids: [target.id], props } };
     },
   },
+  transformFrames: {
+    weight: 6,
+    make: (doc, r) => {
+      const boxes = frames(doc).filter((f) => f.type !== 'group');
+      if (boxes.length === 0) return null;
+      const changes = r.pickN(boxes, r.int(1, 3)).map((f) => ({
+        id: f.id,
+        ...(r.chance(0.7) ? { x: r.float(-50, 600), y: r.float(-50, 800) } : {}),
+        ...(r.chance(0.5) ? { w: r.float(0, 400) } : {}),
+        ...(r.chance(0.3) ? { rotation: r.float(-360, 360) } : {}),
+      }));
+      return { key: 'transformFrames', args: { changes } };
+    },
+  },
   moveFrames: {
     weight: 10,
     make: (doc, r) => {

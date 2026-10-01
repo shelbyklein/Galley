@@ -30,6 +30,7 @@ import {
   setSwatchProps,
   storyDocFromText,
   storyPlainText,
+  transformFrames,
   ungroupFrames,
   validateDocument,
   type HistoryState,
@@ -124,6 +125,23 @@ describe('frames: properties and movement', () => {
     expect(h.doc.frames.a).toMatchObject({ x: 10, y: 5 });
     expect(h.doc.frames.b).toMatchObject({ x: 110, y: 105 });
     expect(() => run(h, moveFrames, { ids: ['a'], dx: Infinity, dy: 0 })).toThrow(/finite/);
+  });
+
+  it('transforms several frames to absolute geometry in one command', () => {
+    let h = add(add(history(), 'a', { x: 0, y: 0 }), 'b', { x: 100, y: 100 });
+    h = run(h, groupFrames, { ids: ['b'], groupId: 'g' });
+    h = run(h, transformFrames, { changes: [{ id: 'a', x: 36, w: 10.5, rotation: 30 }, { id: 'b', x: 7, y: 8, h: 0 }] });
+    expect(h.doc.frames.a).toMatchObject({ x: 36, y: 0, w: 10.5, h: 50, rotation: 30 });
+    expect(h.doc.frames.b).toMatchObject({ x: 7, y: 8, w: 100, h: 0 });
+    expect(() => run(h, transformFrames, { changes: [{ id: 'g', x: 1 }] })).toThrow(/group/);
+    expect(() => run(h, transformFrames, { changes: [{ id: 'a', w: -1 }] })).toThrow(/negative/);
+    expect(() => run(h, transformFrames, { changes: [{ id: 'a', x: NaN }] })).toThrow(/finite/);
+    expect(() => run(h, transformFrames, { changes: [{ id: 'ghost', x: 1 }] })).toThrow(/No frame/);
+    // a rejected change leaves the whole command without effect
+    const before = h.doc;
+    expect(() => run(h, transformFrames, { changes: [{ id: 'a', x: 99 }, { id: 'a', w: -1 }] })).toThrow(CommandError);
+    expect(h.doc).toBe(before);
+    valid(h);
   });
 });
 
