@@ -1,0 +1,37 @@
+{
+  "name": "galley-threading-spike",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Phase 0 threading spike: threaded text frames by DOM measurement, ProseMirror story, Electron printToPDF line match",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "demo": "node scripts/build.mjs && electron build/main.cjs --demo",
+    "test": "node scripts/build.mjs && node --import tsx --test --test-concurrency=1 --test-reporter=spec test/*.test.ts",
+    "postinstall": "node node_modules/electron/install.js"
+  },
+  "dependencies": {
+    "electron": "^44.5.1",
+    "prosemirror-commands": "^1.7.2",
+    "prosemirror-history": "^1.5.1",
+    "prosemirror-keymap": "^1.2.3",
+    "prosemirror-model": "^1.25.12",
+    "prosemirror-state": "^1.4.4",
+    "prosemirror-transform": "^1.12.2",
+    "prosemirror-view": "^1.42.6"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "esbuild": "^0.28.2",
+    "playwright-core": "^1.63.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "wawoff2": "^2.0.1",
+    "@fontsource/inter": "^5.3.0"
+  },
+  "allowScripts": {
+    "electron@44.5.1": true,
+    "esbuild@0.28.2": true
+  }
+}

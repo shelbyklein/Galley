@@ -1,0 +1,55 @@
+@font-face { font-family: "Inter Static"; font-weight: 400; src: url("../fonts/Inter-Regular.woff2") format("woff2"); }
+@font-face { font-family: "Inter Static"; font-weight: 800; src: url("../fonts/Inter-ExtraBold.woff2") format("woff2"); }
+@font-face { font-family: "Inter VF"; font-weight: 100 900; src: url("../fonts/InterVariable-wght.woff2") format("woff2"); }
+/* static instance of the variable font (wght=650) made with hb-subset: the PLAN's fallback for Type 3 output */
+@font-face { font-family: "Inter Instance 650"; src: url("../fonts/Inter-wght650-instance.ttf") format("truetype"); }
+
+/* trim 8.5x11 + bleed 0.125 each side + 0.5in slug room beyond trim each side: 9.5 x 12 in */
+@page { size: 9.5in 12in; margin: 0; }
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: transparent; }
+body { -webkit-print-color-adjust: exact; print-color-adjust: exact; font-family: "Inter Static", sans-serif; }
+
+.sheet { position: relative; width: 9.5in; height: 12in; overflow: hidden; }
+.abs { position: absolute; margin: 0; }
+
+.bg { left: .375in; top: .375in; width: 8.75in; height: 4.25in; background: var(--sw-orange); } /* bleed on top/left/right */
+.probe { background: transparent; }
+
+.headline { left: 1in; top: .95in; font: 800 70pt/1 "Inter Static", sans-serif; letter-spacing: -.01em; color: var(--sw-blue); }
+.kicker { left: 1.02in; top: 2.1in; font: 400 12pt/1 "Inter Static", sans-serif; color: var(--sw-black); }
+
+.op-line { left: 1in; font: 800 46pt/1 "Inter Static", sans-serif; color: var(--sw-black); }
+.op-line.op { top: 2.55in; color: var(--sw-black-op); }   /* overprint variant has its own sentinel */
+.op-line.ko { top: 3.35in; color: var(--sw-black); }
+.op-note { left: 1.02in; top: 4.15in; font: 400 9pt/1 "Inter Static", sans-serif; color: var(--sw-black); }
+
+.body { left: 1in; top: 5in; width: 4.2in; font: 400 10.5pt/14pt "Inter Static", sans-serif; color: var(--sw-black); }
+.varline { left: 1in; top: 7.05in; white-space: nowrap; font-family: "Inter VF", sans-serif; font-weight: 650; font-size: 14pt; line-height: 1.1; color: var(--sw-black); }
+.instline { left: 4.6in; top: 7.05in; white-space: nowrap; font-family: "Inter Instance 650", sans-serif; font-size: 14pt; line-height: 1.1; color: var(--sw-black); }
+
+.swatch { width: 1.4in; height: .9in; display: flex; align-items: flex-end; padding: .06in; }
+.swlabel { font: 800 8pt/1 "Inter Static", sans-serif; color: var(--sw-paper); }
+.swatch { background: var(--sw-pms185); }
+.swatch.spot40 { background: var(--sw-pms185-40); }
+.swatch.teal { background: var(--sw-teal); }
+.swatch.teal50 { background: var(--sw-teal-50); border: 2pt solid var(--sw-blue); }
+.swatch.spot40 .swlabel, .swatch.teal50 .swlabel { color: var(--sw-black); }
+
+.grad2 { left: 1in; top: 7.75in; width: 7in; height: .6in; background: linear-gradient(to right, var(--sw-cyan), var(--sw-magenta)); }
+.grad3 { left: 1in; top: 8.65in; width: 7in; height: .6in; background: linear-gradient(to right, var(--sw-cyan), var(--sw-yellow), var(--sw-magenta)); }
+.gradlabel { left: 1in; font: 400 8pt/1 "Inter Static", sans-serif; color: var(--sw-black); }
+
+.tA { left: 1in; top: 9.55in; width: 1.5in; height: 1.5in; background: var(--sw-cyan); }
+.tB { left: 1.9in; top: 10.1in; width: 1.5in; height: 1.1in; background: var(--sw-orange); opacity: .5; display: flex; align-items: flex-end; padding: .05in; }
+.tB span { font: 800 14pt/1 "Inter Static", sans-serif; color: var(--sw-black); }
+.a-only-probe { left: 1.05in; top: 9.6in; width: .5in; height: .5in; background: transparent; }
+.overlap-probe { left: 1.95in; top: 10.12in; width: .5in; height: .5in; background: transparent; } /* inside A and B, clear of text */
+.outside-probe { left: 2.9in; top: 10.12in; width: .45in; height: .45in; background: transparent; } /* inside B only */
+
+.photo { left: 4.1in; top: 9.4in; width: 3.9in; height: 1.45in; object-fit: cover; box-shadow: .04in .05in .1in rgb(from var(--sw-black) r g b / .5); }
+/* gradient to transparent: the common "fade" that Skia cannot express natively (see FINDINGS) */
+.fade { left: 4.1in; top: 11in; width: 3.9in; height: .32in; display: flex; align-items: center; padding: 0 .08in;
+  background: linear-gradient(to right, rgb(from var(--sw-black) r g b / 0), rgb(from var(--sw-black) r g b / .85)); }
+.fade span { font: 800 8pt/1 "Inter Static", sans-serif; color: var(--sw-black); }

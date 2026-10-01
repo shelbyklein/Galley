@@ -1,0 +1,23 @@
+<!doctype html><meta charset="utf-8">
+<style>
+@page { size: 600pt 400pt; margin: 0 }
+html,body{margin:0}
+.a{position:absolute;background:rgb(10,10,25)}
+</style>
+<!-- A: plain boxes at fractional point positions -->
+<div class="a" style="left:10.3pt;top:10.3pt;width:33.37pt;height:20.11pt"></div>
+<div class="a" style="left:100.1pt;top:10.9pt;width:50pt;height:.25pt"></div>        <!-- 0.25pt rule via background -->
+<div class="a" style="left:200pt;top:10pt;width:50pt;height:0;border-top:.25pt solid rgb(10,10,25)"></div> <!-- 0.25pt via border -->
+<!-- B: same geometry inside a transform:scale(.25) wrapper laid out at 4x -->
+<div style="position:absolute;left:0;top:100pt;transform-origin:0 0;transform:scale(.25);width:2400pt;height:400pt">
+  <div class="a" style="left:41.2pt;top:41.2pt;width:133.48pt;height:80.44pt"></div>                  <!-- = 10.3,10.3,33.37,20.11 -->
+  <div class="a" style="left:400.4pt;top:43.6pt;width:200pt;height:1pt"></div>                         <!-- 0.25pt -->
+</div>
+<!-- C: SVG -->
+<svg style="position:absolute;left:0;top:200pt" width="600pt" height="100pt">
+  <rect x="10.3pt" y="10.3pt" width="33.37pt" height="20.11pt" fill="rgb(10,10,25)"/>
+  <line x1="100.1pt" y1="10.9pt" x2="150.1pt" y2="10.9pt" stroke="rgb(10,10,25)" stroke-width=".25pt"/>
+  <rect x="200pt" y="10pt" width="50pt" height=".25pt" fill="rgb(10,10,25)"/>
+</svg>
+<!-- D: text at fractional positions -->
+<div style="position:absolute;left:10.3pt;top:320.7pt;font:12pt/1 'Helvetica Neue',sans-serif;color:rgb(10,10,25)">Fractional text 10.3pt</div>

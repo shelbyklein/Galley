@@ -1,0 +1,6 @@
+{
+  "_comment": "Job geometry in inches. page = trim + 2*marginIn. marginIn is the slug room beyond TRIM on every side (it contains the 0.125in bleed). Must agree with @page and the absolute positions in page/page.css.",
+  "trimIn": [8.5, 11],
+  "bleedIn": 0.125,
+  "marginIn": 0.5
+}

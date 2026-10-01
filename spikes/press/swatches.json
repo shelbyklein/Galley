@@ -1,0 +1,17 @@
+{
+  "_comment": "Galley swatch table. Each entry is one 'paint' the page can use: a swatch, a tint of it, or an overprint variant. type=cmyk: values = C,M,Y,K percent. type=spot: values = CMYK alternate percent. tint is percent of the swatch. proofRGB is the soft-proof sRGB for normal display (ICC CoatedGRACoL2006 -> sRGB via Ghostscript; Pantone official sRGB for the spot). In export mode the page uses a unique sentinel RGB instead.",
+  "swatches": [
+    { "id": "paper",      "name": "Paper",              "type": "cmyk", "values": [0, 0, 0, 0],     "tint": 100, "overprint": false, "proofRGB": [255, 255, 255] },
+    { "id": "black",      "name": "Black",              "type": "cmyk", "values": [0, 0, 0, 100],   "tint": 100, "overprint": false, "proofRGB": [35, 31, 32] },
+    { "id": "black-op",   "name": "Black (overprint)",  "type": "cmyk", "values": [0, 0, 0, 100],   "tint": 100, "overprint": true,  "proofRGB": [35, 31, 32] },
+    { "id": "orange",     "name": "Warm Orange",        "type": "cmyk", "values": [0, 60, 100, 0],  "tint": 100, "overprint": false, "proofRGB": [241, 135, 30] },
+    { "id": "blue",       "name": "Deep Blue",          "type": "cmyk", "values": [100, 80, 0, 20], "tint": 100, "overprint": false, "proofRGB": [30, 52, 130] },
+    { "id": "teal",       "name": "Teal",               "type": "cmyk", "values": [85, 10, 40, 10], "tint": 100, "overprint": false, "proofRGB": [0, 140, 150] },
+    { "id": "teal-50",    "name": "Teal 50%",           "type": "cmyk", "values": [85, 10, 40, 10], "tint": 50,  "overprint": false, "proofRGB": [127, 197, 202] },
+    { "id": "cyan",       "name": "Process Cyan",       "type": "cmyk", "values": [100, 0, 0, 0],   "tint": 100, "overprint": false, "proofRGB": [0, 174, 239] },
+    { "id": "magenta",    "name": "Process Magenta",    "type": "cmyk", "values": [0, 100, 0, 0],   "tint": 100, "overprint": false, "proofRGB": [236, 0, 140] },
+    { "id": "yellow",     "name": "Process Yellow",     "type": "cmyk", "values": [0, 0, 100, 0],   "tint": 100, "overprint": false, "proofRGB": [255, 242, 0] },
+    { "id": "pms185",     "name": "PANTONE 185 C",      "type": "spot", "values": [0, 91, 76, 0],   "tint": 100, "overprint": false, "proofRGB": [228, 0, 43] },
+    { "id": "pms185-40",  "name": "PANTONE 185 C 40%",  "type": "spot", "values": [0, 91, 76, 0],   "tint": 40,  "overprint": false, "proofRGB": [244, 153, 169], "spotName": "PANTONE 185 C" }
+  ]
+}
