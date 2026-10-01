@@ -1,0 +1,503 @@
+{
+  "assets": {
+    "photo": {
+      "colorSpace": "rgb",
+      "height": 1280,
+      "id": "photo",
+      "kind": "image",
+      "ppi": 300,
+      "width": 2400
+    }
+  },
+  "formatVersion": 1,
+  "frames": {
+    "body": {
+      "fill": null,
+      "h": 120,
+      "id": "body",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_body",
+      "stroke": null,
+      "type": "text",
+      "w": 444,
+      "x": 36,
+      "y": 951
+    },
+    "details": {
+      "fill": null,
+      "h": 30,
+      "id": "details",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_details",
+      "stroke": null,
+      "type": "text",
+      "w": 720,
+      "x": 36,
+      "y": 357
+    },
+    "free": {
+      "fill": null,
+      "h": 39,
+      "id": "free",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_free",
+      "stroke": null,
+      "type": "text",
+      "w": 160,
+      "x": 579,
+      "y": 1008
+    },
+    "free-ellipse": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "pms-185-c",
+        "tint": 100
+      },
+      "h": 160,
+      "id": "free-ellipse",
+      "layerId": "layer_1",
+      "name": "Ellipse",
+      "rotation": 0,
+      "stroke": null,
+      "type": "ellipse",
+      "w": 160,
+      "x": 579,
+      "y": 945
+    },
+    "open-studio": {
+      "fill": null,
+      "h": 78,
+      "id": "open-studio",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_open-studio",
+      "stroke": null,
+      "type": "text",
+      "w": 720,
+      "x": 36,
+      "y": 252
+    },
+    "orange-block": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "warm-orange",
+        "tint": 100
+      },
+      "h": 474,
+      "id": "orange-block",
+      "layerId": "layer_1",
+      "name": "Orange block",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 810,
+      "x": -9,
+      "y": -9
+    },
+    "photo-frame": {
+      "assetId": "photo",
+      "content": {
+        "h": 384,
+        "w": 720,
+        "x": 0,
+        "y": 0
+      },
+      "fill": null,
+      "h": 384,
+      "id": "photo-frame",
+      "layerId": "layer_1",
+      "name": "photo.jpg",
+      "rotation": 0,
+      "stroke": null,
+      "type": "image",
+      "w": 720,
+      "x": 36,
+      "y": 516
+    },
+    "spring": {
+      "fill": null,
+      "h": 168,
+      "id": "spring",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_spring",
+      "stroke": null,
+      "type": "text",
+      "w": 720,
+      "x": 36,
+      "y": 72
+    },
+    "url": {
+      "fill": null,
+      "h": 27,
+      "id": "url",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_url",
+      "stroke": null,
+      "type": "text",
+      "w": 444,
+      "x": 36,
+      "y": 1074
+    }
+  },
+  "guides": {
+    "guide_1": {
+      "id": "guide_1",
+      "orientation": "horizontal",
+      "pageId": "page_1",
+      "position": 489
+    }
+  },
+  "layerOrder": [
+    "layer_1"
+  ],
+  "layers": {
+    "layer_1": {
+      "color": "#4da3ff",
+      "id": "layer_1",
+      "locked": false,
+      "name": "Layer 1",
+      "visible": true
+    }
+  },
+  "meta": {
+    "colorProfile": null,
+    "engineVersion": "44.5.1",
+    "title": "Spring Poster"
+  },
+  "pageOrder": [
+    "page_1"
+  ],
+  "pages": {
+    "page_1": {
+      "bleed": {
+        "bottom": 9,
+        "left": 9,
+        "right": 9,
+        "top": 9
+      },
+      "columns": {
+        "count": 3,
+        "gutter": 12
+      },
+      "height": 1224,
+      "id": "page_1",
+      "items": [
+        "orange-block",
+        "spring",
+        "open-studio",
+        "details",
+        "body",
+        "url",
+        "free-ellipse",
+        "free",
+        "photo-frame"
+      ],
+      "margins": {
+        "bottom": 36,
+        "left": 36,
+        "right": 36,
+        "top": 36
+      },
+      "slug": {
+        "bottom": 36,
+        "left": 36,
+        "right": 36,
+        "top": 36
+      },
+      "width": 792
+    }
+  },
+  "stories": {
+    "story_body": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 18,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 27,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Twenty studios open their doors for one day. Watch screen printing, letterpress and riso demos, browse prints, and meet the people who make them. Free entry, all ages.",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_body"
+    },
+    "story_details": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 22.5,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 27,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Saturday, May 16 · 10am–4pm · 412 Grove Street",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_details"
+    },
+    "story_free": {
+      "defaults": {
+        "align": "center",
+        "fill": {
+          "overprint": false,
+          "swatchId": "paper",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 37.5,
+        "fontStyle": "normal",
+        "fontWeight": 900,
+        "leading": 39,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "FREE",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_free"
+    },
+    "story_open-studio": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 70,
+        "fontStyle": "normal",
+        "fontWeight": 800,
+        "leading": 75,
+        "tracking": -10
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "OPEN STUDIO",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_open-studio"
+    },
+    "story_spring": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "studio-blue",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 160,
+        "fontStyle": "normal",
+        "fontWeight": 800,
+        "leading": 168,
+        "tracking": -20
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "SPRING",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_spring"
+    },
+    "story_url": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 18,
+        "fontStyle": "normal",
+        "fontWeight": 700,
+        "leading": 27,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "galleystudio.example/spring",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_url"
+    }
+  },
+  "swatchOrder": [
+    "registration",
+    "paper",
+    "black",
+    "warm-orange",
+    "studio-blue",
+    "pms-185-c",
+    "teal"
+  ],
+  "swatches": {
+    "black": {
+      "id": "black",
+      "name": "[Black]",
+      "type": "cmyk",
+      "values": [
+        0,
+        0,
+        0,
+        100
+      ]
+    },
+    "paper": {
+      "id": "paper",
+      "name": "[Paper]",
+      "type": "cmyk",
+      "values": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "pms-185-c": {
+      "id": "pms-185-c",
+      "name": "PANTONE 185 C",
+      "type": "spot",
+      "values": [
+        0,
+        91,
+        76,
+        0
+      ]
+    },
+    "registration": {
+      "id": "registration",
+      "name": "[Registration]",
+      "type": "cmyk",
+      "values": [
+        100,
+        100,
+        100,
+        100
+      ]
+    },
+    "studio-blue": {
+      "id": "studio-blue",
+      "name": "Studio Blue",
+      "type": "cmyk",
+      "values": [
+        100,
+        80,
+        0,
+        20
+      ]
+    },
+    "teal": {
+      "id": "teal",
+      "name": "Teal",
+      "type": "cmyk",
+      "values": [
+        85,
+        10,
+        40,
+        10
+      ]
+    },
+    "warm-orange": {
+      "id": "warm-orange",
+      "name": "Warm Orange",
+      "type": "cmyk",
+      "values": [
+        0,
+        60,
+        100,
+        0
+      ]
+    }
+  }
+}

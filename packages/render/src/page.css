@@ -1,0 +1,73 @@
+/*
+ * Page renderer styles. RULES (checked by test/sentinels.test.ts):
+ *   1. No document color ever appears in this file. Colors come from the ColorResolver as inline styles/attributes,
+ *      so export mode can paint sentinels only. (Paper white in screen mode is inline too.)
+ *   2. Everything on the sheet is positioned in points (CSS `pt` = PDF point).
+ *   3. The sheet always clips (`overflow: hidden`), or printToPDF shrinks wide content to fit (press spike, caveat 3).
+ * The text rules are the threading spike's `.slot` rules (spikes/threading/src/shared/styles.ts), so frames lay out the
+ * same way here and in the thread engine that arrives in Phase 2.
+ */
+.galley-page {
+  position: relative;
+  flex: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  font-kerning: normal;
+}
+
+.galley-page,
+.galley-page * {
+  box-sizing: border-box;
+}
+
+.galley-paper {
+  position: absolute;
+}
+
+/* sheet-sized SVG layers for shapes; each starts at the sheet origin so the <svg> box itself is never fractional */
+.galley-svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+}
+
+.galley-text {
+  position: absolute;
+  display: flow-root;
+  margin: 0;
+  overflow: hidden;
+  white-space: pre-wrap;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures;
+}
+
+.galley-text > p {
+  margin: 0;
+}
+
+.galley-text strong {
+  font-weight: bolder;
+}
+
+.galley-text em {
+  font-style: italic;
+}
+
+.galley-image {
+  position: absolute;
+  overflow: hidden;
+}
+
+.galley-image > img {
+  position: absolute;
+  display: block;
+  max-width: none;
+}

@@ -40,10 +40,11 @@ export function isBuiltinSwatch(id: Id): boolean {
 }
 
 export function builtinSwatches(): Record<Id, Swatch> {
+  // Panel order follows InDesign: [Registration], [Paper], [Black].
   return {
+    [SWATCH_REGISTRATION]: { id: SWATCH_REGISTRATION, name: '[Registration]', type: 'cmyk', values: [100, 100, 100, 100] },
     [SWATCH_PAPER]: { id: SWATCH_PAPER, name: '[Paper]', type: 'cmyk', values: [0, 0, 0, 0] },
     [SWATCH_BLACK]: { id: SWATCH_BLACK, name: '[Black]', type: 'cmyk', values: [0, 0, 0, 100] },
-    [SWATCH_REGISTRATION]: { id: SWATCH_REGISTRATION, name: '[Registration]', type: 'cmyk', values: [100, 100, 100, 100] },
   };
 }
 

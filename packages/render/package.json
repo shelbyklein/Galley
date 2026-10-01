@@ -8,11 +8,8 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./fonts.css": "./src/fonts.css"
+    "./fonts": "./src/fonts.ts"
   },
-  "sideEffects": [
-    "*.css"
-  ],
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --noEmit -p ."
