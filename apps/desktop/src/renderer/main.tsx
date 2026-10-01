@@ -3,6 +3,7 @@ import * as model from '@galley/model';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
+import './canvas/register';
 import { registerCoreCommands } from './commands/core';
 import { installKeyboardShortcuts } from './commands/keyboard';
 import { commands } from './commands/registry';

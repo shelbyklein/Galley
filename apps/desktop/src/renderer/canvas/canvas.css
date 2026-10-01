@@ -1,24 +1,140 @@
-/* Canvas placeholder styles (lane B replaces them). */
-.gl-pasteboard {
+/* The editor canvas: rulers, pasteboard, page layer, overlay. Owned by lane B. Colors come from theme.css custom
+   properties plus the few canvas-only ones below (values sampled from docs/plans/assets/phases-1-2/editor-phase1.svg). */
+:root {
+  --gl-guide-slug: #c9a227;
+  --gl-ruler-major: #8a8a8e;
+  --gl-ruler-mid: #7a7a7e;
+  --gl-ruler-minor: #6c6c70;
+  --gl-ruler-label: #9a9a9e;
+  --gl-marquee-fill: rgb(77 163 255 / 0.12);
+}
+
+.gl-canvas-root {
   position: absolute;
   inset: 0;
   overflow: hidden;
   background: var(--gl-bg-pasteboard);
+  touch-action: none;
 }
 
-/* centered at the middle of the pasteboard; the negative margins in the inline style pull it back by half its size */
-.gl-page-slot {
+/* the pasteboard: below and right of the rulers */
+.gl-viewport {
   position: absolute;
-  left: 50%;
-  top: 50%;
+  left: var(--gl-ruler-size);
+  top: var(--gl-ruler-size);
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  background: var(--gl-bg-pasteboard);
+}
+.gl-no-rulers .gl-viewport {
+  left: 0;
+  top: 0;
 }
 
-.gl-page-scale {
-  position: relative;
+/* rulers */
+.gl-ruler {
+  position: absolute;
+  display: block;
+  background: var(--gl-bg-ruler);
+}
+.gl-ruler-top {
+  left: var(--gl-ruler-size);
+  top: 0;
+}
+.gl-ruler-left {
+  left: 0;
+  top: var(--gl-ruler-size);
+}
+.gl-ruler-corner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--gl-ruler-size);
+  height: var(--gl-ruler-size);
+  background: var(--gl-bg-panel);
+}
+
+/* the page layer: PageView (1 pt = 4/3 px) scaled by the zoom; the origin is the sheet's top-left */
+.gl-page-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
   transform-origin: 0 0;
 }
-
 .gl-page-shadow {
   position: absolute;
   background: var(--gl-page-shadow);
+}
+
+/* in-place text editing: the story's typography, transparent text over the rendered frame, a visible caret */
+.gl-text-editor {
+  color: transparent;
+  caret-color: var(--gl-accent);
+  outline: none;
+  cursor: text;
+  user-select: text;
+  -webkit-user-select: text;
+}
+.gl-text-editor::selection {
+  background: rgb(77 163 255 / 0.4);
+  color: transparent;
+}
+
+/* the interaction layer: screen-space chrome above the page; it never takes the pointer itself */
+.gl-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.gl-overlay > * {
+  position: absolute;
+}
+
+.gl-guide {
+  box-sizing: border-box;
+}
+.gl-guide-margin,
+.gl-guide-bleed,
+.gl-guide-slug {
+  background: none;
+}
+
+.gl-outline {
+  box-sizing: border-box;
+}
+
+.gl-handle {
+  box-sizing: border-box;
+  background: #fff;
+  border: 1.2px solid var(--gl-accent);
+}
+.gl-center-mark {
+  width: 6px;
+  height: 6px;
+  background: var(--gl-accent);
+}
+
+.gl-smart-guide {
+  background: var(--gl-smart-guide);
+}
+.gl-smart-label {
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: var(--gl-smart-guide);
+  color: #0d2614;
+  font-size: 9.5px;
+  line-height: 12px;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.gl-marquee {
+  box-sizing: border-box;
+  border: 1px solid var(--gl-accent);
+  background: var(--gl-marquee-fill);
+}
+.gl-marquee-zoom {
+  border-style: dashed;
 }

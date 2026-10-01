@@ -6,6 +6,7 @@ const api: GalleyApi = {
   engineVersion: process.versions.electron,
   e2e: process.env.GALLEY_E2E === '1',
   getInitialDocument: () => ipcRenderer.invoke(IPC.getInitialDocument),
+  placeImage: () => ipcRenderer.invoke(IPC.placeImage),
 };
 
 contextBridge.exposeInMainWorld('galley', api);

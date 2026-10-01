@@ -14,6 +14,10 @@ export function setActivePackage(dir: string): void {
   activePackageDir = dir;
 }
 
+export function getActivePackage(): string | null {
+  return activePackageDir;
+}
+
 export function readPackage(dir: string): PackageFiles {
   const document = fs.readFileSync(path.join(dir, 'document.json'), 'utf8');
   const linksPath = path.join(dir, 'links.json');
