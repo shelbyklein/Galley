@@ -35,6 +35,7 @@ import {
   type Id,
 } from '@galley/model';
 import { createStore, type StoreApi } from 'zustand/vanilla';
+import { isSelectable } from './selectable';
 
 /** The tools of Phase 1 and 2. Lane B implements their behavior and registers a command per tool. */
 export type ToolId = 'select' | 'type' | 'line' | 'rectangle' | 'rectangle-frame' | 'ellipse' | 'hand' | 'zoom';
@@ -97,10 +98,10 @@ export function blankDocument(): GalleyDocument {
   return createDocument({ title: 'Untitled', engineVersion: currentEngineVersion() });
 }
 
-/** After the document changes: drop selected ids that no longer exist, and keep the current page valid. */
+/** After the document changes: drop selected ids that no longer exist or sit on a hidden or locked layer, and keep the current page valid. */
 function reconcile(state: EditorState, history: HistoryState): Pick<EditorState, 'history' | 'selection' | 'currentPageId'> {
   const doc = history.doc;
-  const selection = state.selection.filter((id) => id in doc.frames);
+  const selection = state.selection.filter((id) => isSelectable(doc, id));
   return {
     history,
     selection: selection.length === state.selection.length ? state.selection : selection,
@@ -137,7 +138,7 @@ export function createEditorState(initial: GalleyDocument = blankDocument()) {
       currentPageId: initial.pageOrder[0]!,
       setSelection: (ids) => {
         const doc = get().history.doc;
-        const next = [...new Set(ids)].filter((id) => id in doc.frames);
+        const next = [...new Set(ids)].filter((id) => isSelectable(doc, id));
         const cur = get().selection;
         if (next.length !== cur.length || next.some((id, i) => id !== cur[i])) set({ selection: next });
       },

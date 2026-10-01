@@ -1,4 +1,15 @@
-/** Right dock hosting collapsible panels (Pages, Layers, Swatches). Panels live in ../panels (lane C). Empty placeholder. */
+import { LayersPanel, PagesPanel, SwatchesPanel } from '../panels';
+
+/**
+ * Right dock hosting the collapsible panels: Pages, Layers, Swatches (lane C), and later the panels lanes S and T add.
+ * Each panel is built on `Panel` (../panels/Panel.tsx), which owns its header, collapse and visibility.
+ */
 export function Dock() {
-  return <span className="gl-region-label">Dock</span>;
+  return (
+    <div className="gl-dock-stack" data-testid="dock-stack">
+      <PagesPanel />
+      <LayersPanel />
+      <SwatchesPanel />
+    </div>
+  );
 }

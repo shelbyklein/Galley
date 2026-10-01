@@ -1,4 +1,18 @@
-/* The editor shell: title bar, control strip, tools | canvas | dock, status bar. Owned by lane C. */
+/* The editor shell: title bar, control strip, tools | canvas | dock, status bar. Owned by lane C.
+   Colors come from theme.css; the few extra tokens the shell needs are declared here, not hard-coded below. */
+:root {
+  --gl-bg-popover: #2f2f31;
+  --gl-bg-layer-active: #38383c;
+  --gl-bg-button: #3a3a3e;
+  --gl-bg-button-hover: #46464a;
+  --gl-text-bright: #f2f2f6;
+  --gl-text-disabled: #6c6c70;
+  --gl-warning: #ffb340;
+  --gl-warning-bg: #3a3022;
+  --gl-error-bg: #3a2422;
+  --gl-overlay: rgb(0 0 0 / 0.5);
+}
+
 .gl-shell {
   display: grid;
   height: 100%;
@@ -12,6 +26,13 @@
   background: var(--gl-bg-window);
 }
 
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------------------------------------------------------------------------------------------- title bar */
+
 .gl-titlebar {
   grid-area: titlebar;
   display: flex;
@@ -22,15 +43,283 @@
   font-size: 12px;
   -webkit-app-region: drag; /* the window is dragged by its title bar */
 }
+.gl-title-suffix {
+  color: var(--gl-text-muted);
+}
+.gl-title-edited {
+  color: var(--gl-text-faint);
+  white-space: pre;
+}
+
+/* ------------------------------------------------------------------------------------------ control strip */
 
 .gl-control-strip {
   grid-area: control;
   display: flex;
   align-items: center;
-  padding: 0 12px 0 72px;
+  padding: 0 12px 0 calc(var(--gl-tools-w) + 16px); /* the mockup starts the strip's content where the canvas starts, plus 16 */
   background: var(--gl-bg-control);
   border-bottom: 1px solid var(--gl-line);
+  min-width: 0;
 }
+
+.gl-cs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  white-space: nowrap;
+}
+.gl-cs-grid {
+  display: grid;
+  grid-template-rows: 16px 16px;
+  row-gap: 3px;
+}
+.gl-cs-sep {
+  align-self: center;
+  width: 1px;
+  height: 32px;
+  background: var(--gl-line-field);
+  margin: 0 4px;
+}
+.gl-cs-spacer {
+  flex: 1 1 auto;
+}
+.gl-cs-info {
+  color: var(--gl-text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.gl-cs-label {
+  color: var(--gl-text-label);
+}
+.gl-cs-icon {
+  color: var(--gl-text-label);
+}
+.gl-cs-rotation {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.gl-cs-paint {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* the reference point: a 3 x 3 grid of dots in a small box */
+.gl-ref {
+  display: grid;
+  grid-template-columns: repeat(3, 4px);
+  grid-template-rows: repeat(3, 4px);
+  gap: 3px;
+  width: 24px;
+  height: 24px;
+  padding: 2px;
+  border: 1px solid var(--gl-text-muted);
+  border-radius: 2px;
+  flex: none;
+}
+.gl-ref-dot {
+  position: relative;
+  width: 4px;
+  height: 4px;
+  padding: 0;
+  border: 0;
+  background: var(--gl-text-muted);
+}
+.gl-ref-dot::after {
+  content: '';
+  position: absolute;
+  inset: -3px; /* a bigger click target than the dot */
+}
+.gl-ref-dot.is-active {
+  background: var(--gl-accent);
+  box-shadow: 0 0 0 1px var(--gl-accent);
+}
+.gl-ref-dot:disabled {
+  opacity: 0.5;
+}
+
+/* text fields: X, Y, W, H, rotation, weight, and the fields in dialogs */
+.gl-field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--gl-text-label);
+}
+.gl-field-label {
+  min-width: 16px;
+}
+.gl-field-input {
+  width: 88px;
+  height: 16px;
+  padding: 0 6px;
+  border: 1px solid var(--gl-line-field);
+  border-radius: var(--gl-radius);
+  background: var(--gl-bg-field);
+  color: var(--gl-text);
+  font: inherit;
+  user-select: text;
+  outline: none;
+}
+.gl-field[style*='width'] .gl-field-input {
+  width: 100%;
+}
+.gl-field-input:focus {
+  border-color: var(--gl-accent);
+}
+.gl-field-input:disabled {
+  color: var(--gl-text-disabled);
+  opacity: 0.6;
+}
+
+.gl-cs-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--gl-radius);
+  background: transparent;
+  color: var(--gl-text-muted);
+}
+.gl-cs-link:hover:not(:disabled) {
+  background: var(--gl-bg-button);
+}
+.gl-cs-link.is-on {
+  color: var(--gl-accent);
+}
+.gl-cs-link:disabled {
+  opacity: 0.4;
+}
+
+.gl-cs-chip {
+  display: inline-flex;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+}
+.gl-cs-chip.is-target {
+  border-color: var(--gl-accent);
+}
+.gl-cs-chip:disabled {
+  opacity: 0.45;
+}
+
+/* paint chips: a swatch color, or a white square with a red slash for [None] */
+.gl-chip {
+  display: inline-block;
+  flex: none;
+  box-sizing: border-box;
+  border: 1px solid var(--gl-text-faint);
+  background: transparent;
+}
+.gl-chip.is-none {
+  background: linear-gradient(to top left, transparent calc(50% - 1px), var(--gl-danger) calc(50% - 1px), var(--gl-danger) calc(50% + 1px), transparent calc(50% + 1px)), #fff;
+}
+.gl-chip.is-outline {
+  border-width: 3px;
+  border-color: var(--gl-text-label);
+  background-color: transparent;
+}
+.gl-chip.is-outline.is-none {
+  border-color: var(--gl-text-faint);
+  background: linear-gradient(to top left, transparent calc(50% - 1px), var(--gl-danger) calc(50% - 1px), var(--gl-danger) calc(50% + 1px), transparent calc(50% + 1px));
+}
+
+/* selects */
+.gl-cs-fitting {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.gl-select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.gl-select select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 150px;
+  height: 16px;
+  padding: 0 20px 0 6px;
+  border: 1px solid var(--gl-line-field);
+  border-radius: var(--gl-radius);
+  background: var(--gl-bg-field);
+  color: var(--gl-text);
+  font: inherit;
+  outline: none;
+}
+.gl-select select:disabled {
+  opacity: 0.5;
+}
+.gl-select select:focus {
+  border-color: var(--gl-accent);
+}
+.gl-select-caret {
+  position: absolute;
+  right: 4px;
+  color: var(--gl-text-muted);
+  pointer-events: none;
+}
+
+/* icons are SVG files used as masks, so they take the text color of their button */
+.gl-icon {
+  display: inline-block;
+  flex: none;
+  background-color: currentColor;
+  -webkit-mask: var(--gl-icon-url) center / contain no-repeat;
+  mask: var(--gl-icon-url) center / contain no-repeat;
+}
+
+/* popovers: the swatch picker, the panel menus, the layer color palette */
+.gl-popover {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+  max-height: 300px;
+  padding: 4px;
+  overflow: auto;
+  background: var(--gl-bg-popover);
+  border: 1px solid var(--gl-line-field);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.5);
+}
+.gl-popover-right {
+  left: auto;
+  right: 0;
+}
+.gl-popover-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--gl-text-row);
+  text-align: left;
+  white-space: nowrap;
+}
+.gl-popover-row:hover:not(:disabled) {
+  background: var(--gl-bg-row-selected);
+}
+.gl-popover-row:disabled {
+  color: var(--gl-text-disabled);
+}
+
+/* ------------------------------------------------------------------------------------------------- tools */
 
 .gl-tools {
   grid-area: tools;
@@ -38,6 +327,76 @@
   background: var(--gl-bg-panel);
   border-right: 1px solid var(--gl-line);
 }
+.gl-tools-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding-top: 10px;
+}
+.gl-tool-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.gl-tool-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--gl-text-label);
+}
+.gl-tool-button:hover:not(:disabled) {
+  background: var(--gl-bg-row-hover);
+}
+.gl-tool-button.is-active {
+  background: var(--gl-bg-tool-active);
+  color: var(--gl-text-bright);
+}
+.gl-tool-button:disabled {
+  color: var(--gl-text-disabled);
+}
+.gl-tools-divider {
+  width: 28px;
+  height: 1px;
+  margin: 8px 0 12px;
+  background: var(--gl-line-soft);
+}
+
+/* the fill / stroke proxy: the fill square sits in front of the stroke square */
+.gl-proxy {
+  position: relative;
+  width: 36px;
+  height: 36px;
+}
+.gl-proxy button {
+  position: absolute;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  line-height: 0;
+}
+.gl-proxy-stroke {
+  left: 10px;
+  top: 10px;
+}
+.gl-proxy-fill {
+  left: 1px;
+  top: 1px;
+  z-index: 1;
+  outline: 1px solid transparent;
+}
+.gl-proxy .is-target .gl-chip {
+  box-shadow: 0 0 0 1px var(--gl-accent);
+}
+
+/* ------------------------------------------------------------------------------------------------ canvas */
 
 .gl-canvas {
   grid-area: canvas;
@@ -48,6 +407,59 @@
   background: var(--gl-bg-pasteboard);
 }
 
+.gl-notices {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(560px, calc(100% - 32px));
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.gl-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--gl-line-field);
+  border-radius: 6px;
+  background: var(--gl-bg-popover);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.4);
+  pointer-events: auto;
+}
+.gl-notice.is-warning {
+  border-color: var(--gl-warning);
+  background: var(--gl-warning-bg);
+}
+.gl-notice.is-error {
+  border-color: var(--gl-danger);
+  background: var(--gl-error-bg);
+}
+.gl-notice-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  user-select: text;
+}
+.gl-notice-detail {
+  color: var(--gl-text-muted);
+  overflow-wrap: anywhere;
+}
+.gl-notice-close {
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--gl-text-muted);
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* -------------------------------------------------------------------------------------------------- dock */
+
 .gl-dock {
   grid-area: dock;
   position: relative;
@@ -55,6 +467,13 @@
   border-left: 1px solid var(--gl-line);
   overflow: hidden;
 }
+.gl-dock-stack {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* ------------------------------------------------------------------------------------------ status bar */
 
 .gl-statusbar {
   grid-area: status;
@@ -66,23 +485,62 @@
   border-top: 1px solid var(--gl-line);
   color: var(--gl-text-muted);
 }
-
-/* Placeholder captions so an empty region is recognizable in a screenshot. Lane C removes them as real content lands. */
-.gl-region-label {
+.gl-status-zoom,
+.gl-status-pages {
+  color: var(--gl-text-label);
+}
+.gl-status-zoom {
+  min-width: 32px;
+}
+.gl-status-pages {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.gl-status-step {
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--gl-text-label);
+}
+.gl-status-step:disabled {
+  color: var(--gl-text-disabled);
+}
+.gl-status-summary {
   color: var(--gl-text-faint);
-  font-size: 11px;
-  letter-spacing: 0.02em;
-  pointer-events: none;
 }
-.gl-tools .gl-region-label {
-  position: absolute;
-  top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  writing-mode: vertical-rl;
+.gl-status-spacer {
+  flex: 1;
 }
-.gl-dock .gl-region-label {
-  position: absolute;
-  top: 12px;
-  left: 12px;
+/* lane A inserts the soft-proof profile indicator here, as one more child before the hint */
+.gl-status-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--gl-text-faint);
+}
+.gl-status-warning {
+  color: var(--gl-warning);
+}
+.gl-status-hint {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--gl-text-faint);
+}
+.gl-status-hint:hover {
+  color: var(--gl-text-label);
+}
+
+/* scrollbars in panels and dialogs: thin and dark */
+.gl-shell ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.gl-shell ::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background: var(--gl-bg-button);
+}
+.gl-shell ::-webkit-scrollbar-track {
+  background: transparent;
 }

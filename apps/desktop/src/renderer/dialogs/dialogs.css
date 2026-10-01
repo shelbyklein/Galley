@@ -1,0 +1,174 @@
+/* Modal dialogs: New Document, Swatch Options. Owned by lane C. Tokens come from theme.css and shell/shell.css. */
+.gl-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gl-overlay);
+}
+.gl-modal {
+  display: flex;
+  flex-direction: column;
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 48px);
+  background: var(--gl-bg-control);
+  border: 1px solid var(--gl-line-field);
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgb(0 0 0 / 0.6);
+  color: var(--gl-text);
+}
+.gl-modal-title {
+  margin: 0;
+  padding: 14px 18px 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.gl-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 18px 8px;
+  overflow-y: auto;
+}
+.gl-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 18px 14px;
+}
+
+.gl-button {
+  min-width: 72px;
+  height: 24px;
+  padding: 0 14px;
+  border: 1px solid var(--gl-line-field);
+  border-radius: 5px;
+  background: var(--gl-bg-button);
+  color: var(--gl-text);
+}
+.gl-button:hover:not(:disabled) {
+  background: var(--gl-bg-button-hover);
+}
+.gl-button.is-primary {
+  border-color: var(--gl-accent);
+  background: var(--gl-accent);
+  color: #08233f;
+  font-weight: 600;
+}
+.gl-button:disabled {
+  opacity: 0.45;
+}
+
+.gl-form-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.gl-form-label {
+  min-width: 56px;
+  color: var(--gl-text-label);
+}
+.gl-input {
+  flex: 1;
+  min-width: 0;
+  height: 22px;
+  padding: 0 6px;
+  border: 1px solid var(--gl-line-field);
+  border-radius: var(--gl-radius);
+  background: var(--gl-bg-field);
+  color: var(--gl-text);
+  font: inherit;
+  user-select: text;
+  outline: none;
+}
+.gl-input:focus {
+  border-color: var(--gl-accent);
+}
+.gl-input:disabled {
+  opacity: 0.55;
+}
+.gl-input-narrow {
+  flex: 0 0 120px;
+}
+
+.gl-fieldset {
+  margin: 0;
+  padding: 6px 10px 10px;
+  border: 1px solid var(--gl-line-soft);
+  border-radius: 6px;
+}
+.gl-fieldset legend {
+  padding: 0 6px;
+  color: var(--gl-text-muted);
+}
+.gl-fields-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.gl-dialog-field {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  flex: 1;
+}
+.gl-dialog-field .gl-field-label {
+  font-size: 10px;
+  color: var(--gl-text-muted);
+}
+.gl-dialog-field .gl-field-input {
+  width: 100%;
+  height: 22px;
+}
+.gl-orientation {
+  display: flex;
+  align-self: flex-end;
+}
+.gl-orient {
+  height: 22px;
+  padding: 0 10px;
+  border: 1px solid var(--gl-line-field);
+  background: var(--gl-bg-field);
+  color: var(--gl-text-label);
+}
+.gl-orient:first-child {
+  border-radius: var(--gl-radius) 0 0 var(--gl-radius);
+}
+.gl-orient:last-child {
+  border-left: 0;
+  border-radius: 0 var(--gl-radius) var(--gl-radius) 0;
+}
+.gl-orient.is-on {
+  background: var(--gl-bg-row-selected);
+  color: var(--gl-text-bright);
+}
+
+.gl-form-error {
+  min-height: 14px;
+  margin: 0;
+  color: var(--gl-danger);
+}
+.gl-form-note {
+  margin: 0;
+  color: var(--gl-text-muted);
+}
+
+.gl-channel-row {
+  gap: 12px;
+}
+.gl-slider {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--gl-accent);
+}
+.gl-percent-field {
+  flex: 0 0 72px;
+}
+.gl-swatch-preview {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--gl-line-field);
+}
