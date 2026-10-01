@@ -20,6 +20,7 @@ export { SentinelTable, type Paint } from './paint.ts';
 export { rewriteContent, type RewriteResult, type RewriteStats } from './rewrite.ts';
 export { parseContent, ContentParser, nums, type Op, type Operand } from './tokenizer.ts';
 export type { OutputIntentSpec } from './pdfx.ts';
+export { createSoftProofer, type Cmyk100, type Rgb8, type SoftProofer } from './softproof.ts';
 
 export interface PrepressOptions {
   /** The sentinel table of the document being exported: `buildSentinelTable(exportedDoc)` from @galley/model. */

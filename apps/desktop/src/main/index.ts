@@ -3,6 +3,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'node:path';
 import { IPC, type PackageFiles } from '../shared/ipc';
+import { registerExportHandlers } from './export';
 import { handleAssetProtocol, initialPackagePath, readPackage, registerAssetScheme, setActivePackage } from './package';
 
 /** Set by Playwright e2e runs (apps/desktop/e2e/helpers/launch.ts). */
@@ -49,6 +50,7 @@ function createMainWindow(): BrowserWindow {
 
 app.whenReady().then(() => {
   handleAssetProtocol();
+  registerExportHandlers(); // lane A: File > Export > PDF/X-4 and soft proofing (main/export)
   // TEMPORARY: open one package at startup (lane C replaces this with real File > Open / New).
   ipcMain.handle(IPC.getInitialDocument, (): PackageFiles | null => {
     const dir = initialPackagePath();

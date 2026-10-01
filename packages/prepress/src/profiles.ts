@@ -61,8 +61,9 @@ function existingFile(candidates: string[]): string | null {
 
 /** Where Ghostscript keeps `iccprofiles/` (Homebrew on Apple Silicon and Intel, or a system install). */
 export function ghostscriptIccDirs(env: NodeJS.ProcessEnv = process.env): string[] {
+  // an override (even an empty one, "no folder") replaces the search, so tests can simulate a machine without Ghostscript
+  if (env[ENV_GS_ICC_DIR] !== undefined) return env[ENV_GS_ICC_DIR]!.split(':').filter(Boolean);
   const dirs: string[] = [];
-  if (env[ENV_GS_ICC_DIR]) dirs.push(env[ENV_GS_ICC_DIR]!);
   for (const prefix of ['/opt/homebrew', '/usr/local', '/usr']) dirs.push(path.join(prefix, 'share/ghostscript/iccprofiles'));
   for (const cellar of ['/opt/homebrew/Cellar/ghostscript', '/usr/local/Cellar/ghostscript']) {
     try {
