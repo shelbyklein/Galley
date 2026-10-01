@@ -1,0 +1,74 @@
+/* Galley editor theme. Every UI color comes from these custom properties (values sampled from
+   docs/plans/assets/phases-1-2/editor-phase1.svg). Lanes add components, not new hard-coded colors. */
+:root {
+  /* surfaces */
+  --gl-bg-window: #1d1d1f; /* window background, hairline dividers */
+  --gl-bg-titlebar: #2a2a2c;
+  --gl-bg-control: #323234; /* control strip, panel headers */
+  --gl-bg-panel: #2a2a2c; /* tools column, dock, status bar */
+  --gl-bg-ruler: #2f2f31;
+  --gl-bg-pasteboard: #3b3b3e;
+  --gl-bg-field: #1f1f21; /* text fields, dropdowns */
+  --gl-bg-row-hover: #2f2f31;
+  --gl-bg-row-selected: #3d5a80;
+  --gl-bg-tool-active: #4a4a4e;
+
+  /* lines */
+  --gl-line: #1d1d1f;
+  --gl-line-field: #4a4a4e;
+  --gl-line-soft: #3a3a3e;
+
+  /* text */
+  --gl-text: #ececf0;
+  --gl-text-label: #c8c8cc;
+  --gl-text-row: #d8d8dc;
+  --gl-text-muted: #9a9a9e;
+  --gl-text-faint: #8a8a8e;
+
+  /* accents */
+  --gl-accent: #4da3ff; /* selection frames and handles */
+  --gl-danger: #e5352b;
+  --gl-smart-guide: #33d17a;
+  --gl-guide-ruler: #31c4f3;
+  --gl-guide-margin: #e040fb;
+  --gl-guide-column: #8e7cff;
+  --gl-guide-bleed: #ff3b30;
+  --gl-page-shadow: rgb(0 0 0 / 0.35);
+
+  /* metrics */
+  --gl-titlebar-h: 28px;
+  --gl-control-h: 44px;
+  --gl-tools-w: 44px;
+  --gl-dock-w: 300px;
+  --gl-status-h: 28px;
+  --gl-panel-header-h: 24px;
+  --gl-radius: 3px;
+
+  --gl-font-ui: -apple-system, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+  --gl-font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--gl-bg-window);
+  color: var(--gl-text);
+  font: 11px/1.3 var(--gl-font-ui);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  overflow: hidden;
+}

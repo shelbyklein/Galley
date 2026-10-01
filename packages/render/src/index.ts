@@ -1,0 +1,7 @@
+// @galley/render: the shared page renderer. Imported by the editor canvas and by the hidden export page.
+// Import '@galley/render/fonts' once per window to load the built-in Inter faces.
+export { PageView, type AssetUrlFn, type PageViewProps } from './PageView';
+export { createColorResolver, naiveCmykToRgb, type ColorMode, type ColorResolver, type ColorResolverOptions, type SoftProofFn } from './color';
+export { htmlFrameStyle, num, pt, sheetGeometry, type SheetGeometry } from './geometry';
+export { bolder, loadPageResources, usedFontFaces, usedImageUrls } from './fontLoading';
+export { collectPaintedColors, findNonSentinelColors, type PaintedColor } from './audit';

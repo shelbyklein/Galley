@@ -1,0 +1,88 @@
+/* The editor shell: title bar, control strip, tools | canvas | dock, status bar. Owned by lane C. */
+.gl-shell {
+  display: grid;
+  height: 100%;
+  grid-template-columns: var(--gl-tools-w) minmax(0, 1fr) var(--gl-dock-w);
+  grid-template-rows: var(--gl-titlebar-h) var(--gl-control-h) minmax(0, 1fr) var(--gl-status-h);
+  grid-template-areas:
+    'titlebar titlebar titlebar'
+    'control control control'
+    'tools canvas dock'
+    'status status status';
+  background: var(--gl-bg-window);
+}
+
+.gl-titlebar {
+  grid-area: titlebar;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gl-bg-titlebar);
+  color: var(--gl-text-label);
+  font-size: 12px;
+  -webkit-app-region: drag; /* the window is dragged by its title bar */
+}
+
+.gl-control-strip {
+  grid-area: control;
+  display: flex;
+  align-items: center;
+  padding: 0 12px 0 72px;
+  background: var(--gl-bg-control);
+  border-bottom: 1px solid var(--gl-line);
+}
+
+.gl-tools {
+  grid-area: tools;
+  position: relative;
+  background: var(--gl-bg-panel);
+  border-right: 1px solid var(--gl-line);
+}
+
+.gl-canvas {
+  grid-area: canvas;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--gl-bg-pasteboard);
+}
+
+.gl-dock {
+  grid-area: dock;
+  position: relative;
+  background: var(--gl-bg-panel);
+  border-left: 1px solid var(--gl-line);
+  overflow: hidden;
+}
+
+.gl-statusbar {
+  grid-area: status;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px;
+  background: var(--gl-bg-panel);
+  border-top: 1px solid var(--gl-line);
+  color: var(--gl-text-muted);
+}
+
+/* Placeholder captions so an empty region is recognizable in a screenshot. Lane C removes them as real content lands. */
+.gl-region-label {
+  color: var(--gl-text-faint);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+}
+.gl-tools .gl-region-label {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  writing-mode: vertical-rl;
+}
+.gl-dock .gl-region-label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+}

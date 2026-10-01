@@ -1,0 +1,24 @@
+/* Canvas placeholder styles (lane B replaces them). */
+.gl-pasteboard {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--gl-bg-pasteboard);
+}
+
+/* centered at the middle of the pasteboard; the negative margins in the inline style pull it back by half its size */
+.gl-page-slot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+
+.gl-page-scale {
+  position: relative;
+  transform-origin: 0 0;
+}
+
+.gl-page-shadow {
+  position: absolute;
+  background: var(--gl-page-shadow);
+}

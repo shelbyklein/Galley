@@ -1,0 +1,8 @@
+/* The export page has no chrome and no color: the sheet is transparent so printToPDF paints only the document.
+   (No document color may appear in this file; see packages/render/src/page.css.) */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}

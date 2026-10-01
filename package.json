@@ -1,0 +1,38 @@
+{
+  "name": "galley",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Galley: a desktop page-layout app with press-ready PDF output",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @galley/desktop",
+    "build": "npm run typecheck && npm run build -w @galley/desktop",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "vitest run",
+    "test:e2e": "npm run build && npm run test:e2e -w @galley/desktop",
+    "test:golden": "node scripts/placeholder.mjs test:golden",
+    "test:text": "node scripts/placeholder.mjs test:text",
+    "test:geometry": "node scripts/placeholder.mjs test:geometry",
+    "fixtures": "tsx scripts/fixtures/build-poster-basic.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.3",
+    "electron": "44.5.1",
+    "fast-check": "^4.10.2",
+    "jsdom": "^30.1.1",
+    "sharp": "^0.35.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  },
+  "allowScripts": {
+    "electron@44.5.1": true,
+    "esbuild@0.25.12": true,
+    "esbuild@0.28.2": true,
+    "fsevents@2.3.3": false
+  }
+}
