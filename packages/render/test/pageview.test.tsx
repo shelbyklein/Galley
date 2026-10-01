@@ -8,6 +8,7 @@ import {
   applyCommand,
   buildSentinelTable,
   createHistory,
+  createStory,
   isSentinelCss,
   makeLayer,
   paint,
@@ -94,6 +95,23 @@ describe('PageView: screen mode', () => {
   });
 });
 
+describe('PageView: export clips to the bleed box', () => {
+  const doc = poster();
+
+  it('wraps the page in a clip-path of the sheet minus the bleed (slug 36 pt, bleed 9 pt: 27 pt each side)', () => {
+    const clip = render(doc, 'export').querySelector<HTMLElement>('.galley-clip')!;
+    expect(clip.style.clipPath).toBe('inset(27pt 27pt 27pt 27pt)');
+    expect(clip.style.width).toBe('864pt');
+    expect(clip.style.overflow).toBe('');
+  });
+
+  it('clips at the trim edge when the page has no bleed, and not at all in screen mode', () => {
+    const noBleed = { ...doc, pages: { page_1: { ...doc.pages['page_1']!, bleed: { top: 0, right: 0, bottom: 0, left: 0 } } } };
+    expect(render(noBleed, 'export').querySelector<HTMLElement>('.galley-clip')!.style.clipPath).toBe('inset(36pt 36pt 36pt 36pt)');
+    expect(render(doc, 'screen').querySelector('.galley-clip')).toBeNull();
+  });
+});
+
 describe('PageView: structure', () => {
   const doc = poster();
 
@@ -110,9 +128,12 @@ describe('PageView: structure', () => {
     const block = host.querySelector('rect[data-frame-id="orange-block"]')!;
     expect([block.getAttribute('x'), block.getAttribute('y'), block.getAttribute('width'), block.getAttribute('height')]).toEqual(['27', '27', '810', '474']);
     const spring = host.querySelector<HTMLElement>('[data-frame-id="spring"]')!;
-    expect(spring.style.left).toBe('72pt');
-    expect(spring.style.top).toBe('108pt');
+    // frames sit at the sheet origin and are moved by a translate (P1-04: left/top would snap to 0.75 pt)
+    expect(spring.style.transform).toBe('translate(72pt, 108pt)');
+    expect(spring.style.left).toBe('0px');
     expect(spring.style.width).toBe('720pt');
+    expect(spring.style.clipPath).toBe('inset(0)'); // not overflow: hidden, which would snap the box size to whole pixels
+    expect(spring.style.overflow).toBe('');
     const ellipse = host.querySelector('ellipse[data-frame-id="free-ellipse"]')!;
     expect(ellipse.getAttribute('cx')).toBe('695'); // 36 + 579 + 80
     expect(ellipse.getAttribute('rx')).toBe('80');
@@ -136,8 +157,23 @@ describe('PageView: structure', () => {
     const frame = host.querySelector<HTMLElement>('[data-frame-id="photo-frame"]')!;
     const img = frame.querySelector('img')!;
     expect(img.getAttribute('src')).toBe('galley-asset://pkg/assets/photo.jpg');
-    expect(img.style.width).toBe('720pt');
+    // laid out at its natural pixel size, then scaled by a transform to the frame's content rectangle (720 x 384 pt)
+    expect(img.style.width).toBe('2400px');
+    expect(img.style.height).toBe('1280px');
+    expect(img.style.transform).toBe('translate(0pt, 0pt) scale(0.4, 0.4)'); // 720 pt = 960 px = 2400 px x 0.4
+    expect(frame.style.transform).toBe('translate(72pt, 552pt)');
     expect(frame.classList.contains('galley-image')).toBe(true);
+  });
+
+  it('rotates a text frame about its own center: translate to the frame, then rotate about the box center', () => {
+    let h = createHistory(doc);
+    h = applyCommand(h, addFrame, {
+      frame: { id: 'tilted', type: 'text', name: '', layerId: 'layer_1', x: 100.25, y: 50.5, w: 90, h: 30, rotation: 12.5, fill: null, stroke: null, storyId: 'story_tilted', inset: 0 },
+      pageId: doc.pageOrder[0]!,
+      story: createStory('story_tilted', 'Tilted', {}),
+    });
+    const el = render(h.doc, 'screen').querySelector<HTMLElement>('[data-frame-id="tilted"]')!;
+    expect(el.style.transform).toBe('translate(136.25pt, 86.5pt) rotate(12.5deg)');
   });
 
   it('paints in document order: shapes in SVG runs, text and images between them', () => {

@@ -23,6 +23,13 @@
   box-sizing: border-box;
 }
 
+/* export mode: the clip to the bleed box (clip-path inline); no size or overflow rules, so nothing snaps */
+.galley-clip {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
 .galley-paper {
   position: absolute;
 }
@@ -35,11 +42,12 @@
   overflow: visible;
 }
 
+/* Frames are placed and clipped by htmlFrameStyle (a translate transform and clip-path). They must NOT get
+   overflow: hidden: an overflow clip snaps the box size to whole CSS pixels in the PDF (packages/render/GEOMETRY.md). */
 .galley-text {
   position: absolute;
   display: flow-root;
   margin: 0;
-  overflow: hidden;
   white-space: pre-wrap;
   overflow-wrap: normal;
   word-break: normal;
@@ -63,11 +71,12 @@
 
 .galley-image {
   position: absolute;
-  overflow: hidden;
 }
 
+/* the image is laid out at its natural pixel size at the frame's origin and placed and scaled by a transform (inline) */
 .galley-image > img {
   position: absolute;
   display: block;
   max-width: none;
+  transform-origin: 0 0;
 }

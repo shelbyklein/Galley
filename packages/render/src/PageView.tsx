@@ -8,15 +8,17 @@ import {
   type Id,
   type ImageFrame,
   type LineFrame,
+  type Page,
   type PMNode,
   type RectFrame,
   type Story,
   type TextFrame,
 } from '@galley/model';
-import { memo, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
+import { memo, useEffect, useMemo, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from 'react';
 import { createColorResolver, type ColorMode, type ColorResolver, type SoftProofFn } from './color';
 import { loadPageResources, usedFontFaces, usedImageUrls } from './fontLoading';
-import { htmlFrameStyle, num, pt, sheetGeometry } from './geometry';
+import { bleedClipInsets, htmlFrameStyle, num, pt, sheetGeometry } from './geometry';
+import { defaultSoftProof, getSoftProofEpoch, getSoftProofSource, subscribeSoftProof } from './softproof';
 import './page.css';
 
 export type AssetUrlFn = (asset: Asset) => string;
@@ -30,7 +32,10 @@ export interface PageViewProps {
   assetUrl: AssetUrlFn;
   /** Replace the colour source entirely. Lane A passes a soft-proofing resolver; most callers pass `softProof` or nothing. */
   resolver?: ColorResolver;
-  /** Screen mode only: ICC soft proof for inks. Without it, the temporary naive CMYK to RGB conversion is used. */
+  /**
+   * Screen mode only: ICC soft proof for inks. Without it, the application's default soft-proof source is used (see
+   * ./softproof.ts), and without that, the temporary naive CMYK to RGB conversion.
+   */
   softProof?: SoftProofFn;
   className?: string;
   style?: CSSProperties;
@@ -140,11 +145,24 @@ const TextFrameView = memo(function TextFrameView({ frame, story, origin, colors
 
 // ------------------------------------------------------------------------------------------------------------ image
 
+/**
+ * An image frame: the frame box (placed and clipped by htmlFrameStyle) holds the image, laid out at its natural pixel size
+ * and then moved and scaled to `frame.content` by a transform. A layout size in whole pixels never snaps, and a transform is
+ * written to the PDF as an exact matrix, so the picture lands where the model says to within 0.01 pt, at any fractional
+ * position or size (left/top/width/height in pt would snap the image to 0.75 pt steps).
+ */
 const ImageFrameView = memo(function ImageFrameView({ frame, asset, origin, assetUrl }: { frame: ImageFrame; asset: Asset; origin: Origin; assetUrl: AssetUrlFn }) {
   const c = frame.content!;
+  const sx = c.w / (asset.width * 0.75); // natural pixels are CSS px, 0.75 pt each
+  const sy = c.h / (asset.height * 0.75);
   return (
     <div className="galley-image" style={htmlFrameStyle(frame, origin)} data-frame-id={frame.id} data-frame-type="image">
-      <img src={assetUrl(asset)} alt="" draggable={false} style={{ left: pt(c.x), top: pt(c.y), width: pt(c.w), height: pt(c.h) }} />
+      <img
+        src={assetUrl(asset)}
+        alt=""
+        draggable={false}
+        style={{ left: 0, top: 0, width: `${asset.width}px`, height: `${asset.height}px`, transform: `translate(${pt(c.x)}, ${pt(c.y)}) scale(${Math.round(sx * 1e8) / 1e8}, ${Math.round(sy * 1e8) / 1e8})` }}
+      />
     </div>
   );
 });
@@ -168,12 +186,20 @@ export function PageView({ doc, pageId, colorMode, assetUrl, resolver, softProof
   if (!page) throw new Error(`PageView: no page "${pageId}"`);
   const geo = sheetGeometry(page);
 
+  // The default soft-proof source answers asynchronously: the epoch changes when answers arrive, which repaints the page.
+  const proofEpoch = useSyncExternalStore(subscribeSoftProof, getSoftProofEpoch, getSoftProofEpoch);
+  const proof = softProof ?? defaultSoftProof;
+
   // In screen mode a color depends only on the swatches, so dragging frames keeps the resolver (and the memoized frames) stable.
   const colors = useMemo(
-    () => resolver ?? createColorResolver(doc, colorMode, { softProof }),
+    () => resolver ?? createColorResolver(doc, colorMode, { softProof: proof }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [resolver, colorMode === 'export' ? doc : doc.swatches, colorMode, softProof],
+    [resolver, colorMode === 'export' ? doc : doc.swatches, colorMode, proof, proofEpoch],
   );
+
+  // Ready also means the soft-proof colors are final: the memo above asked the source for the inks this render needs,
+  // and the answer arrives with a new epoch, which renders again with the real colors and this true.
+  const proofSettled = colorMode !== 'screen' || !!softProof || !!resolver || (getSoftProofSource()?.isSettled() ?? true);
 
   const faces = usedFontFaces(doc, pageId);
   const urls = usedImageUrls(doc, pageId, assetUrl);
@@ -239,7 +265,7 @@ export function PageView({ doc, pageId, colorMode, assetUrl, resolver, softProof
       lang="en-US"
       data-galley-page={pageId}
       data-color-mode={colorMode}
-      data-ready={ready ? 'true' : 'false'}
+      data-ready={ready && proofSettled ? 'true' : 'false'}
       style={{ width: pt(geo.width), height: pt(geo.height), ...style }}
     >
       {colorMode === 'screen' && (
@@ -248,6 +274,19 @@ export function PageView({ doc, pageId, colorMode, assetUrl, resolver, softProof
           style={{ left: pt(geo.trim.x), top: pt(geo.trim.y), width: pt(geo.trim.width), height: pt(geo.trim.height), background: '#ffffff' }}
         />
       )}
+      {colorMode === 'export' ? <ExportClip page={page} width={geo.width} height={geo.height}>{children}</ExportClip> : children}
+    </div>
+  );
+}
+
+/**
+ * Export mode only: everything is clipped to the bleed box, so art that runs past the bleed (or into the slug) never
+ * reaches the PDF. With bleed off the bleed box is the trim box, so the art is cut at the trim edge.
+ */
+function ExportClip({ page, width, height, children }: { page: Page; width: number; height: number; children: ReactNode }) {
+  const c = bleedClipInsets(page);
+  return (
+    <div className="galley-clip" style={{ width: pt(width), height: pt(height), clipPath: `inset(${pt(c.top)} ${pt(c.right)} ${pt(c.bottom)} ${pt(c.left)})` }}>
       {children}
     </div>
   );
