@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import {
   addFrame,
   addLayer,
@@ -17,7 +17,7 @@ import {
   type GalleyDocument,
   type Id,
 } from '@galley/model';
-import { collectPaintedColors, createColorResolver, findNonSentinelColors, naiveCmykToRgb, PageView, type ColorMode } from '../src';
+import { collectPaintedColors, createColorResolver, findNonSentinelColors, htmlFrameStyle, naiveCmykToRgb, PageView, setSoftProofSource, type ColorMode } from '../src';
 
 const dir = path.resolve(__dirname, '../../../fixtures/poster-basic.galley') + '/';
 const poster = (): GalleyDocument =>
@@ -74,6 +74,36 @@ describe('PageView: export mode paints only sentinels', () => {
   });
 });
 
+describe('frame placement rules (packages/render/GEOMETRY.md)', () => {
+  const css = fs.readFileSync(path.resolve(__dirname, '../src/page.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+
+  it('never gives a frame overflow: hidden, which snaps its clip to whole pixels; only the sheet clips by overflow', () => {
+    const rules = [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)].map((m) => ({ selector: m[1]!.trim(), body: m[2]! }));
+    const clipping = rules.filter((r) => /overflow\s*:\s*hidden/.test(r.body)).map((r) => r.selector);
+    expect(clipping).toEqual(['.galley-page']);
+    const frame = htmlFrameStyle({ x: 36.3, y: 99.1, w: 100.1, h: 60.1, rotation: 0 }, { x: 36, y: 36 });
+    expect(frame.overflow).toBeUndefined();
+    expect(frame.left).toBe(0);
+    expect(frame.transform).toBe('translate(72.3pt, 135.1pt)');
+    expect(frame.clipPath).toBe('inset(0)');
+  });
+
+  it('moves a text inset by a translate, not by padding, and keeps the clip on the frame', () => {
+    let h = createHistory(poster());
+    h = applyCommand(h, addFrame, {
+      frame: { id: 'inset', type: 'text', name: '', layerId: 'layer_1', x: 36.3, y: 99.1, w: 150, h: 40, rotation: 0, fill: null, stroke: null, storyId: 'story_inset', inset: 3.6 },
+      pageId: h.doc.pageOrder[0]!,
+      story: createStory('story_inset', 'Inset', {}),
+    });
+    const el = render(h.doc, 'screen').querySelector<HTMLElement>('[data-frame-id="inset"]')!;
+    expect(el.style.padding).toBe('');
+    const inner = el.querySelector<HTMLElement>('.galley-text-inset')!;
+    expect(inner.style.transform).toBe('translate(3.6pt, 3.6pt)');
+    expect(inner.style.width).toBe('142.8pt');
+    expect(inner.textContent).toBe('Inset');
+  });
+});
+
 describe('PageView: screen mode', () => {
   const doc = poster();
   const host = render(doc, 'screen');
@@ -109,6 +139,39 @@ describe('PageView: export clips to the bleed box', () => {
     const noBleed = { ...doc, pages: { page_1: { ...doc.pages['page_1']!, bleed: { top: 0, right: 0, bottom: 0, left: 0 } } } };
     expect(render(noBleed, 'export').querySelector<HTMLElement>('.galley-clip')!.style.clipPath).toBe('inset(36pt 36pt 36pt 36pt)');
     expect(render(doc, 'screen').querySelector('.galley-clip')).toBeNull();
+  });
+});
+
+describe('PageView: the installed soft-proof source', () => {
+  const doc = poster();
+  afterEach(() => setSoftProofSource(null));
+
+  it('shows the source\'s colors for CMYK and spot inks, asks only for inks the page paints, and falls back to the temporary conversion for what it cannot answer', () => {
+    const asked: string[] = [];
+    setSoftProofSource({
+      proof: (ink) => {
+        asked.push(`${ink.name}@${ink.tint}`);
+        return ink.name === 'Warm Orange' ? [9, 8, 7] : undefined;
+      },
+      subscribe: () => () => undefined,
+      isSettled: () => true,
+    });
+    const host = render(doc, 'screen');
+    expect(host.querySelector('rect[data-frame-id="orange-block"]')!.getAttribute('fill')).toBe('rgb(9 8 7)');
+    // the headline's Studio Blue got no answer: the page shows the naive conversion, never nothing
+    expect(host.querySelector<HTMLElement>('[data-frame-id="spring"]')!.style.color).toBe(`rgb(${naiveCmykToRgb({ values: [100, 80, 0, 20], tint: 100 }).join(', ')})`); // (jsdom normalizes the style's color)
+    expect(new Set(asked)).toEqual(new Set(['Warm Orange@100', 'Studio Blue@100', '[Black]@100', 'PANTONE 185 C@100', '[Paper]@100']));
+    // export mode never asks the source: its colors are sentinels
+    asked.length = 0;
+    render(doc, 'export');
+    expect(asked).toEqual([]);
+  });
+
+  it('an explicit softProof prop wins over the installed source', () => {
+    setSoftProofSource({ proof: () => [1, 1, 1], subscribe: () => () => undefined, isSettled: () => true });
+    const host = document.createElement('div');
+    host.innerHTML = renderToStaticMarkup(<PageView doc={doc} pageId={doc.pageOrder[0]!} colorMode="screen" assetUrl={assetUrl} softProof={() => [200, 100, 50]} />);
+    expect(host.querySelector('rect[data-frame-id="orange-block"]')!.getAttribute('fill')).toBe('rgb(200 100 50)');
   });
 });
 

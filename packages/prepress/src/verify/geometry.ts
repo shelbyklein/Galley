@@ -23,6 +23,8 @@ export interface PaintedPath {
 }
 
 export interface TextRun {
+  /** Which text object (BT ... ET) of the page this run belongs to, from 0. One text frame is one block. */
+  block: number;
   /** The glyph origin on the baseline of the run's first glyph: x from the left, y of the BASELINE from the top, in points. */
   x: number;
   y: number;
@@ -69,6 +71,7 @@ export async function measurePdfGeometry(pdf: Uint8Array): Promise<PdfGeometry> 
     return { x0: Math.min(...t.map((p) => p[0])), y0: Math.min(...t.map((p) => p[1])), x1: Math.max(...t.map((p) => p[0])), y1: Math.max(...t.map((p) => p[1])) };
   };
 
+  let blocks = 0;
   const interpret = (src: string, start: M, resources: PDFDict | undefined, depth: number) => {
     let ctm = start;
     const stack: { ctm: M; lw: number; fontSize: number; font: string }[] = [];
@@ -93,7 +96,7 @@ export async function measurePdfGeometry(pdf: Uint8Array): Promise<PdfGeometry> 
     const show = () => {
       const m = mul(tm, ctm);
       const [x, y] = toTop([m[4], m[5]]);
-      out.texts.push({ x, y, size: fontSize * scaleOf(m), font });
+      out.texts.push({ block: blocks - 1, x, y, size: fontSize * scaleOf(m), font });
     };
 
     for (const op of parseContent(src)) {
@@ -118,6 +121,17 @@ export async function measurePdfGeometry(pdf: Uint8Array): Promise<PdfGeometry> 
         case 'w':
           lineWidth = n[0]!;
           break;
+        case 'gs': {
+          // Skia sets the line width through the ExtGState (/LW) rather than the w operator
+          const name = op.operands[0]?.kind === 'name' ? op.operands[0].value : '';
+          const states = dictGet(ctx, resources, 'ExtGState', PDFDict);
+          const state = states ? ctx.lookup(states.get(N(name))) : undefined;
+          if (state instanceof PDFDict) {
+            const lw = ctx.lookupMaybe(state.get(N('LW')), PDFNumber);
+            if (lw) lineWidth = lw.asNumber();
+          }
+          break;
+        }
         case 'm':
           addPoint(n[0]!, n[1]!);
           break;
@@ -161,6 +175,7 @@ export async function measurePdfGeometry(pdf: Uint8Array): Promise<PdfGeometry> 
           paintPath('fill+stroke');
           break;
         case 'BT':
+          blocks++;
           tm = IDENTITY;
           tlm = IDENTITY;
           break;

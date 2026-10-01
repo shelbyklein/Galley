@@ -57,8 +57,13 @@
   font-variant-ligatures: common-ligatures;
 }
 
-.galley-text > p {
+.galley-text p {
   margin: 0;
+}
+
+/* the inset of a text frame with an inset: a transform (inline), laid out from the frame's origin */
+.galley-text-inset {
+  transform-origin: 0 0;
 }
 
 .galley-text strong {

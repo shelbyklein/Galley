@@ -117,14 +117,13 @@ interface TextProps {
 }
 
 /**
- * A text frame: one story, laid out by the browser inside the frame box, clipped to it. (Phase 2 replaces the
+ * A text frame: one story, laid out by the browser inside the frame box, clipped to it (the clip is the frame, not the inset). (Phase 2 replaces the
  * single box with threaded slots; the story and its default style stay the source of truth.)
  */
 const TextFrameView = memo(function TextFrameView({ frame, story, origin, colors }: TextProps) {
   const d = story.defaults;
   const style: CSSProperties = {
     ...htmlFrameStyle(frame, origin),
-    padding: frame.inset > 0 ? pt(frame.inset) : undefined,
     fontFamily: `"${d.fontFamily}", sans-serif`,
     fontWeight: d.fontWeight,
     fontStyle: d.fontStyle,
@@ -134,11 +133,18 @@ const TextFrameView = memo(function TextFrameView({ frame, story, origin, colors
     textAlign: d.align,
     color: colors.css(d.fill),
   };
+  const paragraphs = (story.doc.content ?? []).map((p, i) => <p key={i}>{p.content && p.content.length > 0 ? p.content.map(renderRun) : <br />}</p>);
   return (
     <div className="galley-text" style={style} data-frame-id={frame.id} data-frame-type="text" data-story-id={story.id}>
-      {(story.doc.content ?? []).map((p, i) => (
-        <p key={i}>{p.content && p.content.length > 0 ? p.content.map(renderRun) : <br />}</p>
-      ))}
+      {frame.inset > 0 ? (
+        // The inset is a translate, not padding: a padding of 3.6 pt is 4.8 px, and Chromium puts the first baseline on a whole
+        // pixel, so it would land up to 0.375 pt off. A translate is exact (GEOMETRY.md).
+        <div className="galley-text-inset" style={{ width: pt(Math.max(0, frame.w - 2 * frame.inset)), transform: `translate(${pt(frame.inset)}, ${pt(frame.inset)})` }}>
+          {paragraphs}
+        </div>
+      ) : (
+        paragraphs
+      )}
     </div>
   );
 });
