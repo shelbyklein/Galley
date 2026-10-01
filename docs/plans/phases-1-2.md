@@ -1,6 +1,6 @@
 # Phases 1–2: Canvas foundation and typography
 
-**Issue:** (set when published)
+**Issue:** [shelbyklein/Galley#1](https://github.com/shelbyklein/Galley/issues/1)
 **Handoff:** [phases-1-2-handoff.md](phases-1-2-handoff.md)
 **Baseline:** `main` at `14cf16b`, which has PLAN.md and both Phase 0 spikes
 
@@ -237,5 +237,5 @@ No user data, installs or external services are involved. Each lane lands as its
 - **Handoff:** [phases-1-2-handoff.md](phases-1-2-handoff.md) (prepared).
 - **Now or later:** now. Shelby's instruction was "see if you can get to the end of phase 2".
 - **Tracker:** R7's Tracker Trapper requirement was waived by Shelby in chat on 2026-10-01 (chose "GitHub issue only"). The GitHub issue checklist mirrors the task IDs above.
-- **Readiness:** (recorded after the gate)
+- **Readiness:** pass · 2026-10-01 · R3: current state is greenfield (no UI to screenshot; repository tree at `14cf16b` is the evidence), target mockups and flow diagrams present · R7: Tracker Trapper waived by Shelby in chat (GitHub issue only); the issue checklist matches the 25 task IDs · R12: covered by per-lane merge reverts; no user data, installs or services
 - **Remaining questions:** see Open questions; none blocking.
