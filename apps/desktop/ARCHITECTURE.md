@@ -58,8 +58,10 @@ explicit arrays (`pageOrder`, `layerOrder`, `swatchOrder`, `page.items`, `group.
 
 - A frame's `x`, `y` are the top-left of its unrotated box relative to its page's trim box; `rotation` is degrees about
   the center. Groups have no geometry; use `boundsOf(doc, id)`.
-- Paints are `{ swatchId, tint, overprint }`; `null` is [None]. Text color lives on the story's `defaults` until Phase 2.
-- Text frames are story-backed: `frame.storyId` -> `doc.stories[id]` = ProseMirror JSON + default style.
+- Paints are `{ swatchId, tint, overprint }`; `null` is [None]. Text color is a style property (`shared.fill`), resolved per paragraph.
+- Text frames are story-backed and threadable: `frame.storyId` -> `doc.stories[id]` = ProseMirror JSON whose paragraphs point
+  at paragraph styles (`doc.paragraphStyles`) and whose runs carry character-style and override marks; `story.frameIds` is the
+  thread. `formatVersion` is 2 (v1 files migrate on open). `packages/model/TEXT-MODEL.md` is the reference for all of it.
 - `serializeDocument(doc)` gives canonical text (sorted keys). Compare documents with it, never with `JSON.stringify`
   (key order depends on edit history). It splits image links into `links.json`.
 - `@galley/model/sentinels` assigns each ink a sentinel RGB; renderer export mode and prepress both call
@@ -146,8 +148,9 @@ import { PageView } from '@galley/render';
 - Paint order: layers bottom to top, then `page.items` order, groups expanded in place. Hidden layers are skipped.
   Shapes are SVG layers at the sheet origin (exact geometry); text and image frames are HTML boxes between them
   (`htmlFrameStyle` is the one place lane A may change how those are positioned, P1-04). Positions are `left`/`top` in pt.
-- Text: each story's default style (family, weight, size, leading, tracking, align, color) on the frame box, paragraphs as
-  `<p>`, `strong`/`em` marks. Static in Phase 1; lane T replaces the single box with threaded slots.
+- Text: each paragraph is a `<p>` carrying its resolved style as inline CSS (`paragraphCss` in `src/styles/resolve.ts`) and each
+  run a `<span>` with only what differs from its paragraph (`runCss`); the frame box carries no typography. Until the thread
+  engine (P2-02) the first frame of a thread shows the whole story and the others are empty.
 - **Color modes.** `screen`: paper on the trim box; colors via the temporary naive CMYK to RGB (replaced by P1-07).
   `export`: no paper, no chrome, no empty-frame marks, and every document color is a sentinel RGB from
   `buildSentinelTable(doc)`. Colors only ever come from the `ColorResolver`; `page.css` contains no colors (a test
@@ -258,8 +261,11 @@ test('...', async ({ galley }, testInfo) => {
 `fixtures/poster-basic.galley/` is the Phase 1 mockup poster: Tabloid with 0.125 in bleed and 0.5 in slug, an orange
 CMYK block into the bleed, a Studio Blue CMYK headline, 100K black body text, a PANTONE 185 C spot ellipse with
 [Paper] text, and a generated photo (`scripts/fixtures/generate-photo.ts`, procedural, no third-party image). Its text
-frames sit at multiples of 3 pt with leadings that are multiples of 0.75 pt. Regenerate with `npm run fixtures`;
-`packages/model/test/fixture.test.ts` fails if the committed files drift from the builder.
+frames sit at multiples of 3 pt with leadings that are multiples of 0.75 pt, and its text uses paragraph styles. Regenerate
+with `npm run fixtures`; `packages/model/test/fixture.test.ts` fails if the committed files drift from the builder.
+
+`fixtures/v1/` holds the Phase 1 (`formatVersion: 1`) poster-basic, swatch-chart and typography-marks documents, frozen: they are
+the inputs of the v1 to v2 migration tests and are never regenerated.
 
 ## Fonts
 

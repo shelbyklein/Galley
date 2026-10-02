@@ -1,4 +1,4 @@
-import { isLayerVisible, paintOrder, type BoxFrame, type GalleyDocument, type Id } from '@galley/model';
+import { isLayerVisible, paintOrder, paragraphAttrs, resolveParagraph, type BoxFrame, type GalleyDocument, type Id } from '@galley/model';
 import type { ColorResolver } from '@galley/render';
 import type { CSSProperties } from 'react';
 import { assetUrl } from '../../shared/assets';
@@ -38,7 +38,9 @@ function ThumbFrame({ doc, frame, scale, colors }: { doc: GalleyDocument; frame:
   if (stroke) style.boxShadow = `inset 0 0 0 ${strokeWidth}px ${stroke}`;
   if (frame.type === 'ellipse') style.borderRadius = '50%';
   if (frame.type === 'text') {
-    const ink = doc.stories[frame.storyId] ? colors.css(doc.stories[frame.storyId]!.defaults.fill) : 'currentColor';
+    const story = doc.stories[frame.storyId];
+    // the thumbnail's text bar takes the color of the story's first paragraph
+    const ink = story ? colors.css(resolveParagraph(doc, paragraphAttrs(story.doc.content![0]!)).fill) : 'currentColor';
     return <div className="gl-thumb-frame gl-thumb-text" style={{ ...style, color: ink }} />;
   }
   if (frame.type === 'image') {

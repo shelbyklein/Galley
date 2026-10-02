@@ -1,6 +1,6 @@
 export * from './types';
 export { addAsset, removeAsset, setAssetProps, type AssetProps } from './asset';
-export { setMeta } from './doc';
+export { setBaselineGrid, setMeta } from './doc';
 export {
   addFrame,
   groupFrames,
@@ -19,17 +19,21 @@ export { addGuide, moveGuide, removeGuide } from './guide';
 export { transformFrames, type FrameGeometry } from './transform';
 export { addLayer, moveLayer, removeLayer, setLayerProps, type LayerProps } from './layer';
 export { addPage, movePage, removePage, setPageProps, type PageProps } from './page';
-export { setStoryDefaults, setStoryDoc } from './story';
+export { applyCharacterStyle, applyParagraphStyle, clearTextOverrides, setStoryDoc, setTextOverrides, type TextOverrideTarget } from './story';
+export { addStyle, moveStyle, removeStyle, setStyle, type StyleArgs } from './style';
+export { insertFrameInThread, linkFrames, removeFrameFromThread, unlinkFrame } from './thread';
 export { addSwatch, removeSwatch, setSwatchProps, type SwatchProps } from './swatch';
 
 import { addAsset, removeAsset, setAssetProps } from './asset';
-import { setMeta } from './doc';
+import { setBaselineGrid, setMeta } from './doc';
 import { addFrame, groupFrames, moveFrames, moveFramesToLayer, moveFramesToPage, removeFrames, reorderFrames, setFrameProps, ungroupFrames } from './frame';
 import { addGuide, moveGuide, removeGuide } from './guide';
 import { transformFrames } from './transform';
 import { addLayer, moveLayer, removeLayer, setLayerProps } from './layer';
 import { addPage, movePage, removePage, setPageProps } from './page';
-import { setStoryDefaults, setStoryDoc } from './story';
+import { applyCharacterStyle, applyParagraphStyle, clearTextOverrides, setStoryDoc, setTextOverrides } from './story';
+import { addStyle, moveStyle, removeStyle, setStyle } from './style';
+import { insertFrameInThread, linkFrames, removeFrameFromThread, unlinkFrame } from './thread';
 import { addSwatch, removeSwatch, setSwatchProps } from './swatch';
 import type { CommandDef } from './types';
 
@@ -42,6 +46,7 @@ export const allCommands = {
   removeAsset,
   setAssetProps,
   setMeta,
+  setBaselineGrid,
   addFrame,
   groupFrames,
   moveFrames,
@@ -63,8 +68,19 @@ export const allCommands = {
   movePage,
   removePage,
   setPageProps,
-  setStoryDefaults,
+  applyCharacterStyle,
+  applyParagraphStyle,
+  clearTextOverrides,
   setStoryDoc,
+  setTextOverrides,
+  addStyle,
+  moveStyle,
+  removeStyle,
+  setStyle,
+  insertFrameInThread,
+  linkFrames,
+  removeFrameFromThread,
+  unlinkFrame,
   addSwatch,
   removeSwatch,
   setSwatchProps,

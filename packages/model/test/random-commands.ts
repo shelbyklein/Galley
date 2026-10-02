@@ -6,6 +6,7 @@
  */
 import {
   allCommands,
+  BASIC_PARAGRAPH_ID,
   BUILTIN_SWATCH_IDS,
   createStory,
   makeLayer,
@@ -13,13 +14,17 @@ import {
   paint,
   parentOf,
   pageIdOf,
+  paragraphText,
   storyDocFromText,
+  textWrapSchema,
   type CommandDef,
   type Frame,
   type GalleyDocument,
   type Id,
   type Paint,
+  type StoryRange,
   type Swatch,
+  type TextWrap,
 } from '../src';
 import { imageAsset, type Rng } from './helpers';
 
@@ -41,6 +46,16 @@ function randomPaint(doc: GalleyDocument, r: Rng): Paint {
   return paint(r.pick(doc.swatchOrder), r.chance(0.7) ? 100 : r.int(0, 100), r.chance(0.15));
 }
 
+function randomWrap(r: Rng): TextWrap {
+  const off = () => r.int(0, 18);
+  const wrap = r.pick([
+    { mode: 'none' },
+    { mode: 'boundingBox', offsets: { top: off(), right: off(), bottom: off(), left: off() } },
+    { mode: 'contour', offset: off() },
+  ] as TextWrap[]);
+  return textWrapSchema.parse(wrap);
+}
+
 const frames = (doc: GalleyDocument): Frame[] => Object.values(doc.frames);
 const topLevel = (doc: GalleyDocument): Frame[] => frames(doc).filter((f) => parentOf(doc, f.id) === null);
 
@@ -50,7 +65,7 @@ const uid = (prefix: string, r: Rng) => `${prefix}_${r.int(0, 1e9).toString(36)}
 function newFrame(doc: GalleyDocument, r: Rng): { args: unknown } {
   const pageId = r.pick(doc.pageOrder);
   const layerId = r.pick(doc.layerOrder);
-  const type = r.pick(['rect', 'ellipse', 'line', 'text', 'image'] as const);
+  const type = r.pick(['rect', 'ellipse', 'line', 'text', 'text', 'text', 'image'] as const);
   const id = uid('frm', r);
   const box = {
     x: r.float(-20, 500),
@@ -60,13 +75,17 @@ function newFrame(doc: GalleyDocument, r: Rng): { args: unknown } {
     rotation: r.chance(0.3) ? r.float(-180, 180) : 0,
     fill: r.chance(0.6) ? randomPaint(doc, r) : null,
     stroke: r.chance(0.4) ? { paint: randomPaint(doc, r), weight: r.float(0, 12) } : null,
+    ...(r.chance(0.2) ? { textWrap: randomWrap(r) } : {}),
   };
   let frame: Frame;
   let story;
   if (type === 'text') {
     const storyId = uid('sty', r);
     frame = { id, type, name: '', layerId, ...box, storyId, inset: r.chance(0.3) ? r.float(0, 10) : 0 };
-    story = createStory(storyId, randomText(r), { fill: randomPaint(doc, r), fontSize: r.int(6, 40), leading: r.int(8, 48) });
+    story = createStory(storyId, r.chance(0.3) ? '' : randomText(r), {
+      style: r.pick(doc.paragraphStyleOrder),
+      ...(r.chance(0.3) ? { overrides: { shared: { fill: randomPaint(doc, r) }, print: { fontSize: r.int(6, 40), leading: r.int(8, 48) } } } : {}),
+    });
   } else if (type === 'image') {
     const assets = Object.keys(doc.assets);
     const withAsset = assets.length > 0 && r.chance(0.7);
@@ -90,6 +109,190 @@ function newFrame(doc: GalleyDocument, r: Rng): { args: unknown } {
 }
 
 type Maker = (doc: GalleyDocument, r: Rng) => { key: keyof typeof allCommands; args: unknown } | null;
+
+
+const textFrames = (doc: GalleyDocument) => frames(doc).filter((f): f is Extract<Frame, { type: 'text' }> => f.type === 'text');
+
+/** A random range inside a story (sometimes collapsed, sometimes reversed, rarely out of range so the command must reject it). */
+function randomRange(doc: GalleyDocument, storyId: Id, r: Rng): StoryRange {
+  const paragraphs = doc.stories[storyId]!.doc.content ?? [];
+  const point = () => {
+    const paragraph = r.int(0, paragraphs.length - 1);
+    return { paragraph, offset: r.int(0, paragraphText(paragraphs[paragraph]!).length) };
+  };
+  const range = { from: point(), to: point() };
+  if (r.chance(0.04)) range.to = { ...range.to, offset: range.to.offset + 999 };
+  if (r.chance(0.3)) range.to = range.from;
+  return range;
+}
+
+function randomLayers(doc: GalleyDocument, r: Rng, kind: 'paragraph' | 'character') {
+  const shared: Record<string, unknown> = {};
+  const print: Record<string, unknown> = {};
+  if (r.chance(0.5)) shared.fontWeight = r.pick([300, 400, 500, 700, 800]);
+  if (r.chance(0.3)) shared.fontStyle = r.pick(['normal', 'italic'] as const);
+  if (r.chance(0.3)) shared.tracking = r.int(-50, 100);
+  if (r.chance(0.3)) shared.fill = randomPaint(doc, r);
+  if (r.chance(0.15)) shared.features = { liga: r.chance(0.5), onum: r.chance(0.5) };
+  if (r.chance(0.15)) shared.textCase = r.pick(['normal', 'allCaps', 'smallCaps'] as const);
+  if (r.chance(0.5)) print.fontSize = r.int(6, 48);
+  if (r.chance(0.4)) print.leading = r.float(8, 60);
+  if (kind === 'paragraph') {
+    if (r.chance(0.4)) print.align = r.pick(['left', 'center', 'right', 'justify'] as const);
+    if (r.chance(0.3)) print.firstLineIndent = r.int(-6, 24);
+    if (r.chance(0.3)) print.spaceAfter = r.int(0, 12);
+    if (r.chance(0.2)) print.hyphenate = r.chance(0.5);
+    if (r.chance(0.2)) print.hyphenMinWord = r.chance(0.3) ? null : r.int(3, 8);
+    if (r.chance(0.2)) print.alignToBaselineGrid = r.chance(0.5);
+    if (r.chance(0.1)) shared.role = r.pick(['body', 'heading', 'caption', null] as const);
+  } else if (r.chance(0.3)) print.baselineShift = r.int(-4, 6);
+  const web = r.chance(0.15) ? { fontSize: '1rem', lineHeight: '1.5', tag: 'p' } : {};
+  return { shared, print, web };
+}
+
+const styleMakers: Record<string, { weight: number; make: Maker }> = {
+  addStyle: {
+    weight: 3,
+    make: (doc, r) => {
+      const kind = r.pick(['paragraph', 'character'] as const);
+      const order = kind === 'paragraph' ? doc.paragraphStyleOrder : doc.characterStyleOrder;
+      const id = uid(kind === 'paragraph' ? 'pst' : 'cst', r);
+      const style = { id, name: `Style ${id}`, basedOn: r.chance(0.2) ? null : r.pick(order), ...randomLayers(doc, r, kind) };
+      return { key: 'addStyle', args: { kind, style, index: r.chance(0.3) ? r.int(0, order.length) : undefined } };
+    },
+  },
+  setStyle: {
+    weight: 3,
+    make: (doc, r) => {
+      const kind = r.pick(['paragraph', 'character'] as const);
+      const table = kind === 'paragraph' ? doc.paragraphStyles : doc.characterStyles;
+      const order = kind === 'paragraph' ? doc.paragraphStyleOrder : doc.characterStyleOrder;
+      const pool = r.chance(0.95) ? order.filter((id) => id !== BASIC_PARAGRAPH_ID && id !== 'none') : order;
+      if (pool.length === 0) return null;
+      const current = table[r.pick(pool)]!;
+      // based on any style, so some choices close a cycle and the command has to refuse them
+      const builtin = current.id === BASIC_PARAGRAPH_ID || current.id === 'none';
+      const basedOn = builtin || r.chance(0.2) ? null : r.pick(order);
+      const style = { ...current, basedOn, name: r.chance(0.3) ? `Renamed ${counter++}` : current.name, ...(r.chance(0.8) ? randomLayers(doc, r, kind) : {}) };
+      return { key: 'setStyle', args: { kind, style } };
+    },
+  },
+  moveStyle: {
+    weight: 1,
+    make: (doc, r) => {
+      const kind = r.pick(['paragraph', 'character'] as const);
+      const order = kind === 'paragraph' ? doc.paragraphStyleOrder : doc.characterStyleOrder;
+      return { key: 'moveStyle', args: { kind, id: r.pick(order), index: r.int(0, order.length - 1) } };
+    },
+  },
+  removeStyle: {
+    weight: 2,
+    make: (doc, r) => {
+      const kind = r.pick(['paragraph', 'character'] as const);
+      const order = kind === 'paragraph' ? doc.paragraphStyleOrder : doc.characterStyleOrder;
+      const pool = r.chance(0.95) ? order.filter((id) => id !== BASIC_PARAGRAPH_ID && id !== 'none') : order;
+      if (pool.length === 0) return null;
+      const replacementId = r.chance(0.2) ? undefined : r.chance(0.3) ? null : r.pick(order);
+      return { key: 'removeStyle', args: { kind, id: r.pick(pool), replacementId } };
+    },
+  },
+};
+
+const storyMakers: Record<string, { weight: number; make: Maker }> = {
+  setStoryDoc: {
+    weight: 3,
+    make: (doc, r) => {
+      const ids = Object.keys(doc.stories);
+      return ids.length === 0 ? null : { key: 'setStoryDoc', args: { storyId: r.pick(ids), doc: storyDocFromText(randomText(r), { style: r.pick(doc.paragraphStyleOrder) }) } };
+    },
+  },
+  applyParagraphStyle: {
+    weight: 3,
+    make: (doc, r) => {
+      const ids = Object.keys(doc.stories);
+      if (ids.length === 0) return null;
+      const storyId = r.pick(ids);
+      return { key: 'applyParagraphStyle', args: { storyId, range: randomRange(doc, storyId, r), styleId: r.chance(0.97) ? r.pick(doc.paragraphStyleOrder) : 'ghost', clearOverrides: r.chance(0.3) } };
+    },
+  },
+  applyCharacterStyle: {
+    weight: 3,
+    make: (doc, r) => {
+      const ids = Object.keys(doc.stories);
+      if (ids.length === 0) return null;
+      const storyId = r.pick(ids);
+      return { key: 'applyCharacterStyle', args: { storyId, range: randomRange(doc, storyId, r), styleId: r.chance(0.25) ? null : r.pick(doc.characterStyleOrder) } };
+    },
+  },
+  setTextOverrides: {
+    weight: 4,
+    make: (doc, r) => {
+      const ids = Object.keys(doc.stories);
+      if (ids.length === 0) return null;
+      const storyId = r.pick(ids);
+      const target = r.pick(['paragraph', 'character', 'character'] as const);
+      const { shared, print, web } = randomLayers(doc, r, target);
+      const set = { shared, print, ...(Object.keys(web).length > 0 ? { web } : {}) };
+      const unset = r.chance(0.3) ? { shared: [r.pick(['fontWeight', 'fill', 'tracking'])], print: [r.pick(['fontSize', 'leading'])] } : undefined;
+      return { key: 'setTextOverrides', args: { storyId, range: randomRange(doc, storyId, r), target, patch: { set, unset } } };
+    },
+  },
+  clearTextOverrides: {
+    weight: 2,
+    make: (doc, r) => {
+      const ids = Object.keys(doc.stories);
+      if (ids.length === 0) return null;
+      const storyId = r.pick(ids);
+      return { key: 'clearTextOverrides', args: { storyId, range: randomRange(doc, storyId, r), scope: r.pick(['paragraph', 'character', 'all'] as const) } };
+    },
+  },
+};
+
+const threadMakers: Record<string, { weight: number; make: Maker }> = {
+  linkFrames: {
+    weight: 9,
+    make: (doc, r) => {
+      const all = textFrames(doc);
+      if (all.length < 2) return null;
+      // mostly the last frame of one thread and the first frame of another, which is what a user links; sometimes anything at all
+      const lasts = all.filter((f) => doc.stories[f.storyId]!.frameIds[doc.stories[f.storyId]!.frameIds.length - 1] === f.id);
+      const firsts = all.filter((f) => doc.stories[f.storyId]!.frameIds[0] === f.id);
+      const from = r.chance(0.85) && lasts.length > 0 ? r.pick(lasts) : r.pick(all);
+      const to = r.chance(0.85) && firsts.length > 0 ? r.pick(firsts) : r.pick(all);
+      return { key: 'linkFrames', args: { fromId: from.id, toId: to.id } };
+    },
+  },
+  insertFrameInThread: {
+    weight: 6,
+    make: (doc, r) => {
+      const all = textFrames(doc);
+      if (all.length < 2) return null;
+      const loose = all.filter((f) => doc.stories[f.storyId]!.frameIds.length === 1);
+      const frame = r.chance(0.8) && loose.length > 0 ? r.pick(loose) : r.pick(all);
+      return { key: 'insertFrameInThread', args: { frameId: frame.id, targetId: r.pick(all).id, position: r.pick(['before', 'after'] as const) } };
+    },
+  },
+  unlinkFrame: {
+    weight: 5,
+    make: (doc, r) => {
+      const all = textFrames(doc);
+      if (all.length === 0) return null;
+      const threaded = all.filter((f) => doc.stories[f.storyId]!.frameIds.length > 1);
+      const frame = r.chance(0.85) && threaded.length > 0 ? r.pick(threaded) : r.pick(all);
+      return { key: 'unlinkFrame', args: { frameId: frame.id, newStoryId: uid('sty', r) } };
+    },
+  },
+  removeFrameFromThread: {
+    weight: 5,
+    make: (doc, r) => {
+      const all = textFrames(doc);
+      if (all.length === 0) return null;
+      const threaded = all.filter((f) => doc.stories[f.storyId]!.frameIds.length > 1);
+      const frame = r.chance(0.85) && threaded.length > 0 ? r.pick(threaded) : r.pick(all);
+      return { key: 'removeFrameFromThread', args: { frameId: frame.id, newStoryId: uid('sty', r) } };
+    },
+  },
+};
 
 const makers: Record<string, { weight: number; make: Maker }> = {
   addFrame: { weight: 22, make: (doc, r) => ({ key: 'addFrame', ...newFrame(doc, r) }) },
@@ -115,6 +318,7 @@ const makers: Record<string, { weight: number; make: Maker }> = {
       if (r.chance(0.3)) props.fill = r.chance(0.2) ? null : randomPaint(doc, r);
       if (r.chance(0.2)) props.stroke = r.chance(0.3) ? null : { paint: randomPaint(doc, r), weight: r.float(0, 10) };
       if (target.type === 'text' && r.chance(0.3)) props.inset = r.float(0, 12);
+      if (r.chance(0.2)) props.textWrap = r.chance(0.2) ? null : randomWrap(r);
       if (r.chance(0.1)) props.name = r.pick(WORDS);
       if (target.type === 'image' && r.chance(0.3)) {
         const assets = Object.keys(doc.assets);
@@ -246,20 +450,13 @@ const makers: Record<string, { weight: number; make: Maker }> = {
       return pool.length === 0 ? null : { key: 'removeSwatch', args: { id: r.pick(pool), replacementId: r.chance(0.5) ? r.pick(doc.swatchOrder) : null } };
     },
   },
-  setStoryDoc: {
-    weight: 3,
-    make: (doc, r) => {
-      const ids = Object.keys(doc.stories);
-      return ids.length === 0 ? null : { key: 'setStoryDoc', args: { storyId: r.pick(ids), doc: storyDocFromText(randomText(r)) } };
-    },
+  setBaselineGrid: {
+    weight: 1,
+    make: (_doc, r) => ({ key: 'setBaselineGrid', args: r.chance(0.8) ? { start: r.int(0, 40), increment: r.pick([9, 12, 13.5, 14.4]) } : { increment: r.pick([0, -3, 12]) } }),
   },
-  setStoryDefaults: {
-    weight: 2,
-    make: (doc, r) => {
-      const ids = Object.keys(doc.stories);
-      return ids.length === 0 ? null : { key: 'setStoryDefaults', args: { storyId: r.pick(ids), props: r.chance(0.5) ? { fontSize: r.int(6, 60) } : { fill: randomPaint(doc, r), align: r.pick(['left', 'center', 'right', 'justify'] as const) } } };
-    },
-  },
+  ...styleMakers,
+  ...storyMakers,
+  ...threadMakers,
   addGuide: {
     weight: 2,
     make: (doc, r) => ({ key: 'addGuide', args: { guide: { id: uid('gd', r), orientation: r.pick(['horizontal', 'vertical'] as const), position: r.float(-10, 800), pageId: r.pick(doc.pageOrder) } } }),

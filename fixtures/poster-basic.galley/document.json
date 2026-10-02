@@ -9,7 +9,24 @@
       "width": 2400
     }
   },
-  "formatVersion": 1,
+  "baselineGrid": {
+    "increment": 12,
+    "start": 0
+  },
+  "characterStyleOrder": [
+    "none"
+  ],
+  "characterStyles": {
+    "none": {
+      "basedOn": null,
+      "id": "none",
+      "name": "[None]",
+      "print": {},
+      "shared": {},
+      "web": {}
+    }
+  },
+  "formatVersion": 2,
   "frames": {
     "body": {
       "fill": null,
@@ -224,25 +241,152 @@
       "width": 792
     }
   },
-  "stories": {
-    "story_body": {
-      "defaults": {
+  "paragraphStyleOrder": [
+    "basic-paragraph",
+    "headline",
+    "subhead",
+    "details",
+    "body",
+    "link",
+    "badge"
+  ],
+  "paragraphStyles": {
+    "badge": {
+      "basedOn": "basic-paragraph",
+      "id": "badge",
+      "name": "Badge",
+      "print": {
+        "align": "center",
+        "fontSize": 37.5,
+        "leading": 39
+      },
+      "shared": {
+        "fill": {
+          "overprint": false,
+          "swatchId": "paper",
+          "tint": 100
+        },
+        "fontWeight": 900
+      },
+      "web": {}
+    },
+    "basic-paragraph": {
+      "basedOn": null,
+      "id": "basic-paragraph",
+      "name": "[Basic Paragraph]",
+      "print": {
         "align": "left",
+        "alignToBaselineGrid": false,
+        "dropCapChars": 1,
+        "dropCapLines": 0,
+        "firstLineIndent": 0,
+        "fontSize": 12,
+        "hyphenLadder": null,
+        "hyphenMinAfter": null,
+        "hyphenMinBefore": null,
+        "hyphenMinWord": null,
+        "hyphenate": true,
+        "leading": 15,
+        "leftIndent": 0,
+        "rightIndent": 0,
+        "spaceAfter": 0,
+        "spaceBefore": 0
+      },
+      "shared": {
+        "features": {},
         "fill": {
           "overprint": false,
           "swatchId": "black",
           "tint": 100
         },
         "fontFamily": "Inter",
-        "fontSize": 18,
         "fontStyle": "normal",
         "fontWeight": 400,
-        "leading": 27,
+        "kerning": "metrics",
+        "language": "en-US",
+        "role": null,
+        "textCase": "normal",
         "tracking": 0
       },
+      "web": {}
+    },
+    "body": {
+      "basedOn": "basic-paragraph",
+      "id": "body",
+      "name": "Body",
+      "print": {
+        "fontSize": 18,
+        "leading": 27
+      },
+      "shared": {},
+      "web": {}
+    },
+    "details": {
+      "basedOn": "basic-paragraph",
+      "id": "details",
+      "name": "Details",
+      "print": {
+        "fontSize": 22.5,
+        "leading": 27
+      },
+      "shared": {},
+      "web": {}
+    },
+    "headline": {
+      "basedOn": "basic-paragraph",
+      "id": "headline",
+      "name": "Headline",
+      "print": {
+        "fontSize": 160,
+        "leading": 168
+      },
+      "shared": {
+        "fill": {
+          "overprint": false,
+          "swatchId": "studio-blue",
+          "tint": 100
+        },
+        "fontWeight": 800,
+        "tracking": -20
+      },
+      "web": {}
+    },
+    "link": {
+      "basedOn": "basic-paragraph",
+      "id": "link",
+      "name": "Link",
+      "print": {
+        "fontSize": 18,
+        "leading": 27
+      },
+      "shared": {
+        "fontWeight": 700
+      },
+      "web": {}
+    },
+    "subhead": {
+      "basedOn": "basic-paragraph",
+      "id": "subhead",
+      "name": "Subhead",
+      "print": {
+        "fontSize": 70,
+        "leading": 75
+      },
+      "shared": {
+        "fontWeight": 800,
+        "tracking": -10
+      },
+      "web": {}
+    }
+  },
+  "stories": {
+    "story_body": {
       "doc": {
         "content": [
           {
+            "attrs": {
+              "style": "body"
+            },
             "content": [
               {
                 "text": "Twenty studios open their doors for one day. Watch screen printing, letterpress and riso demos, browse prints, and meet the people who make them. Free entry, all ages.",
@@ -254,26 +398,18 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "body"
+      ],
       "id": "story_body"
     },
     "story_details": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 22.5,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 27,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "style": "details"
+            },
             "content": [
               {
                 "text": "Saturday, May 16 · 10am–4pm · 412 Grove Street",
@@ -285,26 +421,18 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "details"
+      ],
       "id": "story_details"
     },
     "story_free": {
-      "defaults": {
-        "align": "center",
-        "fill": {
-          "overprint": false,
-          "swatchId": "paper",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 37.5,
-        "fontStyle": "normal",
-        "fontWeight": 900,
-        "leading": 39,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "style": "badge"
+            },
             "content": [
               {
                 "text": "FREE",
@@ -316,26 +444,18 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "free"
+      ],
       "id": "story_free"
     },
     "story_open-studio": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 70,
-        "fontStyle": "normal",
-        "fontWeight": 800,
-        "leading": 75,
-        "tracking": -10
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "style": "subhead"
+            },
             "content": [
               {
                 "text": "OPEN STUDIO",
@@ -347,26 +467,18 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "open-studio"
+      ],
       "id": "story_open-studio"
     },
     "story_spring": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "studio-blue",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 160,
-        "fontStyle": "normal",
-        "fontWeight": 800,
-        "leading": 168,
-        "tracking": -20
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "style": "headline"
+            },
             "content": [
               {
                 "text": "SPRING",
@@ -378,26 +490,18 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "spring"
+      ],
       "id": "story_spring"
     },
     "story_url": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 18,
-        "fontStyle": "normal",
-        "fontWeight": 700,
-        "leading": 27,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "style": "link"
+            },
             "content": [
               {
                 "text": "galleystudio.example/spring",
@@ -409,6 +513,9 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "url"
+      ],
       "id": "story_url"
     }
   },

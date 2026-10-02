@@ -5,7 +5,10 @@ import {
   addGuide,
   addLayer,
   addPage,
+  addStyle,
   addSwatch,
+  applyParagraphStyle,
+  BASIC_PARAGRAPH_ID,
   CommandError,
   groupFrames,
   makeLayer,
@@ -25,8 +28,8 @@ import {
   setFrameProps,
   setLayerProps,
   setPageProps,
-  setStoryDefaults,
   setStoryDoc,
+  setTextOverrides,
   setSwatchProps,
   storyDocFromText,
   storyPlainText,
@@ -261,32 +264,37 @@ describe('swatches, stories, assets', () => {
 
   it('deleting a swatch replaces its uses, removes dependent tint swatches, and protects built-ins', () => {
     let h = add(add(history(), 'a', { fill: paint('spot185', 40) }), 'b', { fill: paint('spot185-40'), stroke: { paint: paint('spot185'), weight: 2 } });
-    h = run(h, addFrame, textFrameArgs('t', 's', 'x'));
-    h = run(h, setStoryDefaults, { storyId: 's', props: { fill: paint('spot185') } });
+    h = run(h, addFrame, textFrameArgs('t', 's', 'xy'));
+    h = run(h, addStyle, { kind: 'paragraph', style: { id: 'spot-style', name: 'Spot', basedOn: BASIC_PARAGRAPH_ID, shared: { fill: paint('spot185') }, print: {}, web: {} } });
+    h = run(h, applyParagraphStyle, { storyId: 's', range: { from: { paragraph: 0, offset: 0 }, to: { paragraph: 0, offset: 0 } }, styleId: 'spot-style' });
+    h = run(h, setTextOverrides, { storyId: 's', range: { from: { paragraph: 0, offset: 0 }, to: { paragraph: 0, offset: 1 } }, target: 'character', patch: { set: { shared: { fill: paint('spot185', 50) } } } });
     const withReplacement = run(h, removeSwatch, { id: 'spot185', replacementId: 'orange' });
     expect(withReplacement.doc.swatches.spot185).toBeUndefined();
     expect(withReplacement.doc.swatches['spot185-40']).toBeUndefined();
     expect(withReplacement.doc.frames.a).toMatchObject({ fill: { swatchId: 'orange', tint: 40 } });
     expect(withReplacement.doc.frames.b).toMatchObject({ fill: { swatchId: 'orange', tint: 100 }, stroke: { paint: { swatchId: 'orange' }, weight: 2 } });
-    expect(withReplacement.doc.stories.s!.defaults.fill.swatchId).toBe('orange');
+    expect(withReplacement.doc.paragraphStyles['spot-style']!.shared.fill).toEqual(paint('orange'));
+    expect(JSON.stringify(withReplacement.doc.stories.s!.doc)).toContain('"swatchId":"orange"');
     valid(withReplacement);
     const toNone = run(h, removeSwatch, { id: 'spot185' });
     expect(toNone.doc.frames.a).toMatchObject({ fill: null });
     expect(toNone.doc.frames.b).toMatchObject({ fill: null, stroke: null });
-    expect(toNone.doc.stories.s!.defaults.fill.swatchId).toBe('black');
+    // text has no [None] color: the style drops its color (and inherits [Black]), and the run's local color is gone
+    expect(toNone.doc.paragraphStyles['spot-style']!.shared.fill).toBeUndefined();
+    expect(JSON.stringify(toNone.doc.stories.s!.doc)).not.toContain('override');
     valid(toNone);
     expect(() => run(h, removeSwatch, { id: 'paper' })).toThrow(/Built-in/);
     expect(() => run(h, removeSwatch, { id: 'spot185', replacementId: 'spot185-40' })).toThrow(/being deleted/);
   });
 
-  it('edits story text and default style', () => {
+  it('edits story text, and refuses a story that is malformed or names a style or swatch that does not exist', () => {
     let h = run(history(), addFrame, textFrameArgs('t', 's', 'Hello'));
     h = run(h, setStoryDoc, { storyId: 's', doc: storyDocFromText('Hello\nWorld') });
     expect(storyPlainText(h.doc.stories.s!.doc)).toBe('Hello\nWorld');
     expect(() => run(h, setStoryDoc, { storyId: 's', doc: { type: 'doc', content: [{ type: 'heading' }] } })).toThrow(CommandError);
-    h = run(h, setStoryDefaults, { storyId: 's', props: { fontSize: 18, align: 'center' } });
-    expect(h.doc.stories.s!.defaults).toMatchObject({ fontSize: 18, align: 'center', fontFamily: 'Inter' });
-    expect(() => run(h, setStoryDefaults, { storyId: 's', props: { fontSize: 0 } })).toThrow(CommandError);
+    expect(() => run(h, setStoryDoc, { storyId: 's', doc: storyDocFromText('x', { style: 'ghost' }) })).toThrow(/paragraph style "ghost"/);
+    expect(() => run(h, setStoryDoc, { storyId: 's', doc: storyDocFromText('x', { style: BASIC_PARAGRAPH_ID, overrides: { shared: { fill: paint('ghost') } } }) })).toThrow(/swatch "ghost"/);
+    valid(h);
   });
 
   it('rejects a bad asset path, and a duplicate guide id', () => {

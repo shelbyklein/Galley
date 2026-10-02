@@ -210,18 +210,22 @@ test.describe('text frames', () => {
     await page.evaluate(() => {
       const g = (window as any).__galley;
       const m = g.model;
-      g.store.getState().dispatch(m.setStoryDoc, { storyId: 'story_t', doc: { type: 'doc', content: [m.paragraphNode('Plain ', m.textNode('bold', ['strong']), ' ', m.textNode('italic', ['em']))] } });
+      const bold = m.overrideMark({ shared: { fontWeight: 700 } });
+      const italic = m.overrideMark({ shared: { fontStyle: 'italic' } });
+      g.store.getState().dispatch(m.setStoryDoc, { storyId: 'story_t', doc: { type: 'doc', content: [m.paragraphNode('Plain ', m.textNode('bold', [bold]), ' ', m.textNode('italic', [italic]))] } });
     });
     await page.keyboard.press('Meta+1');
     await setTool(page, 'type');
     await clickPage(page, { x: 380, y: 140 });
     await page.keyboard.type('!');
     const doc = await page.evaluate(() => JSON.parse(JSON.stringify((window as any).__galley.store.getState().history.doc.stories.story_t.doc)));
-    expect(doc.content[0].content.map((r: any) => [r.text, (r.marks ?? []).map((m: any) => m.type).join('+')])).toEqual([
+    // v2: bold and italic are override marks with an explicit weight / style; the paragraph keeps its style
+    expect(doc.content[0].attrs).toEqual({ style: 'basic-paragraph' });
+    expect(doc.content[0].content.map((r: any) => [r.text, (r.marks ?? []).map((m: any) => JSON.stringify(m.attrs)).join('+')])).toEqual([
       ['Plain ', ''],
-      ['bold', 'strong'],
+      ['bold', '{"shared":{"fontWeight":700}}'],
       [' ', ''],
-      ['italic!', 'em'],
+      ['italic!', '{"shared":{"fontStyle":"italic"}}'],
     ]);
   });
 });

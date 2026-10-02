@@ -9,6 +9,7 @@ import {
   createStory,
   paint,
   SWATCH_BLACK,
+  textAttrsToLayers,
   type Frame,
   type GalleyDocument,
   type HistoryState,
@@ -110,7 +111,7 @@ export function buildGeometryDoc(): GalleyDocument {
     h = applyCommand(h, addFrame, {
       pageId: GEO_PAGE.id,
       frame: frame(t, { type: 'text', rotation: t.rotation, storyId: `story_${t.id}`, inset: t.inset }),
-      story: createStory(`story_${t.id}`, 'Hxg', { fontSize: 12, leading: t.leading, fill: paint(SWATCH_BLACK) }),
+      story: createStory(`story_${t.id}`, 'Hxg', { overrides: textAttrsToLayers({ fontSize: 12, leading: t.leading, fill: paint(SWATCH_BLACK) }) }),
     });
   }
   for (const i of IMAGES) {

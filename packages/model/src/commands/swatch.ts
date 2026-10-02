@@ -1,8 +1,10 @@
 import type { Id } from '../ids';
 import { cmykSchema, isBuiltinSwatch, SWATCH_BLACK, swatchSchema, type Cmyk, type Paint, type Swatch } from '../swatch';
+import { mapDocFills } from '../text/ops';
+import { BASIC_PARAGRAPH_ID } from '../text/styles';
 import { percentSchema } from '../units';
 import { defineCommand, fail } from './types';
-import { insertAt, own, removeFrom, swatchOf } from './util';
+import { baseOf, insertAt, own, removeFrom, swatchOf } from './util';
 
 function assertUniqueName(d: { swatches: Record<Id, Swatch> }, name: string, exceptId?: Id): void {
   for (const s of Object.values(d.swatches)) {
@@ -58,7 +60,8 @@ export const setSwatchProps = defineCommand<{ id: Id; props: SwatchProps }>('swa
 
 /**
  * Delete a swatch, plus the tint swatches based on it. Anything painted with a deleted swatch switches to
- * `replacementId` if given, else to [None] (a text story's default color falls back to [Black]). Built-ins stay.
+ * `replacementId` if given, else to [None]. Text has no [None] color: a style or local override that used the swatch
+ * drops its color and inherits (so it ends up [Black] at the root; [Basic Paragraph] itself switches to [Black]). Built-ins stay.
  */
 export const removeSwatch = defineCommand<{ id: Id; replacementId?: Id | null }>('swatch.remove', 'Delete Swatch', (d, { id, replacementId = null }) => {
   swatchOf(d, id);
@@ -81,10 +84,21 @@ export const removeSwatch = defineCommand<{ id: Id; replacementId?: Id | null }>
       f.stroke = p ? { paint: p, weight: f.stroke.weight } : null;
     }
   }
-  for (const s of Object.values(d.stories)) {
-    if (doomed.has(s.defaults.fill.swatchId)) {
-      s.defaults.fill = replace(s.defaults.fill) ?? { swatchId: SWATCH_BLACK, tint: 100, overprint: false };
+  for (const table of [d.paragraphStyles, d.characterStyles]) {
+    for (const style of Object.values(table)) {
+      const fill = style.shared.fill;
+      if (!fill || !doomed.has(fill.swatchId)) continue;
+      const next = replace(fill);
+      if (next) style.shared.fill = next;
+      else if (style.id === BASIC_PARAGRAPH_ID) style.shared.fill = { swatchId: SWATCH_BLACK, tint: 100, overprint: false };
+      else delete style.shared.fill;
     }
+  }
+  const before = baseOf(d);
+  for (const s of Object.values(d.stories)) {
+    const doc = before.stories[s.id]!.doc;
+    const next = mapDocFills(doc, (fill) => (doomed.has(fill.swatchId) ? replace(fill) : fill));
+    if (next !== doc) s.doc = own(next) as typeof s.doc;
   }
   for (const gone of doomed) {
     removeFrom(d.swatchOrder, gone);

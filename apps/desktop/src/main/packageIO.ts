@@ -113,6 +113,6 @@ export function writePackage(target: string, files: PackageFiles, options: Write
     const fonts = path.join(source, 'fonts');
     if (fs.existsSync(fonts) && fs.statSync(fonts).isDirectory()) copyDir(fonts, path.join(target, 'fonts'));
   }
-  writeFileAtomic(path.join(target, 'links.json'), files.links ?? '{\n  "formatVersion": 1,\n  "links": {}\n}\n');
+  writeFileAtomic(path.join(target, 'links.json'), files.links ?? '{\n  "formatVersion": 2,\n  "links": {}\n}\n');
   writeFileAtomic(path.join(target, 'document.json'), files.document);
 }

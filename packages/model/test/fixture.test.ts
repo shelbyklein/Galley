@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { buildSentinelTable, parseDocument, serializeDocument, validateDocument } from '../src';
+import { buildSentinelTable, paragraphAttrs, parseDocument, resolveParagraph, serializeDocument, validateDocument } from '../src';
 import { buildPosterBasic, POSTER_ENGINE_VERSION } from '../../../scripts/fixtures/poster-basic';
 
 const dir = fileURLToPath(new URL('../../../fixtures/poster-basic.galley/', import.meta.url));
@@ -25,9 +25,9 @@ describe('fixtures/poster-basic.galley', () => {
 
   it('has the poster\'s content: orange block, CMYK headline, 100K body text, a spot ellipse and a photo', () => {
     expect(doc.frames['orange-block']).toMatchObject({ type: 'rect', x: -9, y: -9, fill: { swatchId: 'warm-orange' } });
-    expect(doc.stories.story_spring!.defaults.fill.swatchId).toBe('studio-blue');
+    expect(resolveParagraph(doc, paragraphAttrs(doc.stories.story_spring!.doc.content![0]!)).fill.swatchId).toBe('studio-blue');
     expect(doc.swatches['studio-blue']).toMatchObject({ type: 'cmyk', values: [100, 80, 0, 20] });
-    expect(doc.stories.story_body!.defaults.fill.swatchId).toBe('black');
+    expect(resolveParagraph(doc, paragraphAttrs(doc.stories.story_body!.doc.content![0]!)).fill.swatchId).toBe('black');
     expect(doc.swatches.black).toMatchObject({ values: [0, 0, 0, 100] });
     expect(doc.frames['free-ellipse']).toMatchObject({ type: 'ellipse', fill: { swatchId: 'pms-185-c' } });
     expect(doc.swatches['pms-185-c']).toMatchObject({ type: 'spot', name: 'PANTONE 185 C' });

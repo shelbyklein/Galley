@@ -1,0 +1,740 @@
+{
+  "assets": {},
+  "formatVersion": 1,
+  "frames": {
+    "bold-base": {
+      "fill": null,
+      "h": 60,
+      "id": "bold-base",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_bold-base",
+      "stroke": null,
+      "type": "text",
+      "w": 270,
+      "x": 306,
+      "y": 36
+    },
+    "extra-bold": {
+      "fill": null,
+      "h": 48,
+      "id": "extra-bold",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_extra-bold",
+      "stroke": null,
+      "type": "text",
+      "w": 540,
+      "x": 36,
+      "y": 144
+    },
+    "inset-tilted": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "ink-blue",
+        "tint": 20
+      },
+      "h": 72,
+      "id": "inset-tilted",
+      "inset": 6,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 6,
+      "storyId": "story_inset-tilted",
+      "stroke": null,
+      "type": "text",
+      "w": 216,
+      "x": 324,
+      "y": 216
+    },
+    "italic-base": {
+      "fill": null,
+      "h": 90,
+      "id": "italic-base",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_italic-base",
+      "stroke": null,
+      "type": "text",
+      "w": 252,
+      "x": 36,
+      "y": 210
+    },
+    "knockout": {
+      "fill": null,
+      "h": 36,
+      "id": "knockout",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_knockout",
+      "stroke": null,
+      "type": "text",
+      "w": 246,
+      "x": 318,
+      "y": 342
+    },
+    "narrow": {
+      "fill": null,
+      "h": 120,
+      "id": "narrow",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_narrow",
+      "stroke": null,
+      "type": "text",
+      "w": 108,
+      "x": 36,
+      "y": 396
+    },
+    "panel": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "ink-blue",
+        "tint": 100
+      },
+      "h": 60,
+      "id": "panel",
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 270,
+      "x": 306,
+      "y": 330
+    },
+    "regular": {
+      "fill": null,
+      "h": 90,
+      "id": "regular",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_regular",
+      "stroke": null,
+      "type": "text",
+      "w": 252,
+      "x": 36,
+      "y": 36
+    },
+    "spot-right": {
+      "fill": null,
+      "h": 36,
+      "id": "spot-right",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_spot-right",
+      "stroke": null,
+      "type": "text",
+      "w": 252,
+      "x": 36,
+      "y": 330
+    }
+  },
+  "guides": {},
+  "layerOrder": [
+    "layer_1"
+  ],
+  "layers": {
+    "layer_1": {
+      "color": "#4da3ff",
+      "id": "layer_1",
+      "locked": false,
+      "name": "Layer 1",
+      "visible": true
+    }
+  },
+  "meta": {
+    "colorProfile": null,
+    "engineVersion": "44.5.1",
+    "title": "Typography marks"
+  },
+  "pageOrder": [
+    "page_1"
+  ],
+  "pages": {
+    "page_1": {
+      "bleed": {
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0
+      },
+      "columns": {
+        "count": 1,
+        "gutter": 12
+      },
+      "height": 792,
+      "id": "page_1",
+      "items": [
+        "regular",
+        "bold-base",
+        "extra-bold",
+        "italic-base",
+        "inset-tilted",
+        "spot-right",
+        "panel",
+        "knockout",
+        "narrow"
+      ],
+      "margins": {
+        "bottom": 36,
+        "left": 36,
+        "right": 36,
+        "top": 36
+      },
+      "slug": {
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0
+      },
+      "width": 612
+    }
+  },
+  "stories": {
+    "story_bold-base": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 15,
+        "fontStyle": "normal",
+        "fontWeight": 700,
+        "leading": 18,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Bold base ",
+                "type": "text"
+              },
+              {
+                "marks": [
+                  {
+                    "type": "strong"
+                  }
+                ],
+                "text": "stronger",
+                "type": "text"
+              },
+              {
+                "text": " ",
+                "type": "text"
+              },
+              {
+                "marks": [
+                  {
+                    "type": "em"
+                  }
+                ],
+                "text": "slanted",
+                "type": "text"
+              },
+              {
+                "text": " ",
+                "type": "text"
+              },
+              {
+                "marks": [
+                  {
+                    "type": "strong"
+                  },
+                  {
+                    "type": "em"
+                  }
+                ],
+                "text": "both",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_bold-base"
+    },
+    "story_extra-bold": {
+      "defaults": {
+        "align": "center",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 30,
+        "fontStyle": "normal",
+        "fontWeight": 800,
+        "leading": 36,
+        "tracking": -20
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "marks": [
+                  {
+                    "type": "strong"
+                  }
+                ],
+                "text": "Heavy",
+                "type": "text"
+              },
+              {
+                "text": " centered ",
+                "type": "text"
+              },
+              {
+                "marks": [
+                  {
+                    "type": "em"
+                  }
+                ],
+                "text": "title",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_extra-bold"
+    },
+    "story_inset-tilted": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "spot-red-40",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 13.5,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 18,
+        "tracking": 40
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Inset and tilted ",
+                "type": "text"
+              },
+              {
+                "marks": [
+                  {
+                    "type": "strong"
+                  }
+                ],
+                "text": "with",
+                "type": "text"
+              },
+              {
+                "text": " tracking",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_inset-tilted"
+    },
+    "story_italic-base": {
+      "defaults": {
+        "align": "justify",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 12,
+        "fontStyle": "italic",
+        "fontWeight": 400,
+        "leading": 18,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "An italic justified paragraph with some ",
+                "type": "text"
+              },
+              {
+                "marks": [
+                  {
+                    "type": "em"
+                  }
+                ],
+                "text": "emphasis",
+                "type": "text"
+              },
+              {
+                "text": " that is already slanted and some ",
+                "type": "text"
+              },
+              {
+                "marks": [
+                  {
+                    "type": "strong"
+                  }
+                ],
+                "text": "strong",
+                "type": "text"
+              },
+              {
+                "text": " words to fill out a few lines of the frame so the justification shows.",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_italic-base"
+    },
+    "story_knockout": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "paper",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 18,
+        "fontStyle": "normal",
+        "fontWeight": 700,
+        "leading": 24,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Knocked out ",
+                "type": "text"
+              },
+              {
+                "marks": [
+                  {
+                    "type": "strong"
+                  }
+                ],
+                "text": "white",
+                "type": "text"
+              },
+              {
+                "text": " text",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_knockout"
+    },
+    "story_narrow": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 12,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 15,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Typography is the craft of arranging type. ",
+                "type": "text"
+              },
+              {
+                "marks": [
+                  {
+                    "type": "em"
+                  }
+                ],
+                "text": "Hyphenation",
+                "type": "text"
+              },
+              {
+                "text": " happens automatically in this narrow ",
+                "type": "text"
+              },
+              {
+                "marks": [
+                  {
+                    "type": "strong"
+                  }
+                ],
+                "text": "column",
+                "type": "text"
+              },
+              {
+                "text": " of extraordinarily accommodating words.",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_narrow"
+    },
+    "story_regular": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 12,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 15,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Plain ",
+                "type": "text"
+              },
+              {
+                "marks": [
+                  {
+                    "type": "strong"
+                  }
+                ],
+                "text": "bold",
+                "type": "text"
+              },
+              {
+                "text": " and ",
+                "type": "text"
+              },
+              {
+                "marks": [
+                  {
+                    "type": "em"
+                  }
+                ],
+                "text": "italic",
+                "type": "text"
+              },
+              {
+                "text": " and ",
+                "type": "text"
+              },
+              {
+                "marks": [
+                  {
+                    "type": "strong"
+                  },
+                  {
+                    "type": "em"
+                  }
+                ],
+                "text": "both",
+                "type": "text"
+              },
+              {
+                "text": " words.",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          },
+          {
+            "type": "paragraph"
+          },
+          {
+            "content": [
+              {
+                "marks": [
+                  {
+                    "type": "em"
+                  }
+                ],
+                "text": "Italic first",
+                "type": "text"
+              },
+              {
+                "text": " then plain.",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_regular"
+    },
+    "story_spot-right": {
+      "defaults": {
+        "align": "right",
+        "fill": {
+          "overprint": true,
+          "swatchId": "spot-red",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 13.5,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 18,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Spot color, right aligned, ",
+                "type": "text"
+              },
+              {
+                "marks": [
+                  {
+                    "type": "strong"
+                  }
+                ],
+                "text": "bold",
+                "type": "text"
+              },
+              {
+                "text": ".",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_spot-right"
+    }
+  },
+  "swatchOrder": [
+    "registration",
+    "paper",
+    "black",
+    "ink-blue",
+    "spot-red",
+    "spot-red-40"
+  ],
+  "swatches": {
+    "black": {
+      "id": "black",
+      "name": "[Black]",
+      "type": "cmyk",
+      "values": [
+        0,
+        0,
+        0,
+        100
+      ]
+    },
+    "ink-blue": {
+      "id": "ink-blue",
+      "name": "Ink Blue",
+      "type": "cmyk",
+      "values": [
+        100,
+        80,
+        0,
+        20
+      ]
+    },
+    "paper": {
+      "id": "paper",
+      "name": "[Paper]",
+      "type": "cmyk",
+      "values": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "registration": {
+      "id": "registration",
+      "name": "[Registration]",
+      "type": "cmyk",
+      "values": [
+        100,
+        100,
+        100,
+        100
+      ]
+    },
+    "spot-red": {
+      "id": "spot-red",
+      "name": "PANTONE 185 C",
+      "type": "spot",
+      "values": [
+        0,
+        91,
+        76,
+        0
+      ]
+    },
+    "spot-red-40": {
+      "baseId": "spot-red",
+      "id": "spot-red-40",
+      "name": "PANTONE 185 C 40%",
+      "percent": 40,
+      "type": "tint"
+    }
+  }
+}

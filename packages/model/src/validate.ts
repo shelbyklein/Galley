@@ -6,6 +6,8 @@
  */
 import type { Id } from './ids';
 import type { GalleyDocument } from './schema';
+import { storyDocReferenceProblem } from './text/story';
+import { BASIC_PARAGRAPH_ID, NONE_CHARACTER_ID } from './text/styles';
 
 export interface ValidationIssue {
   code:
@@ -18,6 +20,9 @@ export interface ValidationIssue {
     | 'layer-mismatch'
     | 'swatch-rule'
     | 'story-rule'
+    | 'thread-rule'
+    | 'style-rule'
+    | 'style-cycle'
     | 'duplicate-name';
   message: string;
   /** A readable location such as `frames.frm_1.fill.swatchId`. */
@@ -42,6 +47,8 @@ export function validateDocument(doc: GalleyDocument): ValidationIssue[] {
     ['swatches', doc.swatches],
     ['frames', doc.frames],
     ['stories', doc.stories],
+    ['paragraphStyles', doc.paragraphStyles],
+    ['characterStyles', doc.characterStyles],
     ['assets', doc.assets],
     ['guides', doc.guides],
   ] as const) {
@@ -55,6 +62,8 @@ export function validateDocument(doc: GalleyDocument): ValidationIssue[] {
     ['pageOrder', doc.pageOrder, doc.pages],
     ['layerOrder', doc.layerOrder, doc.layers],
     ['swatchOrder', doc.swatchOrder, doc.swatches],
+    ['paragraphStyleOrder', doc.paragraphStyleOrder, doc.paragraphStyles],
+    ['characterStyleOrder', doc.characterStyleOrder, doc.characterStyles],
   ] as const) {
     const seen = new Set<Id>();
     for (const id of order) {
@@ -101,7 +110,6 @@ export function validateDocument(doc: GalleyDocument): ValidationIssue[] {
   }
 
   // frames
-  const storyUse = new Map<Id, Id>();
   for (const f of Object.values(doc.frames)) {
     const at = `frames.${f.id}`;
     if (!(f.layerId in doc.layers)) add('dangling-id', `${at}.layerId`, `layer "${f.layerId}" does not exist`);
@@ -119,23 +127,37 @@ export function validateDocument(doc: GalleyDocument): ValidationIssue[] {
       }
     }
     if (f.type === 'text') {
-      if (!(f.storyId in doc.stories)) add('dangling-id', `${at}.storyId`, `story "${f.storyId}" does not exist`);
-      const other = storyUse.get(f.storyId);
-      if (other) add('story-rule', `${at}.storyId`, `story "${f.storyId}" is already used by frame "${other}" (one story per frame)`);
-      else storyUse.set(f.storyId, f.id);
+      const story = doc.stories[f.storyId];
+      if (!story) add('dangling-id', `${at}.storyId`, `story "${f.storyId}" does not exist`);
+      else if (story.frameIds.filter((id) => id === f.id).length !== 1) {
+        add('thread-rule', `${at}.storyId`, `story "${f.storyId}" does not list this frame exactly once in its thread`);
+      }
     }
     if (f.type === 'image' && f.assetId !== null && !(f.assetId in doc.assets)) {
       add('dangling-id', `${at}.assetId`, `asset "${f.assetId}" does not exist`);
     }
   }
 
-  // stories
+  // stories and threads: the chain lists exactly the text frames that point back at the story
   for (const s of Object.values(doc.stories)) {
-    if (!storyUse.has(s.id)) add('story-rule', `stories.${s.id}`, 'story is not used by any text frame');
-    if (!(s.defaults.fill.swatchId in doc.swatches)) {
-      add('dangling-id', `stories.${s.id}.defaults.fill.swatchId`, `swatch "${s.defaults.fill.swatchId}" does not exist`);
+    const at = `stories.${s.id}`;
+    if (s.frameIds.length === 0) add('story-rule', at, 'story is not used by any text frame');
+    const seen = new Set<Id>();
+    for (const [i, frameId] of s.frameIds.entries()) {
+      const where = `${at}.frameIds[${i}]`;
+      const frame = doc.frames[frameId];
+      if (!frame) add('dangling-id', where, `"${frameId}" is not an existing frame`);
+      else if (frame.type !== 'text') add('thread-rule', where, `"${frameId}" is not a text frame`);
+      else if (frame.storyId !== s.id) add('thread-rule', where, `frame "${frameId}" belongs to story "${frame.storyId}"`);
+      if (seen.has(frameId)) add('thread-rule', where, `"${frameId}" is listed twice in the thread`);
+      seen.add(frameId);
     }
+    const problem = storyDocReferenceProblem(s.doc, doc);
+    if (problem) add('dangling-id', `${at}.doc`, problem);
   }
+
+  // styles
+  validateStyles(doc, add);
 
   // swatches
   const names = new Map<string, Id>();
@@ -159,6 +181,40 @@ export function validateDocument(doc: GalleyDocument): ValidationIssue[] {
   }
 
   return issues;
+}
+
+function validateStyles(doc: GalleyDocument, add: (code: ValidationIssue['code'], path: string, message: string) => void): void {
+  for (const [kind, table] of [
+    ['paragraphStyles', doc.paragraphStyles],
+    ['characterStyles', doc.characterStyles],
+  ] as const) {
+    const names = new Map<string, Id>();
+    for (const style of Object.values(table)) {
+      const at = `${kind}.${style.id}`;
+      const other = names.get(style.name);
+      if (other) add('duplicate-name', `${at}.name`, `name "${style.name}" is already used by style "${other}"`);
+      else names.set(style.name, style.id);
+
+      if (style.basedOn !== null && !(style.basedOn in table)) add('dangling-id', `${at}.basedOn`, `style "${style.basedOn}" does not exist`);
+      // a cycle: walk up the chain and see whether it comes back
+      const seen = new Set<Id>([style.id]);
+      for (let up = style.basedOn; up !== null && up in table; up = table[up]!.basedOn) {
+        if (seen.has(up)) {
+          if (up === style.id) add('style-cycle', `${at}.basedOn`, `style "${style.id}" is based on itself through "${style.basedOn}"`);
+          break;
+        }
+        seen.add(up);
+      }
+      const fill = style.shared.fill;
+      if (fill && !(fill.swatchId in doc.swatches)) add('dangling-id', `${at}.shared.fill.swatchId`, `swatch "${fill.swatchId}" does not exist`);
+    }
+  }
+  const basic = doc.paragraphStyles[BASIC_PARAGRAPH_ID];
+  if (!basic) add('style-rule', `paragraphStyles.${BASIC_PARAGRAPH_ID}`, 'built-in paragraph style [Basic Paragraph] is missing');
+  else if (basic.basedOn !== null) add('style-rule', `paragraphStyles.${BASIC_PARAGRAPH_ID}.basedOn`, '[Basic Paragraph] cannot be based on another style');
+  const none = doc.characterStyles[NONE_CHARACTER_ID];
+  if (!none) add('style-rule', `characterStyles.${NONE_CHARACTER_ID}`, 'built-in character style [None] is missing');
+  else if (none.basedOn !== null) add('style-rule', `characterStyles.${NONE_CHARACTER_ID}.basedOn`, '[None] cannot be based on another style');
 }
 
 export function assertValidDocument(doc: GalleyDocument): void {

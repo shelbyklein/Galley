@@ -159,7 +159,7 @@ describe('PageView: the installed soft-proof source', () => {
     const host = render(doc, 'screen');
     expect(host.querySelector('rect[data-frame-id="orange-block"]')!.getAttribute('fill')).toBe('rgb(9 8 7)');
     // the headline's Studio Blue got no answer: the page shows the naive conversion, never nothing
-    expect(host.querySelector<HTMLElement>('[data-frame-id="spring"]')!.style.color).toBe(`rgb(${naiveCmykToRgb({ values: [100, 80, 0, 20], tint: 100 }).join(', ')})`); // (jsdom normalizes the style's color)
+    expect(host.querySelector<HTMLElement>('[data-frame-id="spring"] p')!.style.color).toBe(`rgb(${naiveCmykToRgb({ values: [100, 80, 0, 20], tint: 100 }).join(', ')})`); // (jsdom normalizes the style's color)
     expect(new Set(asked)).toEqual(new Set(['Warm Orange@100', 'Studio Blue@100', '[Black]@100', 'PANTONE 185 C@100', '[Paper]@100']));
     // export mode never asks the source: its colors are sentinels
     asked.length = 0;
@@ -202,16 +202,20 @@ describe('PageView: structure', () => {
     expect(ellipse.getAttribute('rx')).toBe('80');
   });
 
-  it('renders story text with the story\'s default style', () => {
+  it('renders each paragraph with the CSS of its resolved paragraph style, on the <p> and not on the frame box', () => {
     const host = render(doc, 'screen');
-    const spring = host.querySelector<HTMLElement>('[data-frame-id="spring"]')!;
-    expect(spring.textContent).toBe('SPRING');
-    expect(spring.style.fontFamily).toContain('Inter');
-    expect(spring.style.fontWeight).toBe('800');
-    expect(spring.style.fontSize).toBe('160pt');
-    expect(spring.style.lineHeight).toBe('168pt');
-    expect(spring.style.letterSpacing).toBe('-0.02em');
-    expect(host.querySelector('[data-frame-id="free"]')!.getAttribute('style')).toContain('text-align:center');
+    const frame = host.querySelector<HTMLElement>('[data-frame-id="spring"]')!;
+    expect(frame.textContent).toBe('SPRING');
+    expect(frame.style.fontFamily).toBe(''); // nothing is inherited from the frame
+    const p = frame.querySelector<HTMLElement>('p')!;
+    expect(p.getAttribute('data-paragraph-style')).toBe('headline');
+    expect(p.getAttribute('lang')).toBe('en-US');
+    expect(p.style.fontFamily).toContain('Inter');
+    expect(p.style.fontWeight).toBe('800');
+    expect(p.style.fontSize).toBe('160pt');
+    expect(p.style.lineHeight).toBe('168pt');
+    expect(p.style.letterSpacing).toBe('-0.02em');
+    expect(host.querySelector('[data-frame-id="free"] p')!.getAttribute('style')).toContain('text-align:center');
     expect(host.querySelector('[data-frame-id="body"]')!.textContent).toMatch(/^Twenty studios open their doors/);
   });
 

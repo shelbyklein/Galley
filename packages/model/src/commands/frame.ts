@@ -2,7 +2,8 @@ import type { Id } from '../ids';
 import { parentOf, pageIdOf, subtreeIds } from '../queries';
 import { frameSchema, isBoxFrame, type Frame, type GroupFrame, type ImageContent } from '../schema';
 import type { Paint, Stroke } from '../swatch';
-import { storySchema, type Story } from '../text/story';
+import { storyDocReferenceProblem, storySchema, type Story } from '../text/story';
+import { textWrapSchema, type TextWrap } from '../text/wrap';
 import { fail, defineCommand } from './types';
 import { assertFinite, baseOf, containerOf, deleteFrameTrees, frameOf, insertAt, layerOf, own, pageOf, removeFrom } from './util';
 
@@ -15,11 +16,15 @@ export interface AddFrameArgs {
   parentId?: Id | null;
   /** Position in the container's stacking list; default the top. */
   index?: number;
-  /** Required for a text frame: its story (`story.id === frame.storyId`). Not allowed for other types. */
+  /**
+   * Required for a text frame: its story (`story.id === frame.storyId`), which must not exist yet. The story's thread starts
+   * as this frame (leave `story.frameIds` empty, or `[frame.id]`); join frames to a thread with `thread.link`.
+   * Not allowed for other types.
+   */
   story?: Story;
 }
 
-/** Add a frame (and, for a text frame, its story) to a page or a group. Groups are made with `frame.group`, so a new group must be empty. */
+/** Add a frame (and, for a text frame, its new story) to a page or a group. Groups are made with `frame.group`, so a new group must be empty. */
 export const addFrame = defineCommand<AddFrameArgs>('frame.add', 'Add Frame', (d, { frame, pageId, parentId = null, index, story }) => {
   const parsed = frameSchema.safeParse(frame);
   if (!parsed.success) fail(`Invalid frame: ${parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')}`);
@@ -38,7 +43,11 @@ export const addFrame = defineCommand<AddFrameArgs>('frame.add', 'Add Frame', (d
     const s = storySchema.safeParse(story);
     if (!s.success) fail(`Invalid story: ${s.error.issues.map((i) => i.message).join('; ')}`);
     if (d.stories[story.id]) fail(`Story "${story.id}" already exists`);
-    if (!d.swatches[story.defaults.fill.swatchId]) fail(`No swatch "${story.defaults.fill.swatchId}"`);
+    if (story.frameIds.length > 0 && !(story.frameIds.length === 1 && story.frameIds[0] === frame.id)) {
+      fail('A story is added with its first frame only; thread more frames with thread.link');
+    }
+    const refProblem = storyDocReferenceProblem(story.doc, d);
+    if (refProblem) fail(`Invalid story: ${refProblem}`);
   } else if (story) {
     fail('Only a text frame takes a story');
   }
@@ -56,7 +65,7 @@ export const addFrame = defineCommand<AddFrameArgs>('frame.add', 'Add Frame', (d
   }
   insertAt(list, frame.id, index);
   d.frames[frame.id] = own(frame);
-  if (frame.type === 'text' && story) d.stories[story.id] = own(story);
+  if (frame.type === 'text' && story) d.stories[story.id] = own({ ...story, frameIds: [frame.id] });
 });
 
 // --------------------------------------------------------------------------------------------------------- remove
@@ -81,6 +90,8 @@ export interface FrameProps {
   stroke?: Stroke | null;
   /** Text frames. */
   inset?: number;
+  /** Any box frame: how text in other frames flows around it. `null` or `{ mode: 'none' }` clears it. */
+  textWrap?: TextWrap | null;
   /** Image frames; set `assetId` and `content` together. */
   assetId?: Id | null;
   content?: ImageContent | null;
@@ -104,6 +115,10 @@ export const setFrameProps = defineCommand<{ ids: Id[]; props: FrameProps }>('fr
   }
   if (props.assetId) if (!d.assets[props.assetId]) fail(`No asset "${props.assetId}"`);
   if (props.content && !(props.content.w > 0 && props.content.h > 0)) fail('content size must be positive');
+  if (props.textWrap) {
+    const r = textWrapSchema.safeParse(props.textWrap);
+    if (!r.success) fail(`Invalid text wrap: ${r.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')}`);
+  }
 
   for (const id of ids) {
     const f = frameOf(d, id);
@@ -114,6 +129,10 @@ export const setFrameProps = defineCommand<{ ids: Id[]; props: FrameProps }>('fr
       else if ((BOX_KEYS as readonly string[]).includes(k)) {
         if (f.type === 'group') fail('A group has no box of its own; move or resize its children');
         (f as unknown as Record<string, unknown>)[k] = own(v);
+      } else if (k === 'textWrap') {
+        if (f.type === 'group') fail('A group has no text wrap; set it on its children');
+        if (v === null || (v as TextWrap).mode === 'none') delete f.textWrap;
+        else f.textWrap = own(v as TextWrap);
       } else if (k === 'inset') {
         if (f.type !== 'text') fail('inset applies to text frames only');
         f.inset = v as number;

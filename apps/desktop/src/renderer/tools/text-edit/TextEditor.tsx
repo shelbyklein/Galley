@@ -1,5 +1,5 @@
 import { pageIdOf, setStoryDoc, type Id, type PMNode } from '@galley/model';
-import { htmlFrameStyle, num, pt, sheetGeometry } from '@galley/render';
+import { htmlFrameStyle, pt, sheetGeometry } from '@galley/render';
 import { useLayoutEffect, useRef, type CSSProperties } from 'react';
 import { patchCanvasState } from '../../canvas/canvasState';
 import { selectDoc, useEditorStore } from '../../store';
@@ -30,9 +30,9 @@ function placeCaret(el: HTMLElement, caret: 'end' | { clientX: number; clientY: 
 }
 
 /**
- * In-place text editing of one text frame (Phase 1: plain text with bold and italic runs; Phase 2 replaces it with the
- * ProseMirror view). The editable sits exactly over the frame, inside the same scaled layer as the page, with the story's
- * typography but transparent text: the page renderer underneath draws the text from the model, which every input writes
+ * In-place text editing of one text frame (plain text with bold and italic runs that keeps paragraph styles, local overrides and
+ * character styles intact, see dom.ts; P2-03 replaces it with the ProseMirror view). The editable sits exactly over the frame,
+ * inside the same scaled layer as the page, with the story's typography but transparent text: the page renderer underneath draws the text from the model, which every input writes
  * to, so what you see while typing is what is stored. All typing in one session is a single undo step (a coalesced
  * `story.setDoc`). ⌘Z while editing undoes in the model and the editable follows.
  */
@@ -49,7 +49,7 @@ export function TextEditor({ frameId, caret }: { frameId: Id; caret: 'end' | { c
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el || !story) return;
-    docToEditable(el, story.doc);
+    docToEditable(el, story.doc, doc);
     shown.current = story.doc;
     el.focus();
     placeCaret(el, caret);
@@ -61,7 +61,7 @@ export function TextEditor({ frameId, caret }: { frameId: Id; caret: 'end' | { c
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el || !story || story.doc === shown.current) return;
-    docToEditable(el, story.doc);
+    docToEditable(el, story.doc, doc);
     shown.current = story.doc;
     placeCaret(el, 'end');
   }, [story]);
@@ -75,23 +75,16 @@ export function TextEditor({ frameId, caret }: { frameId: Id; caret: 'end' | { c
   const page = doc.pages[pageIdOf(doc, frameId) ?? ''];
   if (!page) return null;
   const geo = sheetGeometry(page);
-  const d = story.defaults;
+  // the typography is on the paragraphs and runs (docToEditable), exactly as the page draws them
   const style: CSSProperties = {
     ...htmlFrameStyle(frame, geo.origin),
     padding: frame.inset > 0 ? pt(frame.inset) : undefined,
-    fontFamily: `"${d.fontFamily}", sans-serif`,
-    fontWeight: d.fontWeight,
-    fontStyle: d.fontStyle,
-    fontSize: pt(d.fontSize),
-    lineHeight: pt(d.leading),
-    letterSpacing: d.tracking !== 0 ? `${num(d.tracking / 1000)}em` : undefined,
-    textAlign: d.align,
   };
 
   const commit = () => {
     const el = ref.current;
     if (!el || composing.current) return;
-    const next = editableToDoc(el);
+    const next = editableToDoc(el, doc);
     if (JSON.stringify(next) === JSON.stringify(story.doc)) return;
     const store = useEditorStore.getState();
     store.dispatch(setStoryDoc, { storyId: story.id, doc: next }, { coalesceKey: `edit:${story.id}`, label: 'Edit Text' });

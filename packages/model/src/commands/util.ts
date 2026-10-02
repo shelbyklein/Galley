@@ -75,8 +75,9 @@ export function containerOf(d: DocDraft, base: GalleyDocument, id: Id): Id[] {
 }
 
 /**
- * Delete frames and everything inside them: their stories, their entries in page `items` and group `childIds`, and any
- * group left empty. Shared by `frame.remove`, `page.remove` and `layer.remove`.
+ * Delete frames and everything inside them: their entries in page `items` and group `childIds`, and any group left empty. A
+ * deleted text frame leaves its story's thread (the text flows on through the frames that remain); a story left with no
+ * frame is deleted with it. Shared by `frame.remove`, `page.remove` and `layer.remove`.
  */
 export function deleteFrameTrees(d: DocDraft, ids: readonly Id[]): void {
   const base = baseOf(d);
@@ -93,7 +94,13 @@ export function deleteFrameTrees(d: DocDraft, ids: readonly Id[]): void {
   }
   for (const id of doomed) {
     const f = base.frames[id]!;
-    if (f.type === 'text') delete d.stories[f.storyId];
+    if (f.type === 'text') {
+      const story = d.stories[f.storyId];
+      if (story) {
+        story.frameIds = story.frameIds.filter((frameId) => frameId !== id);
+        if (story.frameIds.length === 0) delete d.stories[f.storyId];
+      }
+    }
     delete d.frames[id];
   }
 

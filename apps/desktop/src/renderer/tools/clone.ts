@@ -3,9 +3,11 @@
  *
  * A snapshot holds whole frame trees (a group with its children) plus the stories of text frames, by value, so it
  * survives later edits and deletes of the originals. Instantiating gives every frame and story a fresh id, adds the leaf
- * frames with `frame.add`, then re-forms each group with `frame.group` from the inside out.
+ * frames with `frame.add`, then re-forms each group with `frame.group` from the inside out. A story is copied whole (all its
+ * text) for the first copied frame of its thread; the other copied frames of the thread get empty stories and are threaded
+ * to it again with `thread.link`, in the original reading order. Frames of a thread that were not copied are not in the copy.
  */
-import { addFrame, createId, groupFrames, pageFrameIds, subtreeIds, type Frame, type GalleyDocument, type Id, type Story } from '@galley/model';
+import { addFrame, createId, createStory, groupFrames, linkFrames, pageFrameIds, subtreeIds, type Frame, type GalleyDocument, type Id, type Story } from '@galley/model';
 import type { StoreApi } from 'zustand/vanilla';
 import type { EditorState } from '../store';
 
@@ -32,7 +34,7 @@ export function snapshotFrames(doc: GalleyDocument, ids: readonly Id[], pageId: 
       frames.push(structuredClone(f));
       if (f.type === 'text') {
         const story = doc.stories[f.storyId];
-        if (story) stories.push(structuredClone(story));
+        if (story && !stories.some((s) => s.id === story.id)) stories.push(structuredClone(story));
       }
     }
   }
@@ -64,6 +66,9 @@ export function instantiateSnapshot(store: StoreLike, snap: Snapshot, options: I
   const storyIds = new Map<Id, Id>();
   for (const s of snap.stories) storyIds.set(s.id, makeId('story'));
   const storyById = new Map(snap.stories.map((s) => [s.id, s]));
+  // each story's copied frames in the thread's reading order: the first gets the text, the rest are linked after it
+  const chains = new Map<Id, Id[]>();
+  for (const s of snap.stories) chains.set(s.id, s.frameIds.filter((id) => snap.frames.some((f) => f.id === id)));
 
   if (transaction) state.beginTransaction(transaction);
   try {
@@ -80,13 +85,23 @@ export function instantiateSnapshot(store: StoreLike, snap: Snapshot, options: I
       if (copy.type === 'text') {
         const source = storyById.get(f.type === 'text' ? f.storyId : '');
         if (!source) continue; // a text frame without its story cannot exist
-        story = { ...structuredClone(source), id: storyIds.get(source.id)! };
+        const first = chains.get(source.id)![0] === f.id;
+        const storyId = first ? storyIds.get(source.id)! : makeId('story');
+        story = first ? { ...structuredClone(source), id: storyId, frameIds: [] } : createStory(storyId, '');
         copy.storyId = story.id;
       } else if (copy.type === 'image' && copy.assetId !== null && !doc.assets[copy.assetId]) {
         copy.assetId = null;
         copy.content = null;
       }
       store.getState().dispatch(addFrame, { frame: copy, pageId, story });
+    }
+    // threads: join the copies in reading order
+    for (const chain of chains.values()) {
+      for (let k = 1; k < chain.length; k++) {
+        const [from, to] = [ids.get(chain[k - 1]!)!, ids.get(chain[k]!)!];
+        const current = store.getState().history.doc.frames;
+        if (current[from] && current[to]) store.getState().dispatch(linkFrames, { fromId: from, toId: to });
+      }
     }
     // groups from the inside out: a child group is one page-level frame again before its parent groups it
     for (const f of [...snap.frames].reverse()) {

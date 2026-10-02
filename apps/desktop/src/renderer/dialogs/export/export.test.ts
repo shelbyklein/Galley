@@ -61,7 +61,7 @@ describe('the export dialog state', () => {
     exportDialog.setOption('marks', false);
     await exportDialog.run();
     expect(request!.options).toEqual({ bleed: true, marks: false });
-    expect(JSON.parse(request!.files.document).formatVersion).toBe(1);
+    expect(JSON.parse(request!.files.document).formatVersion).toBe(2);
     expect(request!.files.document).toContain('"engineVersion": "44.5.1"'); // the document as the editor holds it, stamped with the running engine
     expect(request!.suggestedName).toBe('Untitled');
     expect(exportDialog.get()).toMatchObject({ phase: 'done', summary: { path: '/tmp/x.pdf' } });

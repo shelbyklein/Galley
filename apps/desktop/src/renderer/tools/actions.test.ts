@@ -1,4 +1,4 @@
-import { serializeDocument, validateDocument, addLayer, makeLayer, setLayerProps } from '@galley/model';
+import { serializeDocument, validateDocument, addLayer, linkFrames, makeLayer, setLayerProps, storyPlainText, type TextFrame } from '@galley/model';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createEditorStore } from '../store';
 import {
@@ -123,6 +123,34 @@ describe('copy, cut, paste, duplicate', () => {
     expect(s().history.doc.stories[f.storyId]!.doc).toEqual(s().history.doc.stories['s_t']!.doc);
     expect(Object.keys(s().history.doc.stories)).toHaveLength(2);
     expect(validateDocument(s().history.doc)).toEqual([]);
+  });
+
+  it('copies a threaded pair as a threaded pair with the text once, and one frame of a thread as a lone frame with the whole story', () => {
+    const store = createEditorStore(withFrames([text('t', 200), text('u', 320)]).doc);
+    const s = () => store.getState();
+    s().dispatch(linkFrames, { fromId: 't', toId: 'u' }); // one story "Hello\nHello" in two frames
+    s().setSelection(['t', 'u']);
+    copySelection(store);
+    const copies = pasteClipboard(store);
+    let doc = s().history.doc;
+    expect(copies).toHaveLength(2);
+    const [first, second] = copies.map((id) => doc.frames[id] as TextFrame);
+    expect(first!.storyId).toBe(second!.storyId);
+    expect(first!.storyId).not.toBe('s_t');
+    expect(doc.stories[first!.storyId]!.frameIds).toEqual(copies);
+    expect(storyPlainText(doc.stories[first!.storyId]!.doc)).toBe('Hello\nHello'); // the text once, not once per frame
+    expect(doc.stories.s_t!.frameIds).toEqual(['t', 'u']); // the original thread is untouched
+    expect(validateDocument(doc)).toEqual([]);
+    expect(s().history.past).toHaveLength(2); // the link, and the paste (frames, story and thread together) as one step
+
+    s().setSelection(['u']);
+    copySelection(store);
+    const [lone] = pasteClipboard(store);
+    doc = s().history.doc;
+    const loneFrame = doc.frames[lone!] as TextFrame;
+    expect(doc.stories[loneFrame.storyId]!.frameIds).toEqual([lone]); // a copy of one frame is not in the thread
+    expect(storyPlainText(doc.stories[loneFrame.storyId]!.doc)).toBe('Hello\nHello'); // (it keeps the whole story's text)
+    expect(validateDocument(doc)).toEqual([]);
   });
 
   it('copies a group as a group with fresh children', () => {

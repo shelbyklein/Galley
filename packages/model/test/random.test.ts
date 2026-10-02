@@ -140,6 +140,12 @@ describe('random command sequences', () => {
     expect(never, `commands never applied successfully (steps: ${totalSteps})`).toEqual([]);
   });
 
+  it('prints how often each command succeeded and was rejected (RANDOM_STATS=1)', () => {
+    if (!process.env.RANDOM_STATS) return;
+    const rows = Object.keys(allCommands).map((k) => `${k.padEnd(24)} ok ${String(succeeded.get(k) ?? 0).padStart(5)}  rejected ${String(rejected.get(k) ?? 0).padStart(5)}`);
+    console.log(`\n${rows.join('\n')}`);
+  });
+
   it('invalid arguments are rejected without side effects', () => {
     // exercised inside the sequences above (removing the last page, grouping across pages, ...); make sure it happened
     expect([...rejected.values()].reduce((a, b) => a + b, 0)).toBeGreaterThan(0);

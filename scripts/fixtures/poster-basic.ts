@@ -6,26 +6,31 @@
  *
  * Text frame origins and sizes are multiples of 3 pt and leadings multiples of 0.75 pt (whole CSS pixels), the
  * conditions under which the Phase 0 spikes measured exact line positions. P1-04 (lane A) measures the rest.
+ *
+ * The text is set with paragraph styles (Headline, Subhead, Details, Body, Link, Badge), all based on [Basic Paragraph]. They
+ * resolve to exactly what the Phase 1 poster's per-story defaults were: `fixtures/v1/poster-basic.galley` migrates to a
+ * document that renders the same, which e2e/text/migration.e2e.ts checks.
  */
 import {
   addAsset,
   addFrame,
   addGuide,
+  addStyle,
   addSwatch,
   applyCommand,
   createDocument,
   createHistory,
   createStory,
+  BASIC_PARAGRAPH_ID,
   inches,
   paint,
-  SWATCH_BLACK,
   SWATCH_PAPER,
   type Frame,
   type GalleyDocument,
   type HistoryState,
   type Id,
+  type ParagraphStyle,
   type Swatch,
-  type TextAttrs,
 } from '@galley/model';
 
 export const POSTER_ENGINE_VERSION = '44.5.1';
@@ -41,7 +46,16 @@ export interface PosterPhoto {
 const LAYER = 'layer_1';
 const PAGE = 'page_1';
 
-function text(h: HistoryState, id: Id, body: string, box: { x: number; y: number; w: number; h: number }, style: Partial<TextAttrs>): HistoryState {
+const STYLES: Pick<ParagraphStyle, 'id' | 'name' | 'shared' | 'print'>[] = [
+  { id: 'headline', name: 'Headline', shared: { fontWeight: 800, tracking: -20, fill: paint('studio-blue') }, print: { fontSize: 160, leading: 168 } },
+  { id: 'subhead', name: 'Subhead', shared: { fontWeight: 800, tracking: -10 }, print: { fontSize: 70, leading: 75 } },
+  { id: 'details', name: 'Details', shared: {}, print: { fontSize: 22.5, leading: 27 } },
+  { id: 'body', name: 'Body', shared: {}, print: { fontSize: 18, leading: 27 } },
+  { id: 'link', name: 'Link', shared: { fontWeight: 700 }, print: { fontSize: 18, leading: 27 } },
+  { id: 'badge', name: 'Badge', shared: { fontWeight: 900, fill: paint(SWATCH_PAPER) }, print: { fontSize: 37.5, leading: 39, align: 'center' } },
+];
+
+function text(h: HistoryState, id: Id, body: string, box: { x: number; y: number; w: number; h: number }, style: Id): HistoryState {
   const frame: Frame = {
     id,
     type: 'text',
@@ -54,7 +68,7 @@ function text(h: HistoryState, id: Id, body: string, box: { x: number; y: number
     storyId: `story_${id}`,
     inset: 0,
   };
-  return applyCommand(h, addFrame, { frame, pageId: PAGE, story: createStory(`story_${id}`, body, style) });
+  return applyCommand(h, addFrame, { frame, pageId: PAGE, story: createStory(`story_${id}`, body, { style }) });
 }
 
 export function buildPosterBasic(photo: PosterPhoto): GalleyDocument {
@@ -83,7 +97,7 @@ export function buildPosterBasic(photo: PosterPhoto): GalleyDocument {
   ];
   for (const swatch of swatches) h = applyCommand(h, addSwatch, { swatch });
 
-  const black = paint(SWATCH_BLACK);
+  for (const style of STYLES) h = applyCommand(h, addStyle, { kind: 'paragraph', style: { ...style, basedOn: BASIC_PARAGRAPH_ID, web: {} } });
 
   // 1. orange block, from the top bleed edge to y = 465, bleeding off the left and right
   h = applyCommand(h, addFrame, {
@@ -92,9 +106,9 @@ export function buildPosterBasic(photo: PosterPhoto): GalleyDocument {
   });
 
   // 2-4. headline, subhead, details
-  h = text(h, 'spring', 'SPRING', { x: 36, y: 72, w: 720, h: 168 }, { fontWeight: 800, fontSize: 160, leading: 168, tracking: -20, fill: paint('studio-blue') });
-  h = text(h, 'open-studio', 'OPEN STUDIO', { x: 36, y: 252, w: 720, h: 78 }, { fontWeight: 800, fontSize: 70, leading: 75, tracking: -10, fill: black });
-  h = text(h, 'details', 'Saturday, May 16 · 10am–4pm · 412 Grove Street', { x: 36, y: 357, w: 720, h: 30 }, { fontSize: 22.5, leading: 27, fill: black });
+  h = text(h, 'spring', 'SPRING', { x: 36, y: 72, w: 720, h: 168 }, 'headline');
+  h = text(h, 'open-studio', 'OPEN STUDIO', { x: 36, y: 252, w: 720, h: 78 }, 'subhead');
+  h = text(h, 'details', 'Saturday, May 16 · 10am–4pm · 412 Grove Street', { x: 36, y: 357, w: 720, h: 30 }, 'details');
 
   // 5-6. body copy (100K black) and the web address
   h = text(
@@ -102,16 +116,16 @@ export function buildPosterBasic(photo: PosterPhoto): GalleyDocument {
     'body',
     'Twenty studios open their doors for one day. Watch screen printing, letterpress and riso demos, browse prints, and meet the people who make them. Free entry, all ages.',
     { x: 36, y: 951, w: 444, h: 120 },
-    { fontSize: 18, leading: 27, fill: black },
+    'body',
   );
-  h = text(h, 'url', 'galleystudio.example/spring', { x: 36, y: 1074, w: 444, h: 27 }, { fontWeight: 700, fontSize: 18, leading: 27, fill: black });
+  h = text(h, 'url', 'galleystudio.example/spring', { x: 36, y: 1074, w: 444, h: 27 }, 'link');
 
   // 7-8. the PANTONE 185 C ellipse with "FREE" knocked out in [Paper]
   h = applyCommand(h, addFrame, {
     frame: { id: 'free-ellipse', type: 'ellipse', name: 'Ellipse', layerId: LAYER, x: 579, y: 945, w: 160, h: 160, rotation: 0, fill: paint('pms-185-c'), stroke: null },
     pageId: PAGE,
   });
-  h = text(h, 'free', 'FREE', { x: 579, y: 1008, w: 160, h: 39 }, { fontWeight: 900, fontSize: 37.5, leading: 39, align: 'center', fill: paint(SWATCH_PAPER) });
+  h = text(h, 'free', 'FREE', { x: 579, y: 1008, w: 160, h: 39 }, 'badge');
 
   // 9. the photo, filling its 720 x 384 pt frame proportionally (the image is 1.875:1, like the frame)
   h = applyCommand(h, addAsset, {

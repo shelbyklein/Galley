@@ -29,6 +29,7 @@ import {
   type GalleyDocument,
   type HistoryState,
   type Id,
+  textAttrsToLayers,
   type Swatch,
   type TextAttrs,
 } from '@galley/model';
@@ -65,7 +66,7 @@ function rect(h: HistoryState, id: Id, name: string, box: Box, fill: ReturnType<
 
 function text(h: HistoryState, id: Id, body: string, box: Box, style: Partial<TextAttrs>, name = ''): HistoryState {
   const frame: Frame = { id, type: 'text', name, layerId: LAYER, ...box, rotation: 0, fill: null, stroke: null, storyId: `story_${id}`, inset: 0 };
-  return applyCommand(h, addFrame, { frame, pageId: PAGE, story: createStory(`story_${id}`, body, style) });
+  return applyCommand(h, addFrame, { frame, pageId: PAGE, story: createStory(`story_${id}`, body, { overrides: textAttrsToLayers(style) }) });
 }
 
 const caption = (h: HistoryState, id: Id, body: string, x: number, y: number): HistoryState =>

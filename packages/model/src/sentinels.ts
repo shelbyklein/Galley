@@ -17,6 +17,8 @@ import type { Id } from './ids';
 import { getSwatch } from './queries';
 import type { GalleyDocument } from './schema';
 import type { Cmyk, Paint } from './swatch';
+import { paragraphAttrs } from './text/story';
+import { resolveParagraph, resolveRun } from './text/styles';
 
 /**
  * Sentinel channel levels are BASE + STEP * digit (digit 0..15). STEP is 15 (the spike found >= 5 necessary) so
@@ -81,8 +83,9 @@ export function paintKey(doc: GalleyDocument, paint: Paint): string {
 }
 
 /**
- * Every paint in the document that can end up on the page: frame fills and strokes, and story default text colors.
- * Phase 2 adds style and mark colors here (lane T / S).
+ * Every paint in the document that can end up on the page: frame fills and strokes, and the text colors the stories resolve to
+ * (each paragraph's color from its style chain and overrides, and the color of each run a character style or override changes).
+ * A style nothing uses adds no ink.
  */
 export function collectPaints(doc: GalleyDocument): Paint[] {
   const out: Paint[] = [];
@@ -91,7 +94,17 @@ export function collectPaints(doc: GalleyDocument): Paint[] {
     if (f.fill) out.push(f.fill);
     if (f.stroke) out.push(f.stroke.paint);
   }
-  for (const s of Object.values(doc.stories)) out.push(s.defaults.fill);
+  for (const s of Object.values(doc.stories)) {
+    for (const p of s.doc.content ?? []) {
+      const paragraph = resolveParagraph(doc, paragraphAttrs(p));
+      out.push(paragraph.fill);
+      for (const run of p.content ?? []) {
+        if (!run.marks || run.marks.length === 0) continue;
+        const fill = resolveRun(doc, paragraph, run.marks).fill;
+        if (fill !== paragraph.fill) out.push(fill);
+      }
+    }
+  }
   return out;
 }
 

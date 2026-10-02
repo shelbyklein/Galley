@@ -28,7 +28,7 @@ function poster(): GalleyDocument {
   h = run(h, addFrame, {
     frame: { id: 'txt', type: 'text', name: '', layerId: 'layer_1', x: 0, y: 0, w: 100, h: 50, rotation: 0, fill: null, stroke: null, storyId: 'sty', inset: 0 },
     pageId: 'page_1',
-    story: createStory('sty', 'Body', { fill: paint('black') }),
+    story: createStory('sty', 'Body'),
   });
   return h.doc;
 }
