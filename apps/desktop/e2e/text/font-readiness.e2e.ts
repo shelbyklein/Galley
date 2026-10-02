@@ -74,6 +74,9 @@ for(const extraParagraphs of [false,true]) test(`font completion preserves IME a
   await c.send('Input.imeSetComposition',{text:'日本',selectionStart:2,selectionEnd:2});
   await c.send('Input.insertText',{text:'日本'});
   await page.waitForFunction(()=>{const e=(window as any).__galleyText.editor;return !e.composing && !e.pendingRethread;});
+  await expect(page.getByTestId('text-editor')).not.toHaveAttribute('data-composition-paint');
+  await expect(page.locator('.galley-page .galley-text[data-story-id=story_t1][data-composition-hidden]')).toHaveCount(0);
+  for(const f of await page.locator('.galley-page .galley-text[data-story-id=story_t1]').all()) await expect(f).toHaveCSS('visibility','visible');
   const after=await page.evaluate(()=>{
     const e=(window as any).__galleyText.editor,g=(window as any).__galley;
     const source=g.store.getState().history.doc.stories.story_t1.doc,selection=e.storySelection(),mapped=e.vmap.viewToStory(e.view.state.selection.head);

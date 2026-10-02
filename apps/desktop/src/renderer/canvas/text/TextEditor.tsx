@@ -1,10 +1,11 @@
 import { pageIdOf,setStoryDoc,normalizeNativeStoryDoc,type Id,type PMNode } from '@galley/model';
-import { createTextSchema,Measurer,StoryEditor,storySlots,storyTextScale,sheetGeometry,extractLines } from '@galley/render';
+import { createTextSchema,Measurer,StoryEditor,storySlots,storyTextScale,sheetGeometry,extractLines,createColorResolver,defaultSoftProof,getSoftProofEpoch,subscribeSoftProof } from '@galley/render';
 import { undoDepth } from 'prosemirror-history';
-import { useLayoutEffect,useRef } from 'react';
+import { useLayoutEffect,useMemo,useRef,useSyncExternalStore } from 'react';
 import { patchCanvasState } from '../canvasState';
 import { selectDoc,useEditorStore } from '../../store';
 import { reportCaretState,setActiveStoryEditor } from './session';
+import {compositionPaint,editorInk} from './compositionPaint';
 import './editing.css';
 export function exitTextEdit(){patchCanvasState({textEdit:null});setActiveStoryEditor(null);const s=useEditorStore.getState();s.setTextSelection(null);s.closeCoalescing();}
 export function TextEditor({frameId,caret}:{frameId:Id;caret:'end'|{clientX:number;clientY:number}}) {
@@ -13,6 +14,9 @@ export function TextEditor({frameId,caret}:{frameId:Id;caret:'end'|{clientX:numb
   const editor=useRef<StoryEditor|null>(null);
   const shown=useRef<PMNode|null>(null);
   const syncing=useRef(false);
+  const ink=useRef<ReturnType<typeof editorInk>|null>(null);
+  const proofEpoch=useSyncExternalStore(subscribeSoftProof,getSoftProofEpoch,getSoftProofEpoch);
+  const colors=useMemo(()=>createColorResolver(doc,'screen',{softProof:defaultSoftProof}),[doc.swatches,proofEpoch]);
   const saved=useRef<{storyId:string;anchor:number;head:number;focused:boolean}|null>(null);
   const frame=doc.frames[frameId];
   const story=frame?.type==='text'?doc.stories[frame.storyId]:undefined;
@@ -21,11 +25,13 @@ export function TextEditor({frameId,caret}:{frameId:Id;caret:'end'|{clientX:numb
     const el=ref.current;if(!el || !story || !frame || frame.type!=='text') return;
     const geo=sheetGeometry(doc.pages[pageIdOf(doc,frameId)!]!);
     const slots=storySlots(doc,story).map(s=>({...s,x:s.x+geo.origin.x,y:s.y+geo.origin.y}));
-    const schema=createTextSchema({...doc,baselineGrid:{...doc.baselineGrid,start:doc.baselineGrid.start+geo.origin.y}},{mode:'screen',css:()=> 'transparent'},slots,scale);
+    const paintInk=editorInk(el,colors);ink.current=paintInk;
+    const schema=createTextSchema({...doc,baselineGrid:{...doc.baselineGrid,start:doc.baselineGrid.start+geo.origin.y}},paintInk.resolver,slots,scale);
     const measurer=new Measurer(schema);
     const historyAction=(action:'undo'|'redo')=>()=>useEditorStore.getState()[action]();
     const e=new StoryEditor(el,schema.nodeFromJSON(story.doc),slots,measurer,{undo:historyAction('undo'),redo:historyAction('redo'),attributes:{class:'gl-text-editor gl-thread-editor'}});
     editor.current=e;setActiveStoryEditor(e);shown.current=story.doc;
+    const paint=compositionPaint(el,e,story.id);
     const fontsReady=(event:Event)=>{
       if((event as CustomEvent<{pageId:Id}>).detail?.pageId!==pageIdOf(doc,frameId)) return;
       // Preserve the active PM composition DOM; compositionend performs the queued full refresh.
@@ -48,6 +54,7 @@ export function TextEditor({frameId,caret}:{frameId:Id;caret:'end'|{clientX:numb
       }
       const sel=e.storySelection();s.setTextSelection({storyId:story.id,...sel});
       reportCaretState(story.id);
+      paint.refresh();
     };
     el.dataset.testid='text-editor';el.dataset.textEditor='';el.dataset.editingFrame=frameId;
     const previous=saved.current?.storyId===story.id?saved.current:null;
@@ -61,10 +68,11 @@ export function TextEditor({frameId,caret}:{frameId:Id;caret:'end'|{clientX:numb
     }
     e.setStorySelection(previous?.anchor ?? pos,previous?.head ?? pos,slot);e.onUpdate();
     if(window.galley?.e2e) (window as any).__galleyText={editor:e,lines:()=>extractLines(document.querySelector('.galley-page') as HTMLElement,el)};
-    return ()=>{saved.current={storyId:story.id,...e.storySelection(),focused:document.activeElement===e.view.dom};e.onUpdate=null;window.removeEventListener('galley:text-fonts-ready',fontsReady);e.destroy();measurer.dispose();editor.current=null;setActiveStoryEditor(null);useEditorStore.getState().setTextSelection(null);if(window.galley?.e2e) delete (window as any).__galleyText;};
+    return ()=>{saved.current={storyId:story.id,...e.storySelection(),focused:document.activeElement===e.view.dom};paint.destroy();ink.current=null;e.onUpdate=null;window.removeEventListener('galley:text-fonts-ready',fontsReady);e.destroy();measurer.dispose();editor.current=null;setActiveStoryEditor(null);useEditorStore.getState().setTextSelection(null);if(window.galley?.e2e) delete (window as any).__galleyText;};
   // Rebuild style/geometry DOM while preserving selection. Text edits alone sync below.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[frameId,doc.paragraphStyles,doc.characterStyles,doc.frames,doc.baselineGrid,story?.frameIds,scale]);
+  useLayoutEffect(()=>{ink.current?.update(colors);},[colors]);
   useLayoutEffect(()=>{
     const e=editor.current;if(!e || !story || story.doc===shown.current) return;
     if(e.composing) return;
