@@ -6,4 +6,4 @@ export function isEditableElement(el: Element | null): boolean {
   return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT';
 }
 
-export const isTypingNow = (): boolean => isEditableElement(document.activeElement);
+export const isTypingNow = (): boolean => typeof document !== 'undefined' && isEditableElement(document.activeElement);

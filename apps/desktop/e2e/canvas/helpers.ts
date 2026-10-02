@@ -65,7 +65,9 @@ export async function dragPage(page: Page, from: Pt, to: Pt, options: DragOption
 export async function dragScreen(page: Page, a: Pt, b: Pt, { steps = 8, modifiers = [], hold = false }: DragOptions = {}): Promise<void> {
   for (const key of modifiers) await page.keyboard.down(key);
   await page.mouse.move(a.x, a.y);
+  await flushInput(page);
   await page.mouse.down();
+  await flushInput(page);
   await page.mouse.move(b.x, b.y, { steps });
   if (!hold) await page.mouse.up();
   if (!hold) for (const key of modifiers.reverse()) await page.keyboard.up(key);
