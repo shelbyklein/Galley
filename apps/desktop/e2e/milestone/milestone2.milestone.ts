@@ -56,6 +56,7 @@ test('builds a styled flyer with two linked frames and contour wrap, saves/reope
   await chooseTool(page, 'type');
   const typeStrip = page.getByTestId('type-control-strip');
   await typeStrip.locator('[data-type-control="fontFamily"]').selectOption('Roboto');
+  await typeStrip.locator('[data-type-control="fontStyle"]').selectOption('700:normal');
   for (const [field, value] of [['fontSize', '30'], ['leading', '36']]) {
     const input = typeStrip.locator(`[data-field="${field}"]`); await input.fill(value!); await input.press('Enter');
   }
@@ -77,6 +78,7 @@ test('builds a styled flyer with two linked frames and contour wrap, saves/reope
 
   // Edit the whole story from its selected frame, then capture those properties in a named paragraph style.
   await typeStrip.locator('[data-type-control="fontFamily"]').selectOption('Inter');
+  await typeStrip.locator('[data-type-control="fontStyle"]').selectOption('400:normal');
   for (const [field, value] of [['fontSize', '10'], ['leading', '13.5']]) {
     const input = typeStrip.locator(`[data-field="${field}"]`); await input.fill(value!); await input.press('Enter');
   }
