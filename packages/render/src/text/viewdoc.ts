@@ -145,6 +145,15 @@ export function buildViewDoc(args: {
     frames.push(frame);
     vpos += frame.nodeSize;
   }
+  if (!pieces.length && res.overset && frames.length) {
+    // Nothing fits, but PM still needs an inline caret in the existing source paragraph.
+    // An empty anchor prevents native input from creating a new block before the overset source.
+    // It carries no laid-out text and does not change any measured slot or overset boundary.
+    const at = res.overset.from;
+    const para = idx.paras[idx.find(at)].node;
+    frames[0] = schema.nodes.frame.create({ slot: 0 }, schema.nodes.paragraph.create({ style: para.attrs.style, overrides: para.attrs.overrides }));
+    pieces.push({ slot: 0, sFrom: at, sTo: at, vFrom: 2 });
+  }
   return { doc: schema.nodes.doc.create(null, frames), map: new ViewMap(pieces), reused };
 }
 
