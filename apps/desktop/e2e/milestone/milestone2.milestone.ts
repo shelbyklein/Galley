@@ -30,7 +30,8 @@ const COPY = [
 test('builds a styled flyer with two linked frames and contour wrap, saves/reopens it, and exports matching real fonts and pure black text', async ({ galley }, info) => {
   const { page, app } = galley;
   work = fs.mkdtempSync(path.join(os.tmpdir(), 'galley-milestone2-'));
-  const pkg = path.join(work, 'Process Notes.galley'), pdf = path.join(work, 'Process Notes.pdf');
+  let pkg = path.join(work, 'Process Notes.galley');
+  const pdf = path.join(work, 'Process Notes.pdf');
   fs.rmSync(FLYER_SHOTS, { recursive: true, force: true });
   await page.keyboard.press('Meta+n');
   const dialog = page.getByTestId('new-document-dialog');
@@ -120,6 +121,16 @@ test('builds a styled flyer with two linked frames and contour wrap, saves/reope
 
   const doc = await getDoc(page);
   expect(doc.stories[doc.frames[left.id].storyId].frameIds).toEqual([left.id, right.id]);
+  // Save As must preserve the exact document-font source files as well as the text and frames.
+  const originalPackage = pkg;
+  pkg = path.join(work, 'Process Notes Copy.galley');
+  await stubDialogs(app, { save: [pkg] });
+  await clickMenuItem(app, 'file.saveAs');
+  await expect.poll(async () => (await getShellState(page)).packagePath).toBe(pkg);
+  for (const name of ['Inter-Regular.ttf', 'Roboto-Variable.ttf']) {
+    expect(fs.readFileSync(path.join(pkg, 'fonts', name))).toEqual(fs.readFileSync(path.join(originalPackage, 'fonts', name)));
+  }
+  await flushInput(page);
   const painted = await captureFlyerLines(page, [left.id, right.id]);
   expect(painted.every(f => f.lines.length > 8)).toBe(true);
   expect(painted[1]!.lines.some(l => l.cy > 250 && l.cy < 380 && l.right < 470)).toBe(true);
