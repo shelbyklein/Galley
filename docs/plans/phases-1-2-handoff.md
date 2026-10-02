@@ -3,11 +3,11 @@
 These are instructions for the coordinator and for every lane agent. Read [phases-1-2.md](phases-1-2.md) first; the tasks, acceptance checks and exclusions live there.
 
 ## Roles
-- **Coordinator:** Opus 5.5, in the session that wrote this plan.
+- **Coordinator:** GPT-6.1 Sol (`gpt-6.1-sol`), xhigh effort, in the current resumed session.
   - The only integration owner: merges lane branches into `main` and runs the suites after each merge.
   - The only one who writes to GitHub: pushes, edits the issue checklist, posts comments.
   - Resolves conflicts in shared files.
-- **Lanes:** Sonnet, via the Agent tool, one agent per lane, each in an isolated git worktree branched from the `main` revision named in its launch message.
+- **Current lanes T/S/N:** GPT-6.1 Sol (`gpt-6.1-sol`) via Codex collaboration, xhigh effort for T and high effort for S/N. Resume one agent per existing lane worktree at `dac614c`; do not create duplicate Claude or Codex agents. The earlier completed Sonnet lanes remain historical evidence.
 
 | Lane | Tasks | Starts after |
 |---|---|---|
@@ -58,8 +58,7 @@ Lanes edit only the paths they own. To extend a shared file, prefer adding a new
 
 ## Rules for every lane
 1. **Stay in scope.** Work only on your lane's tasks and paths. Read the exclusions in the plan; don't build excluded features.
-2. **Commit on your worktree branch** in small commits with clear messages. Don't push, don't touch `main`, don't open PRs, don't write to GitHub. End each commit message with:
-   `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`
+2. **Commit on your worktree branch** in small commits with clear messages. Don't push, don't touch `main`, don't open PRs, don't write to GitHub. Use accurate authorship for this session; do not attribute new Sol work to Claude.
 3. **Run your own task's acceptance check** before you call it done, plus `npm test` and the e2e suites for your area. Report the exact commands and results. Never claim a check passed without having run it.
 4. **UI tasks:** capture e2e screenshots, look at them (open the PNG with your Read tool), and make sure they show what the task describes. Store the baselines under `apps/desktop/e2e/__screenshots__/`.
 5. **Don't edit `spikes/**`, `PLAN.md`, or `docs/plans/**`.** Put design notes the plan asks for (e.g. `packages/render/GEOMETRY.md`) in your owned paths.
@@ -87,3 +86,6 @@ Lanes edit only the paths they own. To extend a shared file, prefer adding a new
 3. **On a conflict or failed check:** don't force it. Resume the lane (SendMessage) with the failure, or fix small integration glue yourself and note it in the issue.
 4. **At P1-15 and P2-10:** run the milestone suite, capture app screenshots, inspect them, commit them under `docs/plans/assets/phases-1-2/screens/`, and post an issue comment with the results.
 5. **Stop for Shelby** only at the plan's gates, or at a fork as defined in the dev-work skill (scope, user-visible behavior, architecture or file format, cost). The P2-08 leading result is a named fork if it fails.
+
+## Resumed progress reporting
+Tracker Trapper is required again by Shelby's 2026-10-02 instruction. Use the default shared CLI store if MCP is unavailable. Each lane starts its own Codex run, verifies and links its own JSONL when available, starts its stable P2 todo IDs before work, reports milestones at least every five minutes, completes acceptance with evidence, and finishes its run before ending. The coordinator alone changes GitHub boxes after acceptance passes on main.

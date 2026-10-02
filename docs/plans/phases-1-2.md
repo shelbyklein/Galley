@@ -107,7 +107,7 @@ flowchart TB
   - CFF `.otf` fonts export as Type 3, and the export dialog warns about them.
   - The Type 3 → real-font rewrite stays in Phase 4.
 - **Leading:** any value is allowed. P2-08 must prove that non-0.75 pt leadings still match print. If they don't, that is a fork for Shelby.
-- **Tracking:** this GitHub issue only. Tracker Trapper is not used (Shelby's choice, 2026-10-01).
+- **Tracking:** GitHub issue checklist plus Tracker Trapper, restored by Shelby's resume instruction on 2026-10-02. The earlier GitHub-only waiver is superseded.
 
 ## Success criteria
 1. **Poster milestone.** On `main`, `npm run test:milestone1` builds the poster from the Phase 1 mockup through the real UI (draw, place, type, swatches), saves it, reopens it and exports a PDF/X-4 that passes the golden separation checks:
@@ -196,7 +196,6 @@ Tasks are in dependency order. Every acceptance check is pass/fail and runs on t
 - packaging or signing a `.app`
 - auto-update
 - CI pipelines
-- Tracker Trapper
 - the Type 3 → real-font rewrite (Phase 4)
 
 **Must not change:**
@@ -230,12 +229,24 @@ No user data, installs or external services are involved. Each lane lands as its
 ## Work preparation
 - **Scope:** confirmed by Shelby on 2026-10-01 ("see if you can get to the end of phase 2"). Phase 1 scope as listed in chat, including basic PDF export (Shelby chose "Yes, basic export"), InDesign layout (Shelby chose "Familiar InDesign layout"), and Phase 2 per `PLAN.md`.
 - **Plan:** this file.
-- **Mode:** `orchestrated`. Reason: after the foundation lane, three disjoint lanes per phase can run in parallel, and Shelby asked for Sonnet to do the work.
+- **Mode:** `orchestrated`. Reason: three disjoint Phase 2 lanes can run in parallel. Shelby originally requested Sonnet, then explicitly requested GPT-6.1 Sol for this resume.
 - **Models:**
-  - Coordinator: Opus 5.5 (`claude-opus-5-5`), this session, at its current effort setting.
-  - Lanes F, A, B, C, T, S, N: Sonnet (`claude-sonnet-5-5`) via the Agent tool, at the runtime's default effort (the Agent tool has no effort setting).
+  - Current coordinator: GPT-6.1 Sol (`gpt-6.1-sol`), xhigh effort, verified from this session's runtime metadata.
+  - Resumed lanes T, S, N: GPT-6.1 Sol (`gpt-6.1-sol`), xhigh effort for T and high effort for S/N, via Codex collaboration in their existing isolated worktrees.
+  - Historical completed lanes used Opus 5.5 / Sonnet; their commits and evidence are preserved. No further Claude-powered work is authorized.
 - **Handoff:** [phases-1-2-handoff.md](phases-1-2-handoff.md) (prepared).
 - **Now or later:** now. Shelby's instruction was "see if you can get to the end of phase 2".
-- **Tracker:** R7's Tracker Trapper requirement was waived by Shelby in chat on 2026-10-01 (chose "GitHub issue only"). The GitHub issue checklist mirrors the task IDs above.
+- **Tracker:** Tracker Trapper is restored for this resume; stable todo IDs mirror the 25 issue task IDs. Plan ID: `220A01DC-5B7A-4C21-808C-C75CA4CAD1EA`.
 - **Readiness:** pass · 2026-10-01 · R3: current state is greenfield (no UI to screenshot; repository tree at `14cf16b` is the evidence), target mockups and flow diagrams present · R7: Tracker Trapper waived by Shelby in chat (GitHub issue only); the issue checklist matches the 25 task IDs · R12: covered by per-lane merge reverts; no user data, installs or services
 - **Remaining questions:** see Open questions; none blocking.
+
+## Resume audit, 2026-10-02
+- Clean `main`: `dac614c`; Phase 1 and P2-01 accepted (16/25 issue boxes).
+- Galley Claude host PID 16061 identified by cwd and terminated; unrelated Claude sessions preserved.
+- Existing lane T worktree: `.claude/worktrees/agent-a7f68809a1f855a7a`.
+- Existing lane S worktree: `.claude/worktrees/agent-a218bfc0fd80bf96b`.
+- Existing lane N worktree: `.claude/worktrees/agent-a994c5ad4bf5844ef`.
+- All three start at `dac614c` and are clean. Their old JSONL instructions and research remain available; no new lane commits were ready for merge.
+- Coordinator owns GitHub and integration; each resumed lane reports its own Tracker Trapper run and acceptance evidence.
+
+- **Resume readiness:** pass · 2026-10-02 · R1-R13 rechecked; current UI evidence is `assets/phases-1-2/screens/milestone1/06-finished-poster.png`, target type-mode mockup and flow remain linked; R7 restored with plan `220A01DC-5B7A-4C21-808C-C75CA4CAD1EA`; R9 current model and efforts verified/named. Original scope and human flyer/closure gates remain.
