@@ -1,0 +1,9 @@
+.gl-thread-overlay {position:absolute;inset:0;pointer-events:none;overflow:visible;}
+.gl-thread-lines {position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
+.gl-thread-line {position:absolute;border-top:1px dashed #4da3ff;transform-origin:0 0;}
+.gl-text-port {position:absolute;width:9px;height:9px;padding:0;border:1px solid #4da3ff;background:#fff;color:#4da3ff;font:700 9px/7px sans-serif;pointer-events:auto;cursor:crosshair;z-index:5;}
+.gl-text-port.connected {background:#4da3ff;color:#fff;}
+.gl-text-port.overset {border-color:#e95153;background:#e95153;color:white;}
+.gl-text-port.pending {outline:2px solid #fff;box-shadow:0 0 0 3px #4da3ff;}
+.gl-overset-count {position:absolute;color:#fff;background:#ae3438;padding:3px 5px;border-radius:3px;font:10px/1.2 system-ui;white-space:nowrap;z-index:4;}
+.gl-thread-hint {position:absolute;left:16px;bottom:16px;background:#282b30;color:#d8e8fa;border:1px solid #4da3ff;padding:8px 12px;border-radius:5px;font:12px/1.4 system-ui;}

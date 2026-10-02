@@ -57,6 +57,7 @@ export interface Viewport {
 /** Display settings of the canvas (rulers, guides, ruler units). Not part of the document and not in undo history. */
 export interface ViewSettings {
   rulersVisible: boolean;
+  textThreadsVisible: boolean;
   /** Ruler, margin, column, bleed and slug guides. Hidden guides are not drawn and not snapped to. */
   guidesVisible: boolean;
   /** Units of the rulers (and, for lane C, of the control strip fields). The model is always points. */
@@ -211,7 +212,7 @@ export function createEditorState(initial: GalleyDocument = blankDocument()) {
       setViewport: (patch) => set((s) => ({ viewport: { ...s.viewport, ...patch } })),
       activeTool: 'select',
       setActiveTool: (tool) => set({ activeTool: tool }),
-      view: { rulersVisible: true, guidesVisible: true, units: 'pt' },
+      view: { rulersVisible: true, guidesVisible: true, units: 'pt', textThreadsVisible:false },
       setView: (patch) => set((s) => ({ view: { ...s.view, ...patch } })),
 
       textSelection: null,

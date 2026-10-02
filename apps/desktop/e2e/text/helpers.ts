@@ -1,5 +1,14 @@
 import type { Page } from '@playwright/test';
 import { loadDoc } from '../canvas/helpers';
+export const settle = (page:Page,ms=40)=>page.evaluate(t=>new Promise<void>(r=>setTimeout(r,t)),ms);
+export function sweepFrames(w1:number,w2:number,h1=156) {
+  return [{id:'A',x:54,y:54,w:w1,h:h1},{id:'B',x:54,y:228,w:w2,h:288},{id:'C',x:54,y:534,w:504,h:222,cols:2,gutter:18}];
+}
+export function posToOffset(paras:string[],pos:number) {
+  let acc=1,off=0;
+  for(const p of paras) {if(pos<=acc+p.length)return off+pos-acc;acc+=p.length+2;off+=p.length+1;}
+  throw new Error('Story position out of range '+pos);
+}
 export async function textFixture(page:Page,linked=true,words=800) {
   await loadDoc(page,{page:{width:612,height:792,bleed:0,slug:0},frames:[
     {id:'t1',type:'text',x:36,y:36,w:540,h:180,text:Array.from({length:words},(_,i)=>`word${i}`).join(' ')},
