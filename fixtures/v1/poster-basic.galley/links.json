@@ -1,0 +1,9 @@
+{
+  "formatVersion": 1,
+  "links": {
+    "photo": {
+      "hash": "sha256:2fb4ac3c6d533c157b5ac6782891174f8a420dee2ad364689bb06c35e5590f23",
+      "path": "assets/photo.jpg"
+    }
+  }
+}
