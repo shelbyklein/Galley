@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Galley threading spike</title>
+<link rel="stylesheet" href="page.css">
+<link rel="stylesheet" href="../build/renderer.css">
+</head>
+<body>
+<div id="toolbar" class="chrome">
+  <span class="grp"><button id="b-undo" title="Undo (Cmd-Z)">Undo</button><button id="b-redo" title="Redo (Shift-Cmd-Z)">Redo</button></span>
+  <span class="grp"><button id="b-bold"><b>B</b></button><button id="b-italic"><i>I</i></button></span>
+  <span class="grp"><button id="s-heading">Heading</button><button id="s-subhead">Subhead</button><button id="s-body">Body</button><button id="s-quote">Quote</button></span>
+  <span class="grp"><button id="b-add">+200 words</button><button id="b-reset">Reset</button></span>
+  <span class="grp"><button id="b-hyph" data-on="1">Hyphens: on</button><button id="b-wrap">Wrap image</button><button id="b-chrome">Frames</button><button id="b-pdf">Export PDF + check</button></span>
+  <span id="pdfresult"></span>
+</div>
+<div id="stage">
+  <div id="page">
+    <div id="underlay" class="chrome"></div>
+    <div id="pm"></div>
+    <div id="overlay" class="chrome"></div>
+  </div>
+</div>
+<div id="readout" class="chrome"></div>
+<script src="../build/renderer.js"></script>
+</body>
+</html>

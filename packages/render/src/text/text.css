@@ -1,0 +1,10 @@
+/* Text-specific rules apply to the visible slots and the isolated measurement host. */
+.galley-text-slot { box-sizing:border-box;display:flow-root;position:absolute;margin:0;padding:0;white-space:pre-wrap;overflow-wrap:normal;word-break:normal;hyphens:auto;-webkit-hyphens:auto;font-kerning:normal;font-variant-ligatures:common-ligatures; }
+.galley-text-slot *, .galley-text-measure * { box-sizing:border-box; }
+.galley-text-slot > p { margin:0; }
+.galley-text-slot > p:first-of-type, .galley-text-slot > p.cont { padding-top:var(--galley-grid-pad,0)!important; }
+.galley-text-slot > p.cont { text-indent:0!important; }
+.galley-text-slot > p.hy::after { content:'\2010'; }
+.galley-text-slot .hang { word-spacing:-100%; }
+.galley-text-slot > .wrap { visibility:hidden;pointer-events:none;margin-left:0;margin-right:0;margin-bottom:0; }
+.galley-text-measure .galley-text-slot { position:static; }

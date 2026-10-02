@@ -1,0 +1,5 @@
+.gl-thread-editor {position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;outline:none;}
+.gl-thread-editor > .slot {pointer-events:auto;cursor:text;}
+.gl-thread-editor .ProseMirror-separator {display:inline!important;width:0!important;height:0!important;border:0!important;margin:0!important;}
+.gl-thread-editor ::selection {background:rgb(77 163 255 / .35);}
+.gl-thread-editor .ProseMirror-hideselection *::selection {background:transparent;}
