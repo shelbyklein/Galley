@@ -108,7 +108,7 @@
   margin: 0;
   padding: 8px 10px 8px 26px;
   background: var(--gl-bg-field);
-  border-left: 3px solid var(--gl-guide-bleed);
+  border-left: 1px solid var(--gl-guide-bleed);
   color: var(--gl-text-label);
 }
 
@@ -120,7 +120,7 @@
   margin: 0;
   padding: 8px 10px;
   background: var(--gl-bg-field);
-  border-left: 3px solid var(--gl-danger);
+  border-left: 1px solid var(--gl-danger);
   color: var(--gl-text);
   user-select: text;
 }
