@@ -8,6 +8,8 @@ if (bridge) {
   useShellStore.subscribe((state) => {
     if (state.packagePath === previous) return;
     previous = state.packagePath;
-    void refreshFontFamilies().then(invalidateFonts);
+    // Mark the page's existing font resources stale before any asynchronous inventory request.
+    invalidateFonts();
+    void refreshFontFamilies();
   });
 }

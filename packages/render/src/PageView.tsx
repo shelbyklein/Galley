@@ -212,11 +212,13 @@ export function PageView({ doc, pageId, colorMode, assetUrl, resolver, softProof
   const urls = usedImageUrls(doc, pageId, assetUrl);
   const fontEpoch = useSyncExternalStore(subscribeFonts, getFontEpoch, getFontEpoch);
   const resourceKey = JSON.stringify([faces, urls, fontEpoch]);
-  const [ready, setReady] = useState(false);
+  const [loadedResourceKey, setLoadedResourceKey] = useState<string | null>(null);
+  // A render with changed fonts/images must never advertise readiness from the preceding resources,
+  // including the interval before the loading effect runs.
+  const ready = loadedResourceKey === resourceKey;
   useEffect(() => {
     let live = true;
-    setReady(false);
-    void loadPageResources(faces, urls).then(() => live && setReady(true));
+    void loadPageResources(faces, urls).then(() => live && setLoadedResourceKey(resourceKey));
     return () => {
       live = false;
     };
