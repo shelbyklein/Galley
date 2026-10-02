@@ -133,13 +133,18 @@ export function Canvas() {
   };
 
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (active.current) active.current.gesture.move(infoFor(e));
+    if (active.current) {
+      // Chromium can deliver a hover move while a captured pointer is held elsewhere (including after capture).
+      // Only the pointer with a pressed button owns this gesture; hover and other pointers cannot move the document.
+      if (e.pointerId !== active.current.pointerId || e.buttons === 0) return;
+      active.current.gesture.move(infoFor(e));
+    }
     else refreshCursor(e);
   };
 
   const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
     const a = active.current;
-    if (!a) return;
+    if (!a || e.pointerId !== a.pointerId) return;
     active.current = null;
     try {
       rootRef.current?.releasePointerCapture(a.pointerId);

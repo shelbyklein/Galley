@@ -164,6 +164,16 @@ test('smart guide lines show while dragging and disappear on release (screenshot
   await expect(page.locator('.gl-smart-guide[data-axis="x"]')).toHaveCount(1);
   await expect(page.locator('.gl-smart-label')).toHaveText('center X');
   expect((await getFrame(page, 'a')).x + 50).toBe(306); // already snapped while dragging
+  // A real Chromium hover move appeared here during screenshot capture. It had buttons=0 but the same pointer ID,
+  // and used to teleport the selected frame. Another pointer must not move or release the held drag either.
+  await page.evaluate(() => {
+    const viewport = document.querySelector('[data-testid="canvas-viewport"]')!;
+    viewport.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 1, buttons: 0, clientX: 1052, clientY: 169 }));
+    viewport.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 2, buttons: 1, clientX: 100, clientY: 100 }));
+    viewport.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 2, buttons: 0, clientX: 100, clientY: 100 }));
+  });
+  expect((await getFrame(page, 'a')).x + 50).toBe(306);
+  await expect(page.locator('.gl-smart-guide[data-axis="x"]')).toHaveCount(1);
   await snap(page, 'smart-guide', { testInfo });
   await expectBaseline(page, 'smart-guide');
 
