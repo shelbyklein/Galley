@@ -1,7 +1,8 @@
+import type { Ink } from '@galley/model';
 import { describe, expect, it } from 'vitest';
 import { createSoftProofSource, proofCmykOf } from './softproof';
 
-const ink = (values: [number, number, number, number], tint = 100) => ({ values, tint });
+const ink = (values: [number, number, number, number], tint = 100): Ink => ({ swatchId: 'x', name: 'x', model: 'cmyk', overprint: false, values, tint });
 const tick = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
 
 describe('proofCmykOf', () => {
