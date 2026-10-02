@@ -1,0 +1,9 @@
+.gl-panel[data-panel='textWrap'] {flex:0 0 auto;}
+.gl-wrap-controls {padding:10px 12px;}
+.gl-wrap-controls>label {display:flex;align-items:center;gap:8px;font-size:11px;}
+.gl-wrap-controls select {flex:1;min-width:0;background:var(--gl-bg-control);color:var(--gl-text);border:1px solid var(--gl-line);border-radius:2px;padding:3px;font:inherit;}
+.gl-wrap-offsets {display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0;}
+.gl-wrap-offsets .gl-field {width:auto;min-width:0;}
+.gl-wrap-offsets .gl-field-label {min-width:38px;flex:none;}
+.gl-wrap-offsets input {min-width:0;width:100%;}
+.gl-wrap-controls .gl-panel-note {padding:0;margin:8px 0 0;line-height:1.4;}

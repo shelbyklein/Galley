@@ -1,4 +1,4 @@
-import { pageIdOf,paragraphAttrs,resolveParagraph, type GalleyDocument, type Story } from '@galley/model';
+import { boundsOf,isLayerVisible,pageIdOf,paragraphAttrs,resolveParagraph,wrapOf,type GalleyDocument,type Story } from '@galley/model';
 import { type Node, type Schema } from 'prosemirror-model';
 import { useLayoutEffect, useRef, useState } from 'react';
 import type { ColorResolver } from '../color';
@@ -7,7 +7,7 @@ import { Measurer } from './measure';
 import { indexOf } from './storyindex';
 import { threadStory, type ThreadResult } from './thread';
 import { buildViewDoc, diffRegion } from './viewdoc';
-import type { Slot } from './slots';
+import {computeWraps,type Obstacle,type Slot} from './slots';
 import './text.css';
 
 export interface StoryLayout { story: Node; schema: Schema; slots: Slot[]; result: ThreadResult; view: Node; frameNodes: Map<string, Node>;scale:number }
@@ -17,7 +17,15 @@ export function storySlots(doc: GalleyDocument, story: Story): Slot[] {
   return story.frameIds.flatMap((id, idx) => {
     const f = doc.frames[id];
     if (!f || f.type !== 'text') return [];
-    return [{idx,frame:id,col:0,x:f.x+f.inset,y:f.y+f.inset,w:Math.max(0,f.w-2*f.inset),h:Math.max(0,f.h-2*f.inset),wraps:[]}];
+    const base={idx,frame:id,col:0,x:f.x+f.inset,y:f.y+f.inset,w:Math.max(0,f.w-2*f.inset),h:Math.max(0,f.h-2*f.inset)};
+    const obstacles=Object.values(doc.frames).flatMap<Obstacle>(o=>{
+      if(o.id===id || o.type==='group' || pageIdOf(doc,o.id)!==pageIdOf(doc,id) || !isLayerVisible(doc,o.layerId))return [];
+      const wrap=wrapOf(o);if(wrap.mode==='none')return [];
+      if(wrap.mode==='contour' && o.type==='ellipse')return [{id:o.id,x:o.x,y:o.y,w:o.w,h:o.h,shape:'ellipse' as const,offset:wrap.offset,rotation:o.rotation}];
+      const b=boundsOf(doc,o.id)!;
+      return [{id:o.id,...b,shape:'rect' as const,offset:wrap.mode==='contour'?wrap.offset:0,...(wrap.mode==='boundingBox'?{offsets:wrap.offsets}:{})}];
+    });
+    return [{...base,wraps:computeWraps(base,obstacles)}];
   });
 }
 export function layoutStory(doc: GalleyDocument, story: Story, colors: ColorResolver, previous?: StoryLayout): StoryLayout {

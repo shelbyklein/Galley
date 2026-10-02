@@ -20,6 +20,8 @@ export interface Obstacle {
   h: number;
   shape: 'rect' | 'ellipse';
   offset: number; // text offset around the object, pt
+  offsets?: {top:number;right:number;bottom:number;left:number};
+  rotation?: number;
 }
 
 /** An invisible float injected at the top of a slot (both in the measurement DOM and the real frame). */
@@ -58,25 +60,37 @@ export interface PageDef {
  */
 export function computeWraps(slot: Omit<Slot, 'wraps'>, obstacles: Obstacle[]): WrapSpec[] {
   const out: (WrapSpec & { y0: number })[] = [];
+  // Native float widths quantise to 1/64 CSS px. Keep printed glyph boxes outside the requested edge after rounding.
+  const clearance=.025;
   for (const o of obstacles) {
-    const ex0 = o.x - o.offset;
-    const ey0 = o.y - o.offset;
-    const ex1 = o.x + o.w + o.offset;
-    const ey1 = o.y + o.h + o.offset;
+    const source=o.offsets ?? {top:o.offset,right:o.offset,bottom:o.offset,left:o.offset};
+    const padding={top:source.top+clearance,right:source.right+clearance,bottom:source.bottom+clearance,left:source.left+clearance};
+    const angle=(o.rotation ?? 0)*Math.PI/180,cos=Math.cos(angle),sin=Math.sin(angle);
+    const rx=o.w/2+o.offset+clearance,ry=o.h/2+o.offset+clearance;
+    const cx=o.x+o.w/2,cy=o.y+o.h/2;
+    const bx=Math.hypot(rx*cos,ry*sin),by=Math.hypot(rx*sin,ry*cos);
+    const ex0 = o.shape==='ellipse'?cx-bx:o.x-padding.left;
+    const ey0 = o.shape==='ellipse'?cy-by:o.y-padding.top;
+    const ex1 = o.shape==='ellipse'?cx+bx:o.x+o.w+padding.right;
+    const ey1 = o.shape==='ellipse'?cy+by:o.y+o.h+padding.bottom;
     const ox0 = Math.max(ex0, slot.x) - slot.x;
     const ox1 = Math.min(ex1, slot.x + slot.w) - slot.x;
     const oy0 = Math.max(ey0, slot.y) - slot.y;
     const oy1 = Math.min(ey1, slot.y + slot.h) - slot.y;
     if (ox1 <= ox0 || oy1 <= oy0) continue;
-    const cx = o.x + o.w / 2;
     const side: 'left' | 'right' = ox1 >= slot.w - 1e-6 ? 'right' : ox0 <= 1e-6 ? 'left' : cx > slot.x + slot.w / 2 ? 'right' : 'left';
     const left = side === 'right' ? ox0 : 0;
     const width = side === 'right' ? slot.w - ox0 : ox1;
     let shape = 'border-box';
     if (o.shape === 'ellipse') {
-      const cxRel = o.x + o.w / 2 - slot.x - left;
-      const cyRel = o.y + o.h / 2 - slot.y - oy0;
-      shape = `ellipse(${o.w / 2 + o.offset}pt ${o.h / 2 + o.offset}pt at ${cxRel}pt ${cyRel}pt) border-box`;
+      const cxRel = cx - slot.x - left;
+      const cyRel = cy - slot.y - oy0;
+      if(!angle)shape = `ellipse(${rx}pt ${ry}pt at ${cxRel}pt ${cyRel}pt) border-box`;
+      else {
+        // Native CSS polygons cannot be rotated. A circumscribed outline stays outside the ellipse.
+        const n=128,factor=1/Math.cos(Math.PI/n);
+        shape='polygon('+Array.from({length:n},(_,i)=>{const a=2*Math.PI*i/n,x=rx*Math.cos(a)*factor,y=ry*Math.sin(a)*factor;return `${cxRel+x*cos-y*sin}pt ${cyRel+x*sin+y*cos}pt`;}).join(',')+') border-box';
+      }
     }
     out.push({ side, top: oy0, width, height: oy1 - oy0, shape, y0: oy0 });
   }

@@ -1,4 +1,5 @@
 import { LayersPanel, PagesPanel, SwatchesPanel } from '../panels';
+import {TextWrapPanel} from '../panels/text-wrap/TextWrapPanel';
 
 /**
  * Right dock hosting the collapsible panels: Pages, Layers, Swatches (lane C), and later the panels lanes S and T add.
@@ -10,6 +11,7 @@ export function Dock() {
       <PagesPanel />
       <LayersPanel />
       <SwatchesPanel />
+      <TextWrapPanel />
     </div>
   );
 }
