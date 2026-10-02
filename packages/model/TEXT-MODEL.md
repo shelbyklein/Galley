@@ -240,7 +240,8 @@ needs a generated stylesheet), `alignToBaselineGrid` (P2-08), continued-paragrap
   (default `basic-paragraph`) and `overrides` (default null) plus the engine's view-only `cont` and `tail`, `text`, and two marks
   in this order: `charStyle` (attr `style`) and `override` (attrs `shared`, `print`, `web`, default null). Store with
   `normalizeStoryDoc(view.toJSON())` and `story.setDoc`, or use the range commands. The engine's paragraph metrics (`styleOf`) become
-  `resolveParagraph(doc, paragraphAttrs(node))`.
+  `resolveParagraph(doc, paragraphAttrs(node))`. (Checked with prosemirror-model 1.25.12: a schema declared as above loads all 42
+  stories of the migrated fixtures with `nodeFromJSON`, and `toJSON()` through `normalizeStoryDoc` reproduces each one exactly.)
 
 ## Not in the model yet
 
