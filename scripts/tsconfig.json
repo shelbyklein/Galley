@@ -4,5 +4,5 @@
     "lib": ["ES2023"],
     "types": ["node"]
   },
-  "include": ["golden", "geometry"]
+  "include": ["golden", "geometry", "milestone1"]
 }
