@@ -103,7 +103,7 @@ flowchart TB
 - **Output profile:** read from the system. Adobe `CoatedGRACoL2006.icc` is used if present; otherwise Ghostscript's `default_cmyk.icc`, with a visible note. No profile is bundled.
 - **Fonts:** any installed font is allowed.
   - Static TrueType embeds as a real font.
-  - Variable fonts are pre-instanced to static fonts at export.
+  - Variable fonts use the same cached static instance on screen and at export, so both use identical font bytes.
   - CFF `.otf` fonts export as Type 3, and the export dialog warns about them.
   - The Type 3 → real-font rewrite stays in Phase 4.
 - **Leading:** any value is allowed. P2-08 must prove that non-0.75 pt leadings still match print. If they don't, that is a fork for Shelby.
@@ -220,11 +220,12 @@ No user data, installs or external services are involved. Each lane lands as its
 
 **Required tools:** Ghostscript, poppler (`pdftotext`, `pdffonts`) and `qpdf`, all installed on this Mac.
 
-## Open questions (none blocking)
+## Open decisions and questions
 1. What does Shelby's print shop say about Type 3 fonts? This sets how urgent the Phase 4 rewrite is.
 2. ICC profile licensing for any future distribution. For now the system profile is used and nothing is bundled.
 3. Which real flyer to rebuild at the P2-10 gate? Shelby picks it at the gate.
 4. How common is justified body text in Shelby's work? This affects later work on composition quality.
+5. **P2-05 scope decision pending:** Chromium supports the minimum word and break lengths, but does not implement the consecutive-hyphen-line limit. Shelby has been asked whether to defer that control or expand scope beyond the excluded custom composer. The control is disabled and this task remains incomplete until that decision and its resulting acceptance checks are resolved.
 
 ## Work preparation
 - **Scope:** confirmed by Shelby on 2026-10-01 ("see if you can get to the end of phase 2"). Phase 1 scope as listed in chat, including basic PDF export (Shelby chose "Yes, basic export"), InDesign layout (Shelby chose "Familiar InDesign layout"), and Phase 2 per `PLAN.md`.
@@ -238,7 +239,7 @@ No user data, installs or external services are involved. Each lane lands as its
 - **Now or later:** now. Shelby's instruction was "see if you can get to the end of phase 2".
 - **Tracker:** Tracker Trapper is restored for this resume; stable todo IDs mirror the 25 issue task IDs. Plan ID: `220A01DC-5B7A-4C21-808C-C75CA4CAD1EA`.
 - **Readiness:** pass · 2026-10-01 · R3: current state is greenfield (no UI to screenshot; repository tree at `14cf16b` is the evidence), target mockups and flow diagrams present · R7: Tracker Trapper waived by Shelby in chat (GitHub issue only); the issue checklist matches the 25 task IDs · R12: covered by per-lane merge reverts; no user data, installs or services
-- **Remaining questions:** see Open questions; none blocking.
+- **Remaining questions:** see Open decisions and questions. The P2-05 decision and real-flyer acceptance gate remain; other lanes continue independently.
 
 ## Resume audit, 2026-10-02
 - Clean `main`: `dac614c`; Phase 1 and P2-01 accepted (16/25 issue boxes).

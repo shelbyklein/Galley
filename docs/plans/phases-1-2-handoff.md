@@ -42,8 +42,8 @@ Lanes edit only the paths they own. To extend a shared file, prefer adding a new
 - `apps/desktop/e2e/helpers/**`
 - the lockfile
 
-## Environment facts (verified 2026-10-01)
-- **Tools:** macOS (arm64), Node 26.5, npm 11.17.
+## Environment facts (refreshed 2026-10-02)
+- **Tools:** macOS (arm64), Node 24.18.0, npm 11.16.0 in the resumed shell. The earlier run recorded Node 26.5 and npm 11.17; no runtime upgrade is part of this resume.
 - **Command-line tools:** Ghostscript `gs`, poppler (`pdftotext`, `pdffonts`, `pdfimages`, `pdftoppm`), `qpdf` and `rsvg-convert` are in `/opt/homebrew/bin`.
 - **npm and Electron:** npm 11 blocks Electron's postinstall. Add `"allowScripts": {"electron@44.5.1": true, "esbuild@<version>": true}` to the root `package.json`, as both spikes do; see `spikes/*/package.json`. Pin `"electron": "44.5.1"` exactly.
 - **Output profile:** `/Library/Application Support/Adobe/Color/Profiles/Recommended/CoatedGRACoL2006.icc`. Never copy it into the repo; the repository is **public**.
