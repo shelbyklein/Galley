@@ -41,7 +41,7 @@ async function styledStory(page: Page): Promise<void> {
 test('typing in a styled story keeps every paragraph style, local override and character style', async ({ galley }) => {
   const { page } = galley;
   await styledStory(page);
-  await expect(page.locator('[data-frame-id="t"] p')).toHaveCount(2);
+  await expect(page.locator('.galley-page [data-frame-id="t"] p')).toHaveCount(2);
   await setTool(page, 'type');
   await clickPage(page, { x: 250, y: 170 }); // empty space in the frame: the caret goes to the end
   await expect(page.getByTestId('text-editor')).toBeFocused();
@@ -64,13 +64,13 @@ test('typing in a styled story keeps every paragraph style, local override and c
   expect(doc.content[1].attrs).toEqual({ style: 'heading' });
   expect(doc.content[2].attrs).toEqual({ style: 'heading' });
   // and the page draws them in their styles
-  const styles = await page.locator('[data-frame-id="t"] p').evaluateAll((els) => els.map((el) => ({ style: el.getAttribute('data-paragraph-style'), size: Math.round(parseFloat(getComputedStyle(el).fontSize) * 100) / 100, align: getComputedStyle(el).textAlign })));
+  const styles = await page.locator('.galley-page [data-frame-id="t"] p').evaluateAll((els) => els.map((el) => ({ style: el.getAttribute('data-paragraph-style'), size: Math.round(parseFloat(getComputedStyle(el).fontSize) * 100) / 100, align: getComputedStyle(el).textAlign })));
   expect(styles).toEqual([
     { style: 'body', size: 13.33, align: 'center' },
     { style: 'heading', size: 26.67, align: 'left' },
     { style: 'heading', size: 26.67, align: 'left' },
   ]);
-  const weight = await page.locator('[data-frame-id="t"] p:first-child span:last-child').evaluate((el) => getComputedStyle(el).fontWeight);
+  const weight = await page.locator('.galley-page [data-frame-id="t"] p:first-child span:last-child').evaluate((el) => getComputedStyle(el).fontWeight);
   expect(weight).toBe('700');
 });
 

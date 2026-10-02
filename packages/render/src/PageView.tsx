@@ -165,12 +165,17 @@ export function PageView({ doc, pageId, colorMode, assetUrl, resolver, softProof
   useEffect(() => {
     let live = true;
     setReady(false);
-    void loadPageResources(faces, urls).then(() => live && setReady(true));
+    void loadPageResources(faces, urls).then(() => {
+      if (!live) return;
+      setReady(true);
+      // Exact FontFace bytes are installed now. The editable story owns a separate cached layout.
+      window.dispatchEvent(new CustomEvent('galley:text-fonts-ready', { detail: { pageId } }));
+    });
     return () => {
       live = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resourceKey]);
+  }, [resourceKey, pageId]);
 
   const text = useStoryLayouts(doc,pageId,colors,ready);
   const children: ReactNode[] = [];

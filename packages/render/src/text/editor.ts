@@ -18,7 +18,7 @@ import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 import { DOMSerializer,Fragment, Slice, type Node } from 'prosemirror-model';
 import { history, undo, redo } from 'prosemirror-history';
 import { keydownHandler } from 'prosemirror-keymap';
-import { chainCommands, deleteSelection, joinBackward, joinForward, splitBlock, toggleMark } from 'prosemirror-commands';
+import { chainCommands, deleteSelection, joinBackward, joinForward, splitBlockAs, toggleMark } from 'prosemirror-commands';
 import { resolvedParagraphOf,setSchemaSlots } from './schema';
 import {dropCapCss} from '../styles/dropcaps';
 import { makeWrapEl } from './wrap';
@@ -47,6 +47,8 @@ export interface EditorStats {
 }
 
 const surrogate = (s: string) => /[\ud800-\udbff][\udc00-\udfff]$/.test(s);
+// Paragraph styles and local overrides continue through Enter, including at a paragraph's end.
+const splitParagraph=splitBlockAs(node=>({type:node.type,attrs:node.attrs}));
 
 export class StoryEditor {
   story: EditorState;
@@ -320,13 +322,16 @@ export class StoryEditor {
     const a = map.viewToStory(ns.selection.anchor);
     const h = map.viewToStory(ns.selection.head);
     const oldDoc = this.story.doc;
-    const edit = diffRegion(oldDoc, newStoryDoc, h);
+    // The derived view contains only the laid-out prefix. Native edits (especially IME)
+    // must replace that prefix's changed region in the full source, preserving every overset paragraph.
+    const oldVisibleDoc = this.res.overset ? unthread(this.view.state.doc, this.res).doc : oldDoc;
+    const edit = diffRegion(oldVisibleDoc, newStoryDoc, h);
     if (!edit) {
       this.view.updateState(ns);
       return;
     }
     let stTr = this.story.tr.replace(edit.from, edit.oldTo, newStoryDoc.slice(edit.from, edit.newTo));
-    if (!stTr.doc.eq(newStoryDoc)) stTr = this.story.tr.replaceWith(0, oldDoc.content.size, newStoryDoc.content);
+    if (!this.res.overset && !stTr.doc.eq(newStoryDoc)) stTr = this.story.tr.replaceWith(0, oldDoc.content.size, newStoryDoc.content);
     stTr.setSelection(TextSelection.create(stTr.doc, a, h));
     if (tr.getMeta('addToHistory') === false) stTr.setMeta('addToHistory', false);
     const slot = ns.doc.resolve(ns.selection.head).depth > 0 ? ns.doc.resolve(ns.selection.head).index(0) : -1;
@@ -388,8 +393,8 @@ export class StoryEditor {
       return true;
     };
     return {
-      Enter: () => this.runStory(splitBlock),
-      'Shift-Enter': () => this.runStory(splitBlock),
+      Enter: () => this.runStory(splitParagraph),
+      'Shift-Enter': () => this.runStory(splitParagraph),
       Backspace: backspace,
       'Alt-Backspace': backspace,
       Delete: del,
@@ -536,7 +541,7 @@ export class StoryEditor {
         break;
       case 'insertParagraph':
       case 'insertLineBreak':
-        this.runStory(splitBlock);
+        this.runStory(splitParagraph);
         break;
       case 'insertFromPaste':
       case 'insertFromDrop':

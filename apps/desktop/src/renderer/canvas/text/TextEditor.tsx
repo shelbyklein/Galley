@@ -26,6 +26,13 @@ export function TextEditor({frameId,caret}:{frameId:Id;caret:'end'|{clientX:numb
     const historyAction=(action:'undo'|'redo')=>()=>useEditorStore.getState()[action]();
     const e=new StoryEditor(el,schema.nodeFromJSON(story.doc),slots,measurer,{undo:historyAction('undo'),redo:historyAction('redo'),attributes:{class:'gl-text-editor gl-thread-editor'}});
     editor.current=e;setActiveStoryEditor(e);shown.current=story.doc;
+    const fontsReady=(event:Event)=>{
+      if((event as CustomEvent<{pageId:Id}>).detail?.pageId!==pageIdOf(doc,frameId)) return;
+      // Preserve the active PM composition DOM; compositionend performs the queued full refresh.
+      if(e.composing || e.pendingRethread) e.pendingRethread=true;
+      else e.rethreadAll();
+    };
+    window.addEventListener('galley:text-fonts-ready',fontsReady);
     let depth=undoDepth(e.story);
     e.onUpdate=()=>{
       const s=useEditorStore.getState();
@@ -54,7 +61,7 @@ export function TextEditor({frameId,caret}:{frameId:Id;caret:'end'|{clientX:numb
     }
     e.setStorySelection(previous?.anchor ?? pos,previous?.head ?? pos,slot);e.onUpdate();
     if(window.galley?.e2e) (window as any).__galleyText={editor:e,lines:()=>extractLines(document.querySelector('.galley-page') as HTMLElement,el)};
-    return ()=>{saved.current={storyId:story.id,...e.storySelection(),focused:document.activeElement===e.view.dom};e.onUpdate=null;e.destroy();measurer.dispose();editor.current=null;setActiveStoryEditor(null);useEditorStore.getState().setTextSelection(null);if(window.galley?.e2e) delete (window as any).__galleyText;};
+    return ()=>{saved.current={storyId:story.id,...e.storySelection(),focused:document.activeElement===e.view.dom};e.onUpdate=null;window.removeEventListener('galley:text-fonts-ready',fontsReady);e.destroy();measurer.dispose();editor.current=null;setActiveStoryEditor(null);useEditorStore.getState().setTextSelection(null);if(window.galley?.e2e) delete (window as any).__galleyText;};
   // Rebuild style/geometry DOM while preserving selection. Text edits alone sync below.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[frameId,doc.paragraphStyles,doc.characterStyles,doc.frames,doc.baselineGrid,story?.frameIds,scale]);
