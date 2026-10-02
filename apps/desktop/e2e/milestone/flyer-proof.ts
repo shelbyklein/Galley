@@ -74,11 +74,11 @@ export async function captureFlyerLines(page: Page, ids: string[]) {
           marker.style.cssText = 'display:inline-block;width:0;height:0;padding:0;margin:0;border:0;vertical-align:baseline';
           const at = group[0]!.range.cloneRange(); at.collapse(false); at.insertNode(marker);
           const during = group[0]!.range.getBoundingClientRect();
-          if (Math.max(Math.abs(during.top - before.top), Math.abs(during.left - before.left)) > 0.01) throw new Error('Baseline probe changed live text geometry');
+          if (Math.max(Math.abs(during.top - before.top), Math.abs(during.left - before.left), Math.abs(during.width - before.width), Math.abs(during.height - before.height)) > 0.01) throw new Error('Baseline probe changed live text geometry');
           const baseline = (marker.getBoundingClientRect().bottom - origin.y) / zoom;
           marker.remove(); para.normalize();
           const after = group[0]!.range.getBoundingClientRect();
-          if (Math.max(Math.abs(after.top - before.top), Math.abs(after.left - before.left)) > 0.01) throw new Error('Baseline probe changed text geometry');
+          if (Math.max(Math.abs(after.top - before.top), Math.abs(after.left - before.left), Math.abs(after.width - before.width), Math.abs(after.height - before.height)) > 0.01) throw new Error('Baseline probe changed text geometry');
           lines.push({ text: group.map(w => w.text).join(' '), cy: group.reduce((sum, w) => sum + w.cy, 0) / group.length, baseline,
             left: Math.min(...group.map(w => w.left)), right: Math.max(...group.map(w => w.right)) });
         }
