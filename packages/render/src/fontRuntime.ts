@@ -1,6 +1,6 @@
 /** App-supplied exact-file font loader. Standalone render fixtures retain bundled Inter without Electron. */
 export interface RequestedFont { family: string; weight: number; style: 'normal' | 'italic' }
-export interface LoadedFont extends RequestedFont { url: string; missing: boolean; face: { family: string; styleName: string } }
+export interface LoadedFont extends RequestedFont { url: string; missing: boolean; face: { family: string; styleName: string; source?: 'bundled' | 'system' | 'document' } }
 type FontSource = (requests: RequestedFont[]) => Promise<LoadedFont[]>;
 let source: FontSource | undefined;
 let epoch = 0;
@@ -36,9 +36,17 @@ export async function loadExactFonts(faces: readonly string[]): Promise<void> {
   if (id !== sequence) return;
   const nextKey = JSON.stringify(bindings);
   if (key === nextKey) { highlightMissingFonts(); return; }
-  const next = bindings.map((b) => new FontFace(b.family, `url(${JSON.stringify(b.url)})`, { weight: String(b.weight), style: b.style, display: 'block' }));
+  // Bundled Inter uses the identical CSS imports in both entry points, including the original
+  // Latin → Latin-ext per-glyph fallback chain. A scripted Latin face would override that chain.
+  const next = bindings.filter(b => b.missing || b.face.source !== 'bundled').map((b) => new FontFace(b.family, `url(${JSON.stringify(b.url)})`, { weight: String(b.weight), style: b.style, display: 'block' }));
   // FontFace.load rejection must remain visible; a press PDF must never silently use a different local font.
-  await Promise.all(next.map((face) => face.load()));
+  await Promise.all([
+    ...next.map((face) => face.load()),
+    ...bindings.filter(b => !b.missing && b.face.source === 'bundled').map(async b => {
+      const cssFaces = await document.fonts.load(`${b.style} ${b.weight} 16px ${JSON.stringify(b.family)}`);
+      if (!cssFaces.length || cssFaces.some(face => face.status !== 'loaded')) throw new Error(`The bundled CSS font ${b.family} ${b.weight} ${b.style} did not load.`);
+    }),
+  ]);
   if (id !== sequence) return;
   for (const font of loaded) document.fonts.delete(font);
   next.forEach((font) => document.fonts.add(font));

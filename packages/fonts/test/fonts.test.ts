@@ -56,6 +56,21 @@ describe('font inventory and export instances', () => {
     for (const fsType of [2, 0x100, 0x200, 0x104]) expect(embeddingPermission(fsType).embeddable).toBe(false);
   });
 
+  test('legacy bundled weights use CSS nearest-face rules without replacing exact document styles', async () => {
+    const regular = (await fixtures()).find(f => f.family === 'Inter')!;
+    const bundled = [400, 700].map(weight => ({ ...regular, source: 'bundled' as const, style: 'italic' as const, weight }));
+    const request = { family: 'Inter', weight: 900, style: 'italic' as const };
+    expect(resolveFontFace(groupFontFamilies(bundled), request)).toMatchObject({ missing: false, face: { source: 'bundled', weight: 700 } });
+    const authored = { ...regular, style: 'italic' as const, weight: 900 };
+    expect(findFontFace(groupFontFamilies([...bundled, authored]), request)).toMatchObject({ source: 'document', weight: 900 });
+    expect(findFontFace(groupFontFamilies([{ ...regular, style: 'italic', weight: 700 }]), request)).toBeUndefined();
+    // CSS searches heavier faces first above 500, lighter faces first below 400, and 400–500 specially.
+    const weights = [300, 400, 500, 700].map(weight => ({ ...regular, source: 'bundled' as const, weight }));
+    for (const [requested, chosen] of [[350, 300], [450, 500], [600, 700]]) {
+      expect(findFontFace(groupFontFamilies(weights), { family: 'Inter', weight: requested!, style: 'normal' })?.weight).toBe(chosen);
+    }
+  });
+
   test('HarfBuzz WASM pins all axes and keeps glyph advances and shaping', async () => {
     const face = (await fixtures()).find((f) => f.family === 'Roboto')!;
     const bytes = await instanceFont(face, { family: 'Roboto', weight: 650, style: 'normal' });
