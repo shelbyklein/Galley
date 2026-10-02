@@ -167,6 +167,19 @@ test('builds a styled flyer with two linked frames and contour wrap, saves/reope
   await expect(page.getByTestId('export-path')).toHaveText(pdf);
   await page.getByTestId('export-done').click();
   const result = checkFlyer(pdf, pkg, screenFile, path.join(work, 'checks'));
+  // The independent proof must catch a uniform text displacement, even when every line still matches.
+  const displacedFile = path.join(work, 'screen-displaced.json');
+  fs.writeFileSync(displacedFile, JSON.stringify({ ...proof, frames: proof.frames.map(frame => ({ ...frame,
+    lines: frame.lines.map(line => ({ ...line, baseline: line.baseline + 1 })) })) }));
+  const negative = spawnSync(path.join(REPO_ROOT, 'node_modules/.bin/tsx'),
+    [path.join(REPO_ROOT, 'scripts/milestone2/check-flyer.ts'), pdf, pkg, displacedFile, path.join(work, 'negative-checks')],
+    { encoding: 'utf8', env: TOOL_ENV, maxBuffer: 128 << 20 });
+  expect(negative.status, negative.stderr).toBe(1);
+  const displaced = JSON.parse(negative.stdout.trim().split('\n').at(-1)!);
+  expect(displaced.lineMatch.mismatches).toBe(0);
+  expect(displaced.lineMatch.baselineMax).toBeGreaterThan(0.5);
+  expect(displaced.checks.find((check: { name: string }) => check.name === 'UI flyer screen/PDF line agreement').pass).toBe(false);
+  result.negativeControl = { displacementPt: 1, rejected: true, baselineMax: displaced.lineMatch.baselineMax };
   await info.attach('flyer-proof.json', { body: JSON.stringify(result, null, 2), contentType: 'application/json' });
   fs.writeFileSync(path.join(FLYER_SHOTS, 'proof.json'), JSON.stringify(result, null, 2));
   const rendered = spawnSync('pdftoppm', ['-png', '-r', '90', '-singlefile', pdf, path.join(FLYER_SHOTS, '07-exported-pdf')], { encoding: 'utf8', env: TOOL_ENV });
