@@ -6,7 +6,6 @@
  *   panels        which docked panels are shown and which are collapsed (remembered between runs)
  *   proxy         whether swatches apply to the fill or the stroke (the fill/stroke proxy in the Tools column)
  *   control strip the reference point, linked proportions, the last chosen fitting
- *   layers        the active layer (where the Layers panel's New Layer goes)
  *   file          the open package, its broken image links, recent files
  *   notices       errors and warnings shown over the canvas
  *   dialog        the one open modal dialog
@@ -55,9 +54,6 @@ export interface ShellState {
   /** The fitting last chosen from the control strip's dropdown (display only). */
   lastFitting: string | null;
   setLastFitting(label: string | null): void;
-
-  activeLayerId: Id | null;
-  setActiveLayer(id: Id | null): void;
 
   /** The Swatches panel's tint field, and the swatch it highlights (`null` is [None]). */
   tint: number;
@@ -130,9 +126,6 @@ export const useShellStore = create<ShellState>()((set, get) => ({
   setProportionsLinked: (proportionsLinked) => set({ proportionsLinked }),
   lastFitting: null,
   setLastFitting: (lastFitting) => set({ lastFitting }),
-
-  activeLayerId: null,
-  setActiveLayer: (activeLayerId) => set({ activeLayerId }),
 
   tint: 100,
   setTint: (tint) => set({ tint: Math.min(100, Math.max(0, tint)) }),

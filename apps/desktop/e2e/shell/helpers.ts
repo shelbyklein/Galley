@@ -1,4 +1,5 @@
 import type { ElectronApplication, Page } from '@playwright/test';
+import sharp from 'sharp';
 
 /**
  * Helpers for the shell, files and panels specs (lane C). They drive what a test cannot click: the native menu bar and
@@ -162,7 +163,6 @@ export async function getShellState(page: Page) {
       panels: s.panels as Record<string, { visible: boolean; collapsed: boolean }>,
       proxyTarget: s.proxyTarget as string,
       refPoint: s.refPoint as { x: number; y: number },
-      activeLayerId: s.activeLayerId as string | null,
       packagePath: s.packagePath as string | null,
       missingLinks: s.missingLinks as { assetId: string; path: string }[],
       recents: s.recents as { path: string; name: string }[],
@@ -170,4 +170,44 @@ export async function getShellState(page: Page) {
       tint: s.tint as number,
     };
   });
+}
+
+// ---------------------------------------------------------------------------------------------------- pixels
+
+export interface PixelDiff {
+  width: number;
+  height: number;
+  /** Pixels where any channel differs at all. */
+  differing: number;
+  /** Pixels where a channel differs by more than `tolerance`: a real difference, not resampling noise. */
+  significant: number;
+  maxDelta: number;
+}
+
+/**
+ * Compare two PNG screenshots. Chromium does not always resample a large photo the same way twice (the same file
+ * decoded and drawn after a reload can differ by a few levels per channel in about one run in thirty), so "renders
+ * identically" means: the same size, and no pixel off by more than `tolerance` (default 48 of 255). A missing or
+ * misplaced frame, another picture, or a different color is far beyond that.
+ */
+export async function diffPngs(a: Buffer, b: Buffer, tolerance = 48): Promise<PixelDiff> {
+  const [ia, ib] = await Promise.all([sharp(a).raw().toBuffer({ resolveWithObject: true }), sharp(b).raw().toBuffer({ resolveWithObject: true })]);
+  const { width, height, channels } = ia.info;
+  if (ib.info.width !== width || ib.info.height !== height) return { width, height, differing: Infinity, significant: Infinity, maxDelta: 255 };
+  let differing = 0;
+  let significant = 0;
+  let maxDelta = 0;
+  for (let i = 0; i < width * height; i++) {
+    let d = 0;
+    for (let c = 0; c < channels; c++) d = Math.max(d, Math.abs(ia.data[i * channels + c]! - ib.data[i * channels + c]!));
+    if (d > 0) differing++;
+    if (d > tolerance) significant++;
+    if (d > maxDelta) maxDelta = d;
+  }
+  return { width, height, differing, significant, maxDelta };
+}
+
+/** The active layer: where the next new object goes (the editor store's `activeLayerId`). */
+export async function getActiveLayerId(page: Page): Promise<string | null> {
+  return page.evaluate(() => (window as unknown as { __galley: Hook }).__galley.store.getState().activeLayerId as string | null);
 }

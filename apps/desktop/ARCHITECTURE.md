@@ -202,8 +202,9 @@ blocks shortcuts. Tests read and click the native menu through the main process 
 
 **The shell** (`renderer/shell/`, `panels/`, `dialogs/`). `shellStore.ts` holds UI state that is not the document and not
 shared with other lanes: which panels are shown and collapsed (remembered), the fill/stroke proxy target, the control
-strip's reference point and linked proportions, the active layer, the open package path, broken links, recent files,
-notices and the open dialog. Docked panels are built on `panels/Panel.tsx` and listed in `shell/Dock.tsx`. Icons are SVG
+strip's reference point and linked proportions, the open package path, broken links, recent files, notices and the
+open dialog. The one piece of lane C state other lanes need is in the editor store: `activeLayerId` (the layer new
+objects go on). The Layers panel sets it, it follows the selection, and the store keeps it a layer that exists. Docked panels are built on `panels/Panel.tsx` and listed in `shell/Dock.tsx`. Icons are SVG
 files in `shell/icons/` used as CSS masks (`shell/Icon.tsx`); renderer code contains no shape markup. Frames on a hidden
 or locked layer cannot be selected: `store/selectable.ts` filters the selection in the store, so every way of selecting
 obeys it. The control strip's geometry (reference point, X/Y/W/H, rotation) is in `shell/control-strip/transform.ts`;

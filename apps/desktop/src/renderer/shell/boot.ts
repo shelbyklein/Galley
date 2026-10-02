@@ -8,15 +8,22 @@ import { installMenuBridge } from './menu/menuBridge';
 import { selectDoc, selectIsDirty, useEditorStore } from '../store';
 import { useShellStore } from './shellStore';
 
-/** Keep the Layers panel's active layer pointing at a layer that exists (the top one by default). */
-function keepActiveLayerValid(): void {
-  const sync = () => {
-    const doc = selectDoc(useEditorStore.getState());
-    const active = useShellStore.getState().activeLayerId;
-    if (!active || !doc.layers[active]) useShellStore.getState().setActiveLayer(doc.layerOrder[doc.layerOrder.length - 1] ?? null);
-  };
-  sync();
-  useEditorStore.subscribe(sync);
+/**
+ * The active layer follows the selection (as in InDesign): selecting frames that all sit on one layer highlights that
+ * layer in the Layers panel, so the next object drawn goes there. (The store keeps it a layer that exists.)
+ */
+function activeLayerFollowsSelection(): void {
+  let previous = useEditorStore.getState().selection;
+  useEditorStore.subscribe((state) => {
+    if (state.selection === previous) return;
+    previous = state.selection;
+    const doc = selectDoc(state);
+    const layers = new Set(state.selection.map((id) => doc.frames[id]?.layerId));
+    if (layers.size === 1) {
+      const [layerId] = layers;
+      if (layerId && layerId !== state.activeLayerId) state.setActiveLayer(layerId);
+    }
+  });
 }
 
 /** Tell the main process what the window needs for its chrome and for the close prompt. */
@@ -39,7 +46,7 @@ function reportDocumentState(): void {
 
 export async function startShell(): Promise<void> {
   registerShellCommands();
-  keepActiveLayerValid();
+  activeLayerFollowsSelection();
   const api = window.galley;
   if (api) {
     installMenuBridge();

@@ -3,7 +3,7 @@ import { FIXTURES } from '../helpers/launch';
 import { test, expect } from '../helpers/fixtures';
 import { getDocumentJson, getEditorState } from '../helpers/app-state';
 import { expectBaseline, snap, waitForStable } from '../helpers/screenshot';
-import { clickMenuItem, dispatchModel, getFrame, getModelDoc, getShellState, setSelection } from './helpers';
+import { clickMenuItem, dispatchModel, getActiveLayerId, getFrame, getModelDoc, getShellState, setSelection } from './helpers';
 
 // P1-14: the Pages, Layers and Swatches panels and the control strip's object fields. Every panel action must update
 // the model and the canvas; each is one undo step.
@@ -177,7 +177,7 @@ test.describe('Layers panel', () => {
     // the new layer is on top, so it is the first row, and it is the active layer
     await expect(page.locator('[data-layer-id]').first()).toHaveAttribute('data-layer-id', second);
     await expect(page.locator(`[data-layer-id="${second}"]`)).toHaveClass(/is-active/);
-    expect((await getShellState(page)).activeLayerId).toBe(second);
+    expect((await getActiveLayerId(page))).toBe(second);
 
     // a layer made while the lower one is active goes between them
     await page.locator('[data-layer-id="layer_1"]').click();
@@ -188,6 +188,27 @@ test.describe('Layers panel', () => {
     expect(doc.layerOrder[2]).toBe(second);
     expect(doc.layers[doc.layerOrder[1]].name).toBe('Layer 3');
     await expect(page.getByTestId('layers-summary')).toHaveText('Page: 1, 3 Layers');
+  });
+
+  test('the active layer is where new objects go: the clicked layer, or the layer of the selection', async ({ galley }) => {
+    const { page } = galley;
+    await page.getByTestId('layers-new').click();
+    const [bottom, top] = (await getModelDoc(page)).layerOrder as string[];
+    expect(await getActiveLayerId(page)).toBe(top);
+    await dispatchModel(page, 'moveFramesToLayer', { ids: ['photo-frame'], layerId: top });
+    // selecting a frame highlights its layer, as in InDesign
+    await setSelection(page, ['spring']);
+    expect(await getActiveLayerId(page)).toBe(bottom);
+    await expect(page.locator(`[data-layer-id="${bottom}"]`)).toHaveClass(/is-active/);
+    await setSelection(page, ['photo-frame']);
+    expect(await getActiveLayerId(page)).toBe(top);
+    // frames from two layers leave it alone
+    await setSelection(page, ['photo-frame', 'spring']);
+    expect(await getActiveLayerId(page)).toBe(top);
+    // deleting the active layer falls back to the top layer that is left
+    await page.locator(`[data-layer-id="${top}"]`).click();
+    await page.getByTestId('layers-delete').click();
+    expect(await getActiveLayerId(page)).toBe(bottom);
   });
 
   test('renames a layer by double-clicking its name; Escape cancels and an empty name is ignored', async ({ galley }) => {
@@ -239,7 +260,7 @@ test.describe('Layers panel', () => {
     // a plain click on a row only activates it
     await row(bottom!).click();
     expect((await getModelDoc(page)).layerOrder).toEqual([b, bottom, a]);
-    expect((await getShellState(page)).activeLayerId).toBe(bottom);
+    expect((await getActiveLayerId(page))).toBe(bottom);
 
     await page.getByTestId('layers-menu').click();
     await page.getByRole('menuitem', { name: 'Move Layer Up' }).click();
@@ -333,7 +354,7 @@ test.describe('Layers panel', () => {
     expect(doc.layerOrder).toEqual(['layer_1']);
     expect(doc.frames.spring).toBeUndefined();
     await expect(page.locator('.galley-page [data-frame-id="spring"]')).toHaveCount(0);
-    expect((await getShellState(page)).activeLayerId).toBe('layer_1');
+    expect((await getActiveLayerId(page))).toBe('layer_1');
     await page.keyboard.press('Meta+z');
     expect((await getModelDoc(page)).frames.spring).toBeDefined();
     expect((await getModelDoc(page)).layerOrder).toEqual(['layer_1', second]);

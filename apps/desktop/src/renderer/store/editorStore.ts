@@ -79,6 +79,14 @@ export interface EditorState {
   clearSelection(): void;
   setCurrentPage(id: Id): void;
 
+  // ----- active layer (not in history)
+  /**
+   * The layer new objects go on: the one highlighted in the Layers panel (lane C), which follows the selection. Always a
+   * layer that exists (the top layer by default). Lane B's drawing and placing tools read it.
+   */
+  activeLayerId: Id | null;
+  setActiveLayer(id: Id | null): void;
+
   // ----- viewport and tool (not in history)
   viewport: Viewport;
   setViewport(patch: Partial<Viewport>): void;
@@ -99,14 +107,20 @@ export function blankDocument(): GalleyDocument {
 }
 
 /** After the document changes: drop selected ids that no longer exist or sit on a hidden or locked layer, and keep the current page valid. */
-function reconcile(state: EditorState, history: HistoryState): Pick<EditorState, 'history' | 'selection' | 'currentPageId'> {
+function reconcile(state: EditorState, history: HistoryState): Pick<EditorState, 'history' | 'selection' | 'currentPageId' | 'activeLayerId'> {
   const doc = history.doc;
   const selection = state.selection.filter((id) => isSelectable(doc, id));
   return {
     history,
     selection: selection.length === state.selection.length ? state.selection : selection,
     currentPageId: doc.pages[state.currentPageId] ? state.currentPageId : doc.pageOrder[0]!,
+    activeLayerId: state.activeLayerId && doc.layers[state.activeLayerId] ? state.activeLayerId : topLayerId(doc),
   };
+}
+
+/** The topmost layer, the default active layer. */
+export function topLayerId(doc: GalleyDocument): Id | null {
+  return doc.layerOrder[doc.layerOrder.length - 1] ?? null;
 }
 
 export function createEditorState(initial: GalleyDocument = blankDocument()) {
@@ -127,7 +141,7 @@ export function createEditorState(initial: GalleyDocument = blankDocument()) {
       redo: () => update(redo(get().history)),
       openDocument: (doc) => {
         const history = resetHistory(get().history, doc);
-        set({ history, savedRevision: historyRevision(history), selection: [], currentPageId: doc.pageOrder[0]!, viewport: { zoom: 1, panX: 0, panY: 0, fit: true } });
+        set({ history, savedRevision: historyRevision(history), selection: [], currentPageId: doc.pageOrder[0]!, activeLayerId: topLayerId(doc), viewport: { zoom: 1, panX: 0, panY: 0, fit: true } });
       },
       markSaved: () => {
         const history = closeCoalescing(get().history);
@@ -151,6 +165,11 @@ export function createEditorState(initial: GalleyDocument = blankDocument()) {
       },
       setCurrentPage: (id) => {
         if (get().history.doc.pages[id]) set({ currentPageId: id });
+      },
+
+      activeLayerId: topLayerId(initial),
+      setActiveLayer: (id) => {
+        if (id === null || get().history.doc.layers[id]) set({ activeLayerId: id });
       },
 
       viewport: { zoom: 1, panX: 0, panY: 0, fit: true },

@@ -13,7 +13,6 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { selectDoc, useEditorStore } from '../store';
 import { Icon } from '../shell/Icon';
-import { useShellStore } from '../shell/shellStore';
 import { FooterButton, Panel } from './Panel';
 import { useReorder } from './useReorder';
 
@@ -47,17 +46,16 @@ export function nextLayerColor(doc: GalleyDocument): string {
 export function newLayer(): void {
   const store = useEditorStore.getState();
   const doc = selectDoc(store);
-  const shell = useShellStore.getState();
-  const above = shell.activeLayerId ? doc.layerOrder.indexOf(shell.activeLayerId) : doc.layerOrder.length - 1;
+  const above = store.activeLayerId ? doc.layerOrder.indexOf(store.activeLayerId) : doc.layerOrder.length - 1;
   const layer = makeLayer({ id: createId('layer'), name: nextLayerName(doc), color: nextLayerColor(doc) });
   store.dispatch(addLayer, { layer, index: above + 1 });
-  useShellStore.getState().setActiveLayer(layer.id);
+  useEditorStore.getState().setActiveLayer(layer.id);
 }
 
 export function deleteActiveLayer(): void {
   const store = useEditorStore.getState();
   const doc = selectDoc(store);
-  const id = useShellStore.getState().activeLayerId;
+  const id = store.activeLayerId;
   if (!id || doc.layerOrder.length <= 1) return;
   store.dispatch(removeLayer, { id });
 }
@@ -66,7 +64,7 @@ export function deleteActiveLayer(): void {
 export function moveActiveLayer(delta: -1 | 1): void {
   const store = useEditorStore.getState();
   const doc = selectDoc(store);
-  const id = useShellStore.getState().activeLayerId;
+  const id = store.activeLayerId;
   if (!id) return;
   const to = doc.layerOrder.indexOf(id) + delta;
   if (to < 0 || to >= doc.layerOrder.length) return;
@@ -127,7 +125,7 @@ export function LayersPanel() {
   const doc = useEditorStore(selectDoc);
   const selection = useEditorStore((s) => s.selection);
   const currentPageId = useEditorStore((s) => s.currentPageId);
-  const activeLayerId = useShellStore((s) => s.activeLayerId);
+  const activeLayerId = useEditorStore((s) => s.activeLayerId);
   const [collapsed, setCollapsed] = useState<ReadonlySet<Id>>(new Set());
   const [editing, setEditing] = useState<Id | null>(null);
   const topFirst = [...doc.layerOrder].reverse();
@@ -182,7 +180,7 @@ export function LayersPanel() {
                 dropTarget={reorder.drag?.over === i && reorder.drag.from !== i}
                 dragging={reorder.drag?.from === i}
                 onPointerDown={reorder.start(i)}
-                onActivate={() => !reorder.wasDragged() && useShellStore.getState().setActiveLayer(id)}
+                onActivate={() => !reorder.wasDragged() && useEditorStore.getState().setActiveLayer(id)}
                 onToggleCollapsed={() => setCollapsed((c) => { const n = new Set(c); if (n.has(id)) n.delete(id); else n.add(id); return n; })}
                 onEdit={(on) => setEditing(on ? id : null)}
               />

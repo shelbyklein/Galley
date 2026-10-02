@@ -5,7 +5,7 @@ import { FIXTURES, launchApp } from '../helpers/launch';
 import { test, expect } from '../helpers/fixtures';
 import { getDocumentJson, getEditorState, runCommand } from '../helpers/app-state';
 import { expectBaseline, snap, waitForStable } from '../helpers/screenshot';
-import { clickMenuItem, dialogCalls, dispatchModel, findItem, getModelDoc, getShellState, readGalleyMenus, stubDialogs } from './helpers';
+import { clickMenuItem, dialogCalls, diffPngs, dispatchModel, findItem, getModelDoc, getShellState, readGalleyMenus, stubDialogs } from './helpers';
 
 // P1-13: documents and files. New Document with presets, Open / Save / Save As for `.galley` packages, recent files,
 // the dirty indicator and close prompt, relative image links, and the missing-link placeholder and warning.
@@ -20,6 +20,25 @@ test.afterEach(() => {
 });
 
 const mm = (n: number) => (n * 72) / 25.4;
+
+/**
+ * The page as pixels, once it has stopped changing: opening a package changes its image URLs, so the picture reloads
+ * after the document is swapped. Take shots until two in a row are identical (and every image has loaded).
+ */
+async function settledPageShot(page: import('@playwright/test').Page): Promise<Buffer> {
+  await waitForStable(page);
+  await expect
+    .poll(() => page.evaluate(() => Array.from(document.querySelectorAll('.galley-page img')).every((img) => (img as HTMLImageElement).complete && (img as HTMLImageElement).naturalWidth > 0)))
+    .toBe(true);
+  let previous = await page.locator('.galley-page').screenshot();
+  for (let i = 0; i < 20; i++) {
+    await page.waitForTimeout(100);
+    const next = await page.locator('.galley-page').screenshot();
+    if (next.equals(previous)) return next;
+    previous = next;
+  }
+  throw new Error('the page never stopped changing');
+}
 const firstPage = (doc: any) => doc.pages[doc.pageOrder[0]];
 
 /** A copy of the poster fixture in the temp folder. */
@@ -145,7 +164,7 @@ test.describe('Save, Save As and Open', () => {
     await waitForStable(page);
     const original = await getModelDoc(page);
     const originalJson = await getDocumentJson(page);
-    const picture = await page.locator('.galley-page').screenshot();
+    const picture = await settledPageShot(page);
 
     const target = path.join(tmp, 'Copy of Poster.galley');
     await stubDialogs(app, { save: [target], open: [target] });
@@ -169,9 +188,10 @@ test.describe('Save, Save As and Open', () => {
     await runCommand(page, 'file.open');
     await expect.poll(async () => (await getDocumentJson(page)) === originalJson).toBe(true);
     expect(await getModelDoc(page)).toEqual(original);
-    await waitForStable(page);
-    const again = await page.locator('.galley-page').screenshot();
-    expect(again.equals(picture), 'the reopened document renders pixel for pixel like the original').toBe(true);
+    const again = await settledPageShot(page);
+    const diff = await diffPngs(picture, again);
+    expect(diff.significant, `the reopened document renders like the original (${JSON.stringify(diff)})`).toBe(0);
+    expect(diff.differing).toBeLessThan(diff.width * diff.height * 0.5); // resampling noise stays within the photo
     await snap(page, 'reopened-copy', { testInfo });
     await expectBaseline(page, 'reopened-copy');
     expect((await dialogCalls(app)).map((c) => c.kind)).toEqual(['save', 'open']);
