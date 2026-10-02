@@ -1,14 +1,16 @@
-import { createColorResolver, type ColorResolver } from '@galley/render';
+import { createColorResolver, defaultSoftProof, getSoftProofEpoch, subscribeSoftProof, type ColorResolver } from '@galley/render';
 import type { Paint } from '@galley/model';
-import { useMemo, type CSSProperties } from 'react';
+import { useMemo, useSyncExternalStore, type CSSProperties } from 'react';
 import { selectDoc, useEditorStore } from '../store';
 
-/** Resolves paints to the CSS colors the canvas shows (screen mode). Re-created only when the swatches change. */
+/** Resolves paints to the CSS colors the canvas shows (screen mode, soft-proofed). Re-created when the swatches or the proof answers change. */
 export function useScreenColors(): ColorResolver {
   const swatches = useEditorStore((s) => selectDoc(s).swatches);
   const doc = useEditorStore.getState().history.doc;
+  // Chips show the same soft-proofed colors as the canvas, and repaint when the proof answers arrive.
+  const proofEpoch = useSyncExternalStore(subscribeSoftProof, getSoftProofEpoch);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useMemo(() => createColorResolver({ ...doc, swatches }, 'screen'), [swatches]);
+  return useMemo(() => createColorResolver({ ...doc, swatches }, 'screen', { softProof: defaultSoftProof }), [swatches, proofEpoch]);
 }
 
 /**

@@ -14,9 +14,9 @@ test.describe('menu bar', () => {
     const labels = (name: string) => menus.find((m) => m.label === name)!.items!.filter((i) => i.type !== 'separator').map((i) => i.label);
 
     expect(labels('File')).toEqual(['New…', 'Open…', 'Open Recent', 'Close', 'Save', 'Save As…', 'Place…', 'Export PDF/X-4…']);
-    expect(labels('Edit')).toEqual(['Undo', 'Redo', 'Cut', 'Copy', 'Paste', 'Duplicate', 'Delete', 'Select All', 'Deselect All']);
+    expect(labels('Edit')).toEqual(['Undo', 'Redo', 'Cut', 'Copy', 'Paste', 'Paste in Place', 'Duplicate', 'Delete', 'Select All', 'Deselect All']);
     expect(labels('Object')).toEqual(['Group', 'Ungroup', 'Arrange', 'Fitting']);
-    expect(labels('View').slice(0, 7)).toEqual(['Zoom In', 'Zoom Out', 'Fit Page in Window', 'Actual Size', 'Rulers', 'Guides', 'Units']);
+    expect(labels('View').slice(0, 7)).toEqual(['Zoom In', 'Zoom Out', 'Fit Page in Window', 'Actual Size', 'Show/Hide Rulers', 'Show/Hide Guides', 'Units']);
     expect(labels('Window').slice(0, 3)).toEqual(['Pages', 'Layers', 'Swatches']);
 
     // submenus
@@ -139,12 +139,13 @@ test.describe('menu accelerators and the key handler', () => {
     await page.locator('[data-field="x"]').evaluate((el: HTMLInputElement) => el.setSelectionRange(2, 2));
     await clickMenuItem(app, 'edit.selectAll');
     await expect.poll(() => page.locator('[data-field="x"]').evaluate((el: HTMLInputElement) => [el.selectionStart, el.selectionEnd])).toEqual([0, 5]);
-    expect((await runs(page))['edit.selectAll'] ?? 0).toBe(0); // the document command did not run
+    // the document command did not run: lane B's Select All would have selected every frame
+    expect((await getEditorState(page)).selection).toEqual(['photo-frame']);
     await page.keyboard.press('Escape');
-    // with the canvas focused it is the document command
+    // with the canvas focused it is the document command (lane B's edit.selectAll selects every frame on the page)
     await page.waitForTimeout(150);
     await clickMenuItem(app, 'edit.selectAll');
-    await expect.poll(async () => (await runs(page))['edit.selectAll']).toBe(1);
+    await expect.poll(async () => (await getEditorState(page)).selection.length).toBeGreaterThan(1);
   });
 
   test('typing Cmd-A, C, V, X or Z in a field never runs a document command', async ({ galley }) => {
@@ -201,24 +202,24 @@ test.describe('tools', () => {
   test('each shortcut activates its tool: store state and the highlighted button', async ({ galley }) => {
     const { page } = galley;
     expect((await getEditorState(page)).activeTool).toBe('select');
-    await expect(page.locator('[data-tool="select"]')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('.gl-tool-button[data-tool="select"]')).toHaveAttribute('aria-pressed', 'true');
     for (const { key, tool } of [...TOOL_KEYS].reverse()) {
       await page.keyboard.press(key);
       expect((await getEditorState(page)).activeTool, `key ${key}`).toBe(tool);
-      await expect(page.locator(`[data-tool="${tool}"]`)).toHaveAttribute('aria-pressed', 'true');
-      await expect(page.locator(`[data-tool="${tool}"]`)).toHaveClass(/is-active/);
+      await expect(page.locator(`.gl-tool-button[data-tool="${tool}"]`)).toHaveAttribute('aria-pressed', 'true');
+      await expect(page.locator(`.gl-tool-button[data-tool="${tool}"]`)).toHaveClass(/is-active/);
       await expect(page.locator('.gl-tool-button.is-active')).toHaveCount(1);
     }
   });
 
   test('clicking a tool button, or running its command, activates the tool', async ({ galley }) => {
     const { page } = galley;
-    await page.locator('[data-tool="ellipse"]').click();
+    await page.locator('.gl-tool-button[data-tool="ellipse"]').click();
     expect((await getEditorState(page)).activeTool).toBe('ellipse');
     await runCommand(page, 'tool.hand');
     expect((await getEditorState(page)).activeTool).toBe('hand');
-    await expect(page.locator('[data-tool="hand"]')).toHaveClass(/is-active/);
-    await expect(page.locator('[data-tool="ellipse"]')).not.toHaveClass(/is-active/);
+    await expect(page.locator('.gl-tool-button[data-tool="hand"]')).toHaveClass(/is-active/);
+    await expect(page.locator('.gl-tool-button[data-tool="ellipse"]')).not.toHaveClass(/is-active/);
   });
 
   test('registers every tool command with its shortcut', async ({ galley }) => {
@@ -238,7 +239,7 @@ test.describe('tools', () => {
   });
 
   test('the Direct Selection tool is drawn but disabled: it is outside Phase 1', async ({ galley }) => {
-    await expect(galley.page.locator('[data-tool="direct-selection"]')).toBeDisabled();
+    await expect(galley.page.locator('.gl-tool-button[data-tool="direct-selection"]')).toBeDisabled();
   });
 });
 

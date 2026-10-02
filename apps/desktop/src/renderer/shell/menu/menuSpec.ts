@@ -56,6 +56,7 @@ export const MENUS: readonly MenuDef[] = [
       ['edit.cut', 'Cut'],
       ['edit.copy', 'Copy'],
       ['edit.paste', 'Paste'],
+      ['edit.pasteInPlace', 'Paste in Place'],
       ['edit.duplicate', 'Duplicate'],
       ['edit.delete', 'Delete'],
       '-',
@@ -141,7 +142,15 @@ export interface MenuContext {
   redoLabel?: string | null;
   /** Developer menu items (Toggle Developer Tools) are included only in dev runs. */
   dev?: boolean;
+  /**
+   * A text field has the keyboard. The Edit items that edit text (Undo, Redo, Cut, Copy, Paste, Select All) stay
+   * enabled then, even when their document command is disabled, because a click is routed to the field.
+   */
+  textEditing?: boolean;
 }
+
+/** Edit commands that edit a focused text field's text instead of the document. */
+export const TEXT_EDIT_IDS: ReadonlySet<string> = new Set(['edit.undo', 'edit.redo', 'edit.cut', 'edit.copy', 'edit.paste', 'edit.selectAll']);
 
 /**
  * Electron accelerator for a registry shortcut, or undefined when the shortcut must stay with the window: a native
@@ -168,7 +177,7 @@ function commandItem(command: Command, fallback: string, ctx: MenuContext): Menu
     type: checked === undefined ? 'normal' : 'checkbox',
     ...(checked === undefined ? {} : { checked }),
     accelerator: acceleratorFor(command.shortcut),
-    enabled: ctx.registry.isEnabled(command.id),
+    enabled: ctx.registry.isEnabled(command.id) || (!!ctx.textEditing && TEXT_EDIT_IDS.has(command.id)),
   };
 }
 

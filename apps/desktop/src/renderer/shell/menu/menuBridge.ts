@@ -45,6 +45,7 @@ export function currentMenuSpec(dev: boolean): MenuItemSpec[] {
     undoLabel: selectUndoLabel(editor),
     redoLabel: selectRedoLabel(editor),
     dev,
+    textEditing: isEditableElement(document.activeElement),
   });
 }
 
@@ -67,6 +68,13 @@ export function installMenuBridge(): () => void {
     if (timer === undefined) timer = setTimeout(push, UPDATE_DELAY_MS);
   };
   const unsubscribers = [commands.subscribe(schedule), useEditorStore.subscribe(schedule), useShellStore.subscribe(schedule)];
+  // Edit items change meaning when a text field takes or loses the keyboard (TEXT_EDIT_IDS in menuSpec.ts).
+  window.addEventListener('focusin', schedule);
+  window.addEventListener('focusout', schedule);
+  unsubscribers.push(() => {
+    window.removeEventListener('focusin', schedule);
+    window.removeEventListener('focusout', schedule);
+  });
   push();
 
   // ----- duplicate-run guard: key handler vs native accelerator
