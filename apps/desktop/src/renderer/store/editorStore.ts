@@ -58,6 +58,7 @@ export interface Viewport {
 export interface ViewSettings {
   rulersVisible: boolean;
   textThreadsVisible: boolean;
+  baselineGridVisible:boolean;
   /** Ruler, margin, column, bleed and slug guides. Hidden guides are not drawn and not snapped to. */
   guidesVisible: boolean;
   /** Units of the rulers (and, for lane C, of the control strip fields). The model is always points. */
@@ -212,7 +213,7 @@ export function createEditorState(initial: GalleyDocument = blankDocument()) {
       setViewport: (patch) => set((s) => ({ viewport: { ...s.viewport, ...patch } })),
       activeTool: 'select',
       setActiveTool: (tool) => set({ activeTool: tool }),
-      view: { rulersVisible: true, guidesVisible: true, units: 'pt', textThreadsVisible:false },
+      view: { rulersVisible: true, guidesVisible: true, units: 'pt', textThreadsVisible:false,baselineGridVisible:false },
       setView: (patch) => set((s) => ({ view: { ...s.view, ...patch } })),
 
       textSelection: null,

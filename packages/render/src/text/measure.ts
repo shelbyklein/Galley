@@ -14,7 +14,9 @@
 //    has exactly one client rect, so there is no ambiguity about trailing spaces, hanging punctuation or inline
 //    (bold/italic) element boundaries, and a break INSIDE a word (hyphens:auto) is found like any other.
 import { DOMSerializer, type Node } from 'prosemirror-model';
-import { metricsOf } from './schema';
+import { metricsOf,resolvedParagraphOf,textContext } from './schema';
+import {applyDropCapDOM} from '../styles/dropcaps';
+import {applyRunDOM} from './runs';
 import type { Schema } from 'prosemirror-model';
 import { PT, type ParaMetrics } from './slots';
 import type { Slot } from './slots';
@@ -37,6 +39,9 @@ export interface SlotResult {
    * first word is the paragraph's last word it is also the next paragraph's start (see measureSlot).
    */
   frontier: number;
+  gridPads?:number[];
+  dropCapWidths?:number[];
+  dropCapOffsets?:number[][];
 }
 
 interface Rec {
@@ -46,6 +51,9 @@ interface Rec {
   len: number;
   cont: boolean;
   style: ParaMetrics;
+  gridPad:number;
+  dropCapWidth:number;
+  dropCapOffsets:number[];
 }
 
 const EPS = 0.02; // px
@@ -67,6 +75,8 @@ export class Measurer {
     this.host.setAttribute('aria-hidden', 'true');
     this.slotEl = document.createElement('div');
     this.slotEl.className = 'galley-text-slot slot';
+    const scale=textContext(schema).scale;
+    if(scale!==1){this.slotEl.style.zoom=String(scale);this.slotEl.style.transformOrigin='0 0';this.slotEl.style.transform=`scale(${1/scale})`;}
     this.host.appendChild(this.slotEl);
     document.body.appendChild(this.host);
   }
@@ -82,7 +92,7 @@ export class Measurer {
     return lines * style.leading * PT + (style.before + style.after) * PT;
   }
 
-  private build(para: ParaInfo, from: number, first: boolean): Rec {
+  private build(para: ParaInfo, from: number, first: boolean,slot:Slot): Rec {
     const style = metricsOf(para.node);
     const cont = from > para.cs;
     const node = cont
@@ -90,11 +100,33 @@ export class Measurer {
       : para.node;
     const t0 = performance.now();
     const el = this.ser.serializeNode(node) as HTMLElement;
+    const r=resolvedParagraphOf(node);
+    applyRunDOM(el,node);
+    applyDropCapDOM(el,r);
     if (node.content.size === 0) el.appendChild(document.createElement('br')); // PM's trailing-break hack, so empty paragraphs have a line
     this.slotEl.appendChild(el);
+    const cap=el.querySelector<HTMLElement>('[data-drop-cap]');
+    const capBox=cap?.getBoundingClientRect();
+    const dropCapOffsets:number[]=[];
+    if(cap && capBox) {
+      const walker=document.createTreeWalker(cap,NodeFilter.SHOW_TEXT);
+      for(let n=walker.nextNode();n;n=walker.nextNode()) {const text=n as Text;if(!text.length)continue;const range=document.createRange();range.setStart(text,0);range.setEnd(text,Math.min(text.length,1));dropCapOffsets.push((range.getBoundingClientRect().left-capBox.left)/PT);}
+    }
+    const dropCapWidth=capBox?capBox.width/PT:0;
+    let gridPad=0;
+    const grid=textContext(this.schema).grid;
+    if(grid && r.alignToBaselineGrid) {
+      const probe=document.createElement('span');probe.style.cssText='display:inline-block;width:0;height:0;vertical-align:baseline';el.prepend(probe);
+      const baseline=slot.y+(probe.getBoundingClientRect().top-this.slotEl.getBoundingClientRect().top)/PT;
+      probe.remove();
+      const target=grid.start+Math.max(0,Math.ceil((baseline-grid.start)/grid.increment-1e-6))*grid.increment;
+      gridPad=Math.max(0,target-baseline);
+      el.style.setProperty('--galley-grid-pad',gridPad+'pt');
+      el.style.paddingTop=((first||cont?0:r.spaceBefore)+gridPad)+'pt';
+    }
     this.stats.buildMs += performance.now() - t0;
     this.stats.paras++;
-    return { el, para, from, len: para.ce - from, cont, style };
+    return { el, para, from, len: para.ce - from, cont, style,gridPad,dropCapWidth,dropCapOffsets };
   }
 
   measureSlot(idx: StoryIndex, startPos: number, slot: Slot): SlotResult {
@@ -112,6 +144,12 @@ export class Measurer {
     const base = { start: startPos, startMid, startStyle: startPara.node.attrs.style as string };
 
     const recs: Rec[] = [];
+    const finish=(result:SlotResult):SlotResult=>{
+      const pads=result.empty?[]:recs.slice(0,idx.find(result.end)-i0+1).map(r=>r.gridPad);
+      const capWidths=result.empty?[]:recs.slice(0,idx.find(result.end)-i0+1).map(r=>r.dropCapWidth);
+      const capOffsets=result.empty?[]:recs.slice(0,idx.find(result.end)-i0+1).map(r=>r.dropCapOffsets);
+      return {...result,...(pads.some(p=>p!==0)?{gridPads:pads}:{}),...(capWidths.some(w=>w>0)?{dropCapWidths:capWidths,dropCapOffsets:capOffsets}:{})};
+    };
     let next = i0;
     let analyzed = 0;
     let need = H * 1.15;
@@ -124,7 +162,7 @@ export class Measurer {
         if (next >= paras.length) break;
         const p = paras[next];
         const from = next === i0 ? startPos : p.cs;
-        const r = this.build(p, from, next === i0);
+        const r = this.build(p, from, next === i0,slot);
         recs.push(r);
         est += this.estimate(p.node, r.style, widthPx);
         next++;
@@ -138,7 +176,7 @@ export class Measurer {
         const rec = recs[analyzed];
         const r = rec.el.getBoundingClientRect();
         const L = rec.style.leading * PT;
-        const padTop = analyzed === 0 || rec.cont ? 0 : rec.style.before * PT;
+        const padTop = (analyzed === 0 || rec.cont ? 0 : rec.style.before * PT)+rec.gridPad*PT;
         const padBot = rec.style.after * PT;
         const contentH = r.height - padTop - padBot;
         const nLines = Math.max(1, Math.round(contentH / L));
@@ -164,9 +202,9 @@ export class Measurer {
         this.stats.probeMs += performance.now() - tp;
         if (cut.e === 0) {
           // not even the first line fits: cut before this paragraph
-          if (analyzed === 0) return { ...base, end: startPos, empty: true, endMid: false, hy: false, lines: 0, frontier: startPos + 2 };
+          if (analyzed === 0) return finish({ ...base, end: startPos, empty: true, endMid: false, hy: false, lines: 0, frontier: startPos + 2 });
           const prev = recs[analyzed - 1];
-          return { ...base, end: prev.para.ce, empty: false, endMid: false, hy: false, lines, frontier: prev.para.ce + 2 };
+          return finish({ ...base, end: prev.para.ce, empty: false, endMid: false, hy: false, lines, frontier: prev.para.ce + 2 });
         }
         const { e, genHyphen } = cut;
         const off = rec.from - rec.para.cs + e;
@@ -184,11 +222,11 @@ export class Measurer {
         let t = w;
         while (t < text.length && /\s/.test(text[t])) t++;
         const frontier = t >= text.length ? rec.para.ce + 2 : rec.para.cs + w;
-        return { ...base, end: rec.from + e, empty: false, endMid: true, hy, lines: lines + (regular ? nFit : 0), frontier };
+        return finish({ ...base, end: rec.from + e, empty: false, endMid: true, hy, lines: lines + (regular ? nFit : 0), frontier });
       }
       if (next >= paras.length) {
         // the rest of the story fits: slot takes it all
-        return { ...base, end: paras[paras.length - 1].ce, empty: false, endMid: false, hy: false, lines, frontier: paras[paras.length - 1].ce + 2 };
+        return finish({ ...base, end: paras[paras.length - 1].ce, empty: false, endMid: false, hy: false, lines, frontier: paras[paras.length - 1].ce + 2 });
       }
       need = Math.max(H - lastBottom, 0) * 1.15 + 1;
     }
@@ -230,7 +268,13 @@ export class Measurer {
           // A one-char range that starts right after a hyphenation break returns TWO rects: the engine's generated
           // hyphen at the end of the previous line, then the character itself. The character is always the last one.
           const r = rects[rects.length - 1];
-          return r.top + r.height / 2;
+          let shift=0;
+          // Relative glyph shifts change paint, not line flow. Remove them before deciding which native line fits.
+          let lo=0,hi=texts.length-1;while(lo<hi){const mid=(lo+hi+1)>>1;if(texts[mid].start<=c)lo=mid;else hi=mid-1;}
+          for(let el=texts[lo].node.parentElement;el && el!==rec.el;el=el.parentElement) {
+            if(el.style.position==='relative') {const top=parseFloat(getComputedStyle(el).top);if(Number.isFinite(top))shift+=top;}
+          }
+          return r.top + r.height / 2-shift;
         }
       }
       return null;

@@ -15,12 +15,15 @@
 // story state, and the view is regenerated from it.
 import { EditorState, TextSelection, type Command, type Transaction } from 'prosemirror-state';
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
-import { Fragment, Slice, type Node } from 'prosemirror-model';
+import { DOMSerializer,Fragment, Slice, type Node } from 'prosemirror-model';
 import { history, undo, redo } from 'prosemirror-history';
 import { keydownHandler } from 'prosemirror-keymap';
 import { chainCommands, deleteSelection, joinBackward, joinForward, splitBlock, toggleMark } from 'prosemirror-commands';
-import { setSchemaSlots } from './schema';
+import { resolvedParagraphOf,setSchemaSlots } from './schema';
+import {dropCapCss} from '../styles/dropcaps';
 import { makeWrapEl } from './wrap';
+import {textRunStyle} from './runs';
+import {toCssText} from '../styles/resolve';
 import type { Slot } from './slots';
 import { Measurer } from './measure';
 import { indexOf, type StoryIndex } from './storyindex';
@@ -92,6 +95,15 @@ export class StoryEditor {
       dispatchTransaction: (tr) => this.onViewTr(tr),
       attributes: { ...options.attributes, spellcheck: 'false', autocorrect: 'off', autocapitalize: 'off', lang: 'en-US' },
       decorations: (st) => this.hangDecorations(st.doc),
+      nodeViews:{paragraph:(node)=>{
+        let current=node;
+        const rendered=DOMSerializer.renderSpec(document,node.type.spec.toDOM!(node));
+        return {dom:rendered.dom,contentDOM:rendered.contentDOM,update:(next:Node)=>{
+          // Native initial-letter needs fresh paragraph DOM when its style changes (Chromium issue reproduced by lane S).
+          if(next.type!==current.type || JSON.stringify(next.attrs)!==JSON.stringify(current.attrs)) return false;
+          current=next;return true;
+        }};
+      }},
       handleKeyDown: keydownHandler(this.bindings()),
       handlePaste: (_v, e) => this.paste(e),
       handleDrop: () => true,
@@ -132,6 +144,35 @@ export class StoryEditor {
     doc.forEach((frame, off, k) => {
       // the wrap floats sit at the start of the frame's content, before the first paragraph
       this.slots[k]?.wraps.forEach((w, i) => decos.push(Decoration.widget(off + 1, () => makeWrapEl(w), { side: -1, key: `wrap-${k}-${i}-${w.side}-${w.top}-${w.width}-${w.height}-${w.shape}`, ignoreSelection: true, stopEvent: () => true })));
+      frame.forEach((paragraph,pOff)=>{
+        const r=resolvedParagraphOf(paragraph),begin=off+pOff+2;
+        const cap=r.dropCapLines>0 && r.dropCapChars>1?Array.from(paragraph.textContent).slice(0,r.dropCapChars).join('').length:0;
+        let capFragment=0;
+        paragraph.forEach((text,tOff)=>{
+          const run=textRunStyle(paragraph,text),start=begin+tOff;
+          const put=(from:number,to:number,initial:boolean)=>{
+            if(from>=to)return;
+            let css={...run.css};if(initial){
+              delete css.fontSize;delete css.lineHeight;delete css.verticalAlign;delete css.position;delete css.top;
+              css={...dropCapCss(r),...css};
+              // PM preserves mark boundaries. Reserve one measured exclusion box;
+              // paint later fragments inside it without adding another float advance.
+              const width=Number(paragraph.attrs.dropCapWidth);
+              if(width>0){
+                if(capFragment===0)css.width=`${width}pt`;
+                else {
+                  const offset=paragraph.attrs.dropCapOffsets?.[capFragment]??0;
+                  css.width='0pt';css.marginRight='0pt';
+                  css.marginLeft=`${offset-width-(r.fontSize+(r.dropCapLines-1)*r.leading)*.15}pt`;
+                }
+              }
+              capFragment++;
+            }
+            const style=toCssText(css);if(style||run.language)decos.push(Decoration.inline(from,to,{...(style?{style}:{}),...(run.language?{lang:run.language}:{}),...(initial?{'data-drop-cap':String(r.dropCapChars)}:{})}));
+          };
+          if(tOff<cap){const end=Math.min(begin+cap,start+text.nodeSize);put(start,end,true);put(end,start+text.nodeSize,false);}else put(start,start+text.nodeSize,false);
+        });
+      });
       const p = frame.lastChild;
       if (!p || !p.attrs.tail) return;
       const t = p.textContent;

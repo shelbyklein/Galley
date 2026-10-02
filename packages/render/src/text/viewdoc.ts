@@ -87,7 +87,7 @@ function slotPieces(idx: StoryIndex, r: SlotResult): { para: number; from: numbe
 }
 
 function sameSlot(a: SlotResult, b: SlotResult, d: number): boolean {
-  return a.empty === b.empty && a.startMid === b.startMid && a.endMid === b.endMid && a.hy === b.hy && a.start + d === b.start && a.end + d === b.end;
+  return a.empty === b.empty && a.startMid === b.startMid && a.endMid === b.endMid && a.hy === b.hy && a.start + d === b.start && a.end + d === b.end && JSON.stringify(a.gridPads)===JSON.stringify(b.gridPads) && JSON.stringify(a.dropCapWidths)===JSON.stringify(b.dropCapWidths) && JSON.stringify(a.dropCapOffsets)===JSON.stringify(b.dropCapOffsets);
 }
 
 export function buildViewDoc(args: {
@@ -129,11 +129,13 @@ export function buildViewDoc(args: {
       const endsMid = pc.to < info.ce;
       pieces.push({ slot: k, sFrom: pc.from, sTo: pc.to, vFrom: p + 1 });
       if (!frame) {
-        if (!cont && !endsMid) paraNodes.push(info.node);
+        const gridPad=r.gridPads?.[j] ?? 0;
+        const dropCapWidth=r.dropCapWidths?.[j] ?? 0,dropCapOffsets=r.dropCapOffsets?.[j] ?? null;
+        if (!cont && !endsMid && !gridPad && !dropCapWidth) paraNodes.push(info.node);
         else {
           const tail = endsMid ? (j === pcs.length - 1 && r.hy ? 'hy' : 'cn') : '';
           paraNodes.push(
-            schema.nodes.paragraph.create({ ...info.node.attrs, cont, tail }, info.node.content.cut(pc.from - info.cs, pc.to - info.cs)),
+            schema.nodes.paragraph.create({ ...info.node.attrs, cont, tail,gridPad,dropCapWidth,dropCapOffsets }, info.node.content.cut(pc.from - info.cs, pc.to - info.cs)),
           );
         }
       }
@@ -171,7 +173,7 @@ export function unthread(view: Node, res: ThreadResult): { doc: Node; map: ViewM
         groups[groups.length - 1].node = null;
       } else {
         const a = piece.attrs;
-        groups.push({ attrs: { style: a.style, overrides: a.overrides }, parts: [part], node: !a.cont && !a.tail ? piece : null });
+        groups.push({ attrs: { style: a.style, overrides: a.overrides }, parts: [part], node: !a.cont && !a.tail && !a.gridPad && !a.dropCapWidth ? piece : null });
       }
       p += piece.nodeSize;
     }

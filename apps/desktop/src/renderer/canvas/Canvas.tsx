@@ -15,6 +15,7 @@ import { useCanvasKeys } from './useCanvasKeys';
 import { clampZoom, fitPage, formatZoom, sameView, zoomAt, type ViewTransform } from './viewport';
 import './canvas.css';
 import { ThreadOverlay } from './text/ThreadOverlay';
+import { BaselineGrid } from './text/BaselineGrid';
 import './text/register';
 
 /** Stable so the memoized page view does not re-render when only the view changes. */
@@ -228,6 +229,7 @@ export function Canvas() {
           {textEdit && <TextEditor key={textEdit.frameId} frameId={textEdit.frameId} caret={textEdit.caret} />}
         </div>
         <Overlay view={view} pageId={pageId} />
+        <BaselineGrid pageId={pageId} view={view}/>
         <ThreadOverlay view={view} pageId={pageId}/>
       </div>
     </div>

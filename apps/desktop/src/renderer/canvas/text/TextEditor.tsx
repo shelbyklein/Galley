@@ -1,5 +1,5 @@
 import { pageIdOf,setStoryDoc,normalizeNativeStoryDoc,type Id,type PMNode } from '@galley/model';
-import { createTextSchema,Measurer,StoryEditor,storySlots,sheetGeometry,extractLines } from '@galley/render';
+import { createTextSchema,Measurer,StoryEditor,storySlots,storyTextScale,sheetGeometry,extractLines } from '@galley/render';
 import { undoDepth } from 'prosemirror-history';
 import { useLayoutEffect,useRef } from 'react';
 import { patchCanvasState } from '../canvasState';
@@ -16,11 +16,12 @@ export function TextEditor({frameId,caret}:{frameId:Id;caret:'end'|{clientX:numb
   const saved=useRef<{storyId:string;anchor:number;head:number;focused:boolean}|null>(null);
   const frame=doc.frames[frameId];
   const story=frame?.type==='text'?doc.stories[frame.storyId]:undefined;
+  const scale=story?storyTextScale(doc,story):1;
   useLayoutEffect(()=>{
     const el=ref.current;if(!el || !story || !frame || frame.type!=='text') return;
     const geo=sheetGeometry(doc.pages[pageIdOf(doc,frameId)!]!);
     const slots=storySlots(doc,story).map(s=>({...s,x:s.x+geo.origin.x,y:s.y+geo.origin.y}));
-    const schema=createTextSchema(doc,{mode:'screen',css:()=> 'transparent'},slots);
+    const schema=createTextSchema({...doc,baselineGrid:{...doc.baselineGrid,start:doc.baselineGrid.start+geo.origin.y}},{mode:'screen',css:()=> 'transparent'},slots,scale);
     const measurer=new Measurer(schema);
     const historyAction=(action:'undo'|'redo')=>()=>useEditorStore.getState()[action]();
     const e=new StoryEditor(el,schema.nodeFromJSON(story.doc),slots,measurer,{undo:historyAction('undo'),redo:historyAction('redo'),attributes:{class:'gl-text-editor gl-thread-editor'}});
@@ -56,7 +57,7 @@ export function TextEditor({frameId,caret}:{frameId:Id;caret:'end'|{clientX:numb
     return ()=>{saved.current={storyId:story.id,...e.storySelection(),focused:document.activeElement===e.view.dom};e.onUpdate=null;e.destroy();measurer.dispose();editor.current=null;setActiveStoryEditor(null);useEditorStore.getState().setTextSelection(null);if(window.galley?.e2e) delete (window as any).__galleyText;};
   // Rebuild style/geometry DOM while preserving selection. Text edits alone sync below.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[frameId,doc.paragraphStyles,doc.characterStyles,doc.frames,doc.baselineGrid,story?.frameIds]);
+  },[frameId,doc.paragraphStyles,doc.characterStyles,doc.frames,doc.baselineGrid,story?.frameIds,scale]);
   useLayoutEffect(()=>{
     const e=editor.current;if(!e || !story || story.doc===shown.current) return;
     if(e.composing) return;
