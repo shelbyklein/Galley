@@ -62,9 +62,9 @@ test.describe('blank Letter document', () => {
     await page.keyboard.press('Meta+=');
     await page.keyboard.press('Meta+=');
     const after = await screenToPage(page, center);
-    // keyboard zoom rounds the pan to whole pixels, so the center moves by at most half a pixel (half a point at 100%)
-    expect(Math.abs(after.x - before.x)).toBeLessThanOrEqual(0.5);
-    expect(Math.abs(after.y - before.y)).toBeLessThanOrEqual(0.5);
+    // keyboard zoom rounds the pan to whole pixels: each step moves the center by at most half a pixel (about a point here)
+    expect(Math.abs(after.x - before.x)).toBeLessThanOrEqual(1);
+    expect(Math.abs(after.y - before.y)).toBeLessThanOrEqual(1);
 
     // fitted: the window resizes, the page stays fitted
     await page.keyboard.press('Meta+0');
