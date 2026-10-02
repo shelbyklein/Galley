@@ -13,3 +13,5 @@ export { Measurer } from './text/measure';
 export { StoryEditor } from './text/editor';
 export { layoutStory, storySlots, type StoryLayout } from './text/layout';
 export { extractLines, type DomLine } from './text/lines';
+export { applyDropCapDOM, dropCapCss, splitDropCapRuns } from './styles/dropcaps';
+export { StyledRuns } from './styles/StyledRuns';

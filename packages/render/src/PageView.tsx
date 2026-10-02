@@ -17,6 +17,7 @@ import { loadPageResources, usedFontFaces, usedImageUrls } from './fontLoading';
 import { bleedClipInsets, htmlFrameStyle, num, pt, sheetGeometry } from './geometry';
 import { defaultSoftProof, getSoftProofEpoch, getSoftProofSource, subscribeSoftProof } from './softproof';
 import './page.css';
+import './styles/dropcaps.css';
 import { useStoryLayouts } from './text/layout';
 import { ThreadTextFrameView } from './text/TextFrameView';
 
