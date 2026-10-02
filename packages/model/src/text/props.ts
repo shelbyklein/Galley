@@ -145,12 +145,21 @@ export type LayerName = (typeof LAYER_NAMES)[number];
  */
 export type ResolvedParagraph = Required<SharedParaProps> & Required<PrintParaProps> & { baselineShift: number; web: WebProps };
 
+/** Freeze an object and everything inside it: resolved paragraphs share their nested values with the constants and the document. */
+function deepFreeze<T>(value: T): T {
+  if (value && typeof value === 'object') {
+    for (const inner of Object.values(value)) deepFreeze(inner);
+    Object.freeze(value);
+  }
+  return value;
+}
+
 /**
  * What every style chain starts from, and what `[Basic Paragraph]` holds in a new document: Inter Regular 12/15 pt in
  * [Black], flush left, hyphenation on (the engine's own limits). This is also exactly what a Phase 1 default story
  * looked like, so new text frames render the same as they did.
  */
-export const BASIC_PARAGRAPH_PROPS: ResolvedParagraph = {
+export const BASIC_PARAGRAPH_PROPS: ResolvedParagraph = deepFreeze({
   fontFamily: 'Inter',
   fontWeight: 400,
   fontStyle: 'normal',
@@ -179,7 +188,7 @@ export const BASIC_PARAGRAPH_PROPS: ResolvedParagraph = {
   dropCapLines: 0,
   dropCapChars: 1,
   web: {},
-};
+});
 
 const SHARED_PARA_KEYS = ['fontFamily', 'fontWeight', 'fontStyle', 'fill', 'tracking', 'kerning', 'textCase', 'features', 'language', 'role'] as const;
 const PRINT_PARA_KEYS = [
