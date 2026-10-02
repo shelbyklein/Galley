@@ -36,6 +36,7 @@ test('the Type font menus list installed families and load the selected real sty
   expect(actual.requested).toEqual({ family: family!.family, weight: face.weight, style: face.style });
   expect(actual).toMatchObject({ count: 1, loaded: true, binding: { face: { path: face.path, source: 'system' } } });
   expect(Buffer.from(actual.bytes)).toEqual(fs.readFileSync(face.path));
-  await expect(strip.locator('[data-type-control="fontStyle"]')).toHaveCSS('font-family', family!.family.includes(' ') ? `"${family!.family}"` : family!.family);
+  await expect.poll(() => strip.locator('[data-type-control="fontStyle"]').evaluate(el => getComputedStyle(el).fontFamily.replace(/^["']|["']$/g, ''))).toBe(family!.family);
+  await expect(strip.locator('[data-type-control="fontStyle"]')).toHaveCSS('font-weight', String(face.weight));
   await snap(page, 'integrated-system-font-menu', { testInfo: info });
 });
