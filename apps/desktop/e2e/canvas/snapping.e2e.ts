@@ -152,6 +152,9 @@ test('smart guide lines show while dragging and disappear on release (screenshot
   const { page } = galley;
   await setup(page, { frames: [{ id: 'a', type: 'rect', x: 100, y: 100, w: 100, h: 80 }, { id: 'b', type: 'rect', x: 400, y: 300, w: 60, h: 60 }] });
   await page.keyboard.press('Meta+0');
+  // wait for Fit Page to apply before reading the zoom (reading it too early made the drag land off target under load)
+  await expect.poll(async () => (await getEditorState(page)).viewport.fit).toBe(true);
+  await flushInput(page);
   await expect(page.locator('.gl-smart-guide')).toHaveCount(0);
 
   // drag 'a' by its center until it is 2 screen px from the page center (x = 306): it snaps, and the guide shows

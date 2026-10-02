@@ -258,10 +258,16 @@ test('builds the Spring poster through the UI, saves and reopens it, and exports
     expect(Object.keys(doc.frames)).toHaveLength(10); // orange block, headline, subhead, details, photo, body, URL, circle, FREE, bar
     const kinds = Object.values<any>(doc.frames).map((f) => f.type).sort();
     expect(kinds).toEqual(['ellipse', 'image', 'rect', 'rect', 'text', 'text', 'text', 'text', 'text', 'text']);
-    // every text frame has its own story in the default style: 100K black, which is [Black]
-    for (const f of Object.values<any>(doc.frames).filter((f) => f.type === 'text')) {
-      expect(doc.stories[f.storyId].defaults.fill).toEqual({ swatchId: 'black', tint: 100, overprint: false });
-    }
+    // every text frame has its own story, and every paragraph resolves to the default text color: 100K black, [Black]
+    const fills = await page.evaluate(() => {
+      const g = (window as any).__galley;
+      const d = g.store.getState().history.doc;
+      return Object.values<any>(d.frames)
+        .filter((f) => f.type === 'text')
+        .flatMap((f) => (d.stories[f.storyId].doc.content ?? []).map((para: any) => g.model.resolveParagraph(d, para.attrs ?? {}).fill));
+    });
+    expect(fills.length).toBeGreaterThanOrEqual(6);
+    for (const fill of fills) expect(fill).toEqual({ swatchId: 'black', tint: 100, overprint: false });
     expect(storyText(doc, doc.frames[ids.body!].storyId)).toBe(BODY);
     expect(storyText(doc, doc.frames[ids.free!].storyId)).toBe('FREE');
     await shot(page, '06-finished-poster');
