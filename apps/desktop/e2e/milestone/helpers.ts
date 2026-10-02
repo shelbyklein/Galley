@@ -115,6 +115,8 @@ export interface GeometryEdit {
 
 /** Type values into the control strip's X, Y, W and H fields (reference point top-left), each committed with Enter: one undo step per field. */
 export async function setGeometry(page: Page, edit: GeometryEdit): Promise<void> {
+  // The Type tool now shows typography controls; select the frame to edit its object geometry.
+  await chooseTool(page, 'select');
   for (const key of ['x', 'y', 'w', 'h'] as const) {
     const value = edit[key];
     if (value === undefined) continue;

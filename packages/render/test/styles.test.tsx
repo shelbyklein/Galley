@@ -92,8 +92,8 @@ describe('runCss', () => {
 
   it('character styles: case, kerning and baseline shift, and an override on top', () => {
     const doc = styled();
-    expect(run(doc, [{ type: 'charStyle', attrs: { style: 'caps' } }])).toBe('font-kerning: none; text-transform: uppercase; vertical-align: 3pt');
-    expect(run(doc, [{ type: 'charStyle', attrs: { style: 'caps' } }, { type: 'override', attrs: { shared: { textCase: 'normal' } } }])).toBe('font-kerning: none; vertical-align: 3pt');
+    expect(run(doc, [{ type: 'charStyle', attrs: { style: 'caps' } }])).toBe('font-kerning: none; text-transform: uppercase; position: relative; top: -3pt');
+    expect(run(doc, [{ type: 'charStyle', attrs: { style: 'caps' } }, { type: 'override', attrs: { shared: { textCase: 'normal' } } }])).toBe('font-kerning: none; position: relative; top: -3pt');
   });
 
   it('a run with another size keeps tracking proportional to its own size, and can switch features and tracking off', () => {
