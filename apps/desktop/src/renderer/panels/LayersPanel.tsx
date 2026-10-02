@@ -229,6 +229,7 @@ function LayerRow({
     .filter(Boolean)
     .join(' ');
   return (
+    <>
     <div
       className={classes}
       data-layer-id={layer.id}
@@ -249,7 +250,6 @@ function LayerRow({
       </button>
       <span className="gl-layer-color-wrap">
         <button type="button" className="gl-layer-color" style={{ background: layer.color }} aria-label="Layer color" data-action="color" onClick={(e) => { e.stopPropagation(); setPalette(!palette); }} />
-        {palette && <ColorPalette current={layer.color} onPick={(hex) => { set({ color: hex }); setPalette(false); }} onClose={() => setPalette(false)} />}
       </span>
       {editing ? (
         <RenameInput
@@ -265,6 +265,8 @@ function LayerRow({
         </span>
       )}
     </div>
+    {palette && <ColorPalette current={layer.color} onPick={(hex) => { set({ color: hex }); setPalette(false); }} onClose={() => setPalette(false)} />}
+    </>
   );
 }
 
@@ -308,13 +310,15 @@ function ColorPalette({ current, onPick, onClose }: { current: string; onPick(he
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const away = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+      const target = e.target as HTMLElement;
+      if (target.closest('[data-action="color"]')) return; // the chip toggles the palette itself
+      if (ref.current && !ref.current.contains(target)) onClose();
     };
     window.addEventListener('mousedown', away);
     return () => window.removeEventListener('mousedown', away);
   }, [onClose]);
   return (
-    <div className="gl-popover gl-color-palette" ref={ref} role="listbox" aria-label="Layer color" data-testid="layer-palette" onClick={(e) => e.stopPropagation()}>
+    <div className="gl-palette-row" ref={ref} role="listbox" aria-label="Layer color" data-testid="layer-palette" onClick={(e) => e.stopPropagation()}>
       {LAYER_COLORS.map((c) => (
         <button key={c.hex} type="button" role="option" aria-selected={c.hex === current.toLowerCase()} className={`gl-palette-swatch${c.hex === current.toLowerCase() ? ' is-current' : ''}`} style={{ background: c.hex }} title={c.name} data-color={c.hex} onClick={() => onPick(c.hex)} />
       ))}

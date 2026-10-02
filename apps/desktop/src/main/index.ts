@@ -22,8 +22,9 @@ if (E2E) {
 
 // Where recent files and other per-user state live. e2e runs get a fresh folder so tests never see (or change) the real
 // profile; GALLEY_USER_DATA picks a folder explicitly (a test that restarts the app with the same profile).
-const userDataOverride = process.env.GALLEY_USER_DATA || (E2E ? fs.mkdtempSync(join(os.tmpdir(), 'galley-e2e-profile-')) : '');
-if (userDataOverride) app.setPath('userData', userDataOverride);
+const explicitUserData = process.env.GALLEY_USER_DATA ?? '';
+const tempUserData = !explicitUserData && E2E ? fs.mkdtempSync(join(os.tmpdir(), 'galley-e2e-profile-')) : '';
+if (explicitUserData || tempUserData) app.setPath('userData', explicitUserData || tempUserData);
 
 registerAssetScheme();
 
@@ -185,7 +186,16 @@ app.on('before-quit', () => {
   quitting = true;
 });
 
-app.on('will-quit', () => discardScratchPackage());
+app.on('will-quit', () => {
+  discardScratchPackage();
+  if (tempUserData) {
+    try {
+      fs.rmSync(tempUserData, { recursive: true, force: true });
+    } catch {
+      /* best effort: it is in the OS temp folder */
+    }
+  }
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin' || E2E) app.quit();

@@ -251,12 +251,12 @@
   user-select: text;
   outline: none;
 }
-.gl-color-palette {
-  flex-direction: row;
+.gl-palette-row {
+  display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  width: 112px;
-  min-width: 0;
+  padding: 4px 8px 6px 38px;
+  background: var(--gl-bg-row-hover);
 }
 .gl-palette-swatch {
   width: 20px;

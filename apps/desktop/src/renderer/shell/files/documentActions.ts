@@ -91,6 +91,7 @@ export async function clearRecentFiles(): Promise<void> {
 
 /** File > New: the New Document dialog, then a fresh untitled document. */
 export async function newDocument(): Promise<void> {
+  if (useShellStore.getState().dialog) return; // one dialog at a time
   if (!(await confirmUnsavedChanges('creating'))) return;
   const spec = await new Promise<NewDocumentSpec | null>((resolve) =>
     useShellStore.getState().openDialog({ kind: 'newDocument', resolve }),

@@ -17,7 +17,7 @@ import { closeDocument, openRecentFile } from '../files/documentActions';
 import { useShellStore } from '../shellStore';
 import { buildMenuSpec } from './menuSpec';
 
-const DUPLICATE_WINDOW_MS = 120;
+const DUPLICATE_WINDOW_MS = 200;
 const UPDATE_DELAY_MS = 30;
 
 /** Edit commands that mean something else while a text field has the keyboard: they edit the field's text. */
@@ -75,6 +75,11 @@ export function installMenuBridge(): () => void {
   const onKeyDownCapture = (event: KeyboardEvent) => {
     const command = commands.findByShortcut(event);
     if (!command) return;
+    // a modal dialog owns the keyboard: shortcuts do not reach the editor behind it
+    if (useShellStore.getState().dialog) {
+      event.stopImmediatePropagation();
+      return;
+    }
     const now = performance.now();
     if (lastMenu && lastMenu.id === command.id && now - lastMenu.at < DUPLICATE_WINDOW_MS) {
       // the menu already ran this command for this key press
@@ -100,6 +105,7 @@ export function installMenuBridge(): () => void {
       api.textEdit(textAction);
       return;
     }
+    if (useShellStore.getState().dialog) return; // modal: the menu does nothing behind a dialog
     commands.execute(id).catch((error: unknown) => console.error(`Menu command ${id} failed`, error));
   };
   const offMenu = api.onMenuCommand(onMenuCommand);

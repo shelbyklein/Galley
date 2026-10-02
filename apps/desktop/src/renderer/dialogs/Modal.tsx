@@ -1,4 +1,4 @@
-import { useEffect, useRef, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useRef, type FormEvent, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import './dialogs.css';
 
 /**
@@ -40,13 +40,28 @@ export function Modal({
     return () => window.removeEventListener('keydown', onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  // Tab stays inside the dialog
+  const trapTab = (e: ReactKeyboardEvent<HTMLFormElement>) => {
+    if (e.key !== 'Tab' || !box.current) return;
+    const focusable = Array.from(box.current.querySelectorAll<HTMLElement>('input:not([disabled]), select:not([disabled]), button:not([disabled])'));
+    if (focusable.length === 0) return;
+    const first = focusable[0]!;
+    const last = focusable[focusable.length - 1]!;
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
   const submit = (e: FormEvent) => {
     e.preventDefault();
     if (!okDisabled) onOk();
   };
   return (
     <div className="gl-modal-overlay" data-testid="modal-overlay" onMouseDown={(e) => e.target === e.currentTarget && onCancel()}>
-      <form ref={box} className="gl-modal" role="dialog" aria-modal="true" aria-label={title} data-testid={testId} style={{ width }} onSubmit={submit}>
+      <form ref={box} className="gl-modal" role="dialog" aria-modal="true" aria-label={title} data-testid={testId} style={{ width }} onSubmit={submit} onKeyDown={trapTab}>
         <h2 className="gl-modal-title">{title}</h2>
         <div className="gl-modal-body">{children}</div>
         <div className="gl-modal-actions">
