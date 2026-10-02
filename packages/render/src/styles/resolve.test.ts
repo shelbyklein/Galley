@@ -15,8 +15,8 @@ describe('complete print stylesheet', () => {
   it('renders super/subscript baseline offsets, resets inherited case/kerning/tracking and preserves feature switches', () => {
     const base = { ...full, textCase: 'allCaps' as const };
     const run = { ...base, fontSize: 9, leading: 10, baselineShift: -3, tracking: 0, kerning: 'metrics' as const, textCase: 'normal' as const, features: { liga: true, frac: false }, fill: paint('paper') };
-    expect(toCssText(runCss(base, run, colors))).toMatchInlineSnapshot(`"font-size: 9pt; line-height: 10pt; letter-spacing: normal; color: rgb(255 255 255); font-feature-settings: "frac" 0, "liga" 1; text-transform: none; font-kerning: normal; vertical-align: -3pt"`);
-    expect(runCss(base, { ...base, baselineShift: 4 }, colors).verticalAlign).toBe('4pt');
+    expect(toCssText(runCss(base, run, colors))).toMatchInlineSnapshot(`"font-size: 9pt; line-height: 10pt; letter-spacing: normal; color: rgb(255 255 255); font-feature-settings: "frac" 0, "liga" 1; text-transform: none; font-kerning: normal; position: relative; top: 3pt"`);
+    expect(runCss(base, { ...base, baselineShift: 4 }, colors).top).toBe('-4pt');
   });
   it('leaves neutral values absent, drops space before a frame start, and escapes font-family names', () => {
     expect(paragraphCss(BASIC_PARAGRAPH_PROPS, colors)).not.toHaveProperty('--galley-drop-lines');

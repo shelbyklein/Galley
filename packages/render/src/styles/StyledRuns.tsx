@@ -7,7 +7,7 @@ export function StyledRuns({ runs, paragraph, tables, colors }: { runs: readonly
   const draw = (nodes: readonly PMNode[], initial = false) => nodes.map((t, j) => {
     const resolved = resolveRun(tables, paragraph, t.marks);
     const css = runCss(paragraph, resolved, colors);
-    if (initial) { delete css.fontSize; delete css.lineHeight; delete css.verticalAlign; }
+    if (initial) { delete css.fontSize; delete css.lineHeight; delete css.position; delete css.top; }
     return <span key={j} lang={resolved.language !== paragraph.language ? resolved.language : undefined} style={Object.keys(css).length ? css : undefined}>{t.text ?? ''}</span>;
   });
   if (!runs.length) return <br />;

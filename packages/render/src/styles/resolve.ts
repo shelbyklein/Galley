@@ -96,7 +96,11 @@ export function runCss(paragraph: ResolvedParagraph, run: ResolvedParagraph, col
   if (run.tracking !== 0 && (run.tracking !== paragraph.tracking || run.fontSize !== paragraph.fontSize)) css.letterSpacing = own.letterSpacing;
   if (run.tracking !== paragraph.tracking && run.tracking === 0) css.letterSpacing = 'normal';
   if (!sameFeatures(run.features, paragraph.features) && !css.fontFeatureSettings) css.fontFeatureSettings = 'normal';
-  if (run.baselineShift !== paragraph.baselineShift) css.verticalAlign = pt(run.baselineShift - paragraph.baselineShift);
+  // Shift glyph paint without enlarging the line box or changing the paragraph's explicit leading.
+  if (run.baselineShift !== paragraph.baselineShift) {
+    css.position = 'relative';
+    css.top = pt(paragraph.baselineShift - run.baselineShift);
+  }
   return stripUndefined(css as CSSProperties);
 }
 
