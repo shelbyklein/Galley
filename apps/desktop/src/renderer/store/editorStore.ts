@@ -65,6 +65,13 @@ export interface ViewSettings {
 
 export type DisplayUnits = 'pt' | 'in' | 'mm';
 
+/** A text selection inside one story, as ProseMirror positions in `story.doc`. `anchor === head` is a caret. */
+export interface TextSelection {
+  storyId: Id;
+  anchor: number;
+  head: number;
+}
+
 export interface EditorState {
   // ----- document and history
   history: HistoryState;
@@ -110,6 +117,15 @@ export interface EditorState {
   /** Rulers, guides and units (View menu). */
   view: ViewSettings;
   setView(patch: Partial<ViewSettings>): void;
+
+  // ----- text editing (not in history)
+  /**
+   * The selection in the story being edited, or null when no text editor is active. Lane T's editor writes it; lane S's
+   * type controls and style panels read it to apply styles and overrides to the selected text (or, when it is null, to
+   * the whole stories of the selected text frames).
+   */
+  textSelection: TextSelection | null;
+  setTextSelection(selection: TextSelection | null): void;
 }
 
 export type EditorStore = StoreApi<EditorState>;
@@ -125,7 +141,7 @@ export function blankDocument(): GalleyDocument {
 }
 
 /** After the document changes: drop selected ids that no longer exist or sit on a hidden or locked layer, and keep the current page valid. */
-function reconcile(state: EditorState, history: HistoryState): Pick<EditorState, 'history' | 'selection' | 'currentPageId' | 'activeLayerId'> {
+function reconcile(state: EditorState, history: HistoryState): Pick<EditorState, 'history' | 'selection' | 'currentPageId' | 'activeLayerId' | 'textSelection'> {
   const doc = history.doc;
   const selection = state.selection.filter((id) => isSelectable(doc, id));
   return {
@@ -133,6 +149,7 @@ function reconcile(state: EditorState, history: HistoryState): Pick<EditorState,
     selection: selection.length === state.selection.length ? state.selection : selection,
     currentPageId: doc.pages[state.currentPageId] ? state.currentPageId : doc.pageOrder[0]!,
     activeLayerId: state.activeLayerId && doc.layers[state.activeLayerId] ? state.activeLayerId : topLayerId(doc),
+    textSelection: state.textSelection && doc.stories[state.textSelection.storyId] ? state.textSelection : null,
   };
 }
 
@@ -159,7 +176,7 @@ export function createEditorState(initial: GalleyDocument = blankDocument()) {
       redo: () => update(redo(get().history)),
       openDocument: (doc) => {
         const history = resetHistory(get().history, doc);
-        set({ history, savedRevision: historyRevision(history), selection: [], currentPageId: doc.pageOrder[0]!, activeLayerId: topLayerId(doc), viewport: { zoom: 1, panX: 0, panY: 0, fit: true } });
+        set({ history, savedRevision: historyRevision(history), selection: [], currentPageId: doc.pageOrder[0]!, activeLayerId: topLayerId(doc), viewport: { zoom: 1, panX: 0, panY: 0, fit: true }, textSelection: null });
       },
       markSaved: () => {
         const history = closeCoalescing(get().history);
@@ -196,6 +213,15 @@ export function createEditorState(initial: GalleyDocument = blankDocument()) {
       setActiveTool: (tool) => set({ activeTool: tool }),
       view: { rulersVisible: true, guidesVisible: true, units: 'pt' },
       setView: (patch) => set((s) => ({ view: { ...s.view, ...patch } })),
+
+      textSelection: null,
+      setTextSelection: (selection) => {
+        const cur = get().textSelection;
+        if (selection === cur) return;
+        if (selection && cur && selection.storyId === cur.storyId && selection.anchor === cur.anchor && selection.head === cur.head) return;
+        if (selection && !get().history.doc.stories[selection.storyId]) return;
+        set({ textSelection: selection });
+      },
     };
   };
 }
