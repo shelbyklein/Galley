@@ -109,9 +109,8 @@ test('builds a styled flyer with two linked frames and contour wrap, saves/reope
   await paintFill(page, 'Studio Orange'); await clearStroke(page);
   await clickMenuItem(app, 'window.textWrap');
   await page.getByTestId('wrap-mode').selectOption('contour');
-  for (const side of ['top', 'right', 'bottom', 'left']) {
-    const offset = page.getByTestId(`wrap-offset-${side}`); await offset.fill('9'); await offset.press('Enter');
-  }
+  const wrapOffset = page.locator('[data-field="wrap-offset-top"]');
+  await wrapOffset.fill('9'); await wrapOffset.press('Enter');
   await expect.poll(async () => (await getDoc(page)).frames[badge.id].textWrap.mode).toBe('contour');
   await chooseTool(page, 'select');
   await clickPage(page, { x: 70, y: 170 });
