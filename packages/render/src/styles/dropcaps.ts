@@ -46,6 +46,6 @@ export function applyDropCapDOM(p: HTMLElement, r: ResolvedParagraph): void {
   Object.assign(cap.style, dropCapCss(r));
   cap.append(range.extractContents()); range.insertNode(cap);
   for (const child of cap.querySelectorAll<HTMLElement>('[style]')) {
-    child.style.removeProperty('font-size'); child.style.removeProperty('line-height'); child.style.removeProperty('vertical-align');
+    child.style.removeProperty('font-size'); child.style.removeProperty('line-height'); child.style.removeProperty('position'); child.style.removeProperty('top');
   }
 }
