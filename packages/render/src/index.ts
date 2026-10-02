@@ -6,3 +6,4 @@ export { defaultSoftProof, getSoftProofEpoch, getSoftProofSource, setSoftProofSo
 export { bleedClipInsets, htmlFrameStyle, num, pt, sheetGeometry, type SheetGeometry } from './geometry';
 export { bolder, loadPageResources, usedFontFaces, usedImageUrls } from './fontLoading';
 export { collectPaintedColors, findNonSentinelColors, type PaintedColor } from './audit';
+export { paragraphCss, paragraphLanguage, runCss, toCssText, type ParagraphCssOptions } from './styles/resolve';

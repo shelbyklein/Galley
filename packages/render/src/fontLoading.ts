@@ -1,20 +1,21 @@
-import { isLayerVisible, paintOrder, type GalleyDocument, type Id } from '@galley/model';
+import { isLayerVisible, paintOrder, paragraphAttrs, resolveParagraph, resolveRun, type GalleyDocument, type Id } from '@galley/model';
 
-/** CSS `font` shorthand strings (`800 16px "Inter"`) for every face the page's visible text can use. */
+/**
+ * CSS `font` shorthand strings (`800 16px "Inter"`) for every face the page's visible text can use: the resolved style of each
+ * paragraph, and of each run a character style or override mark changes.
+ */
 export function usedFontFaces(doc: GalleyDocument, pageId: Id): string[] {
   const faces = new Set<string>();
+  const add = (r: { fontStyle: string; fontWeight: number; fontFamily: string }) => faces.add(`${r.fontStyle} ${r.fontWeight} 16px "${r.fontFamily}"`);
   for (const frame of paintOrder(doc, pageId)) {
     if (frame.type !== 'text' || !isLayerVisible(doc, frame.layerId)) continue;
     const story = doc.stories[frame.storyId];
     if (!story) continue;
-    const { fontFamily, fontWeight, fontStyle } = story.defaults;
-    const marks = new Set<string>();
-    for (const p of story.doc.content ?? []) for (const t of p.content ?? []) for (const m of t.marks ?? []) marks.add(m.type);
-    const weights = new Set<number>([fontWeight]);
-    if (marks.has('strong')) weights.add(bolder(fontWeight));
-    const styles = new Set<string>([fontStyle]);
-    if (marks.has('em')) styles.add('italic');
-    for (const w of weights) for (const s of styles) faces.add(`${s} ${w} 16px "${fontFamily}"`);
+    for (const p of story.doc.content ?? []) {
+      const paragraph = resolveParagraph(doc, paragraphAttrs(p));
+      add(paragraph);
+      for (const run of p.content ?? []) if (run.marks && run.marks.length > 0) add(resolveRun(doc, paragraph, run.marks));
+    }
   }
   return [...faces].sort();
 }
