@@ -3,3 +3,7 @@
 .gl-thread-editor .ProseMirror-separator {display:inline!important;width:0!important;height:0!important;border:0!important;margin:0!important;}
 .gl-thread-editor ::selection {background:rgb(77 163 255 / .35);}
 .gl-thread-editor .ProseMirror-hideselection *::selection {background:transparent;}
+.gl-thread-editor {-webkit-text-fill-color:transparent;}
+.gl-thread-editor[data-composition-paint] * {-webkit-text-fill-color:currentColor;}
+.gl-thread-editor[data-composition-paint] *::selection {color:inherit;}
+.galley-text[data-composition-hidden] {visibility:hidden;}
