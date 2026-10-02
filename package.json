@@ -15,7 +15,7 @@
     "test:e2e": "npm run build && npm run test:e2e -w @galley/desktop",
     "test:milestone1": "npm run build && npm run test:milestone1 -w @galley/desktop",
     "test:golden": "tsx scripts/golden/run.ts",
-    "test:text": "node scripts/placeholder.mjs test:text",
+    "test:text": "node scripts/text/build.mjs && node --import tsx --test --test-concurrency=1 --test-reporter=spec scripts/text/test/*.test.ts",
     "test:geometry": "tsx scripts/geometry/run.ts",
     "fixtures": "tsx scripts/fixtures/build-poster-basic.ts",
     "fixtures:golden": "tsx scripts/golden/build-fixtures.ts"

@@ -1,9 +1,6 @@
 import {
   isLayerVisible,
   paintOrder,
-  paragraphAttrs,
-  resolveParagraph,
-  resolveRun,
   type Asset,
   type BoxFrame,
   type EllipseFrame,
@@ -13,17 +10,15 @@ import {
   type LineFrame,
   type Page,
   type RectFrame,
-  type Story,
-  type StyleTables,
-  type TextFrame,
 } from '@galley/model';
 import { memo, useEffect, useMemo, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from 'react';
 import { createColorResolver, type ColorMode, type ColorResolver, type SoftProofFn } from './color';
 import { loadPageResources, usedFontFaces, usedImageUrls } from './fontLoading';
 import { bleedClipInsets, htmlFrameStyle, num, pt, sheetGeometry } from './geometry';
 import { defaultSoftProof, getSoftProofEpoch, getSoftProofSource, subscribeSoftProof } from './softproof';
-import { paragraphCss, paragraphLanguage, runCss } from './styles/resolve';
 import './page.css';
+import { useStoryLayouts } from './text/layout';
+import { ThreadTextFrameView } from './text/TextFrameView';
 
 export type AssetUrlFn = (asset: Asset) => string;
 
@@ -104,58 +99,6 @@ function EmptyImageMark({ frame, origin }: { frame: ImageFrame; origin: Origin }
 
 // ------------------------------------------------------------------------------------------------------------- text
 
-interface TextProps {
-  frame: TextFrame;
-  story: Story;
-  paragraphStyles: StyleTables['paragraphStyles'];
-  characterStyles: StyleTables['characterStyles'];
-  origin: Origin;
-  colors: ColorResolver;
-}
-
-/**
- * A text frame: the story laid out by the browser inside the frame box, clipped to it (the clip is the frame, not the inset).
- * Each paragraph is a `<p>` carrying its resolved style as inline CSS (./styles/resolve.ts) and each run a `<span>` with only
- * what differs from its paragraph. Until the thread engine (P2-02) lays a story out across its frames, the first frame of a
- * thread shows the whole story and the other frames are empty.
- */
-const TextFrameView = memo(function TextFrameView({ frame, story, paragraphStyles, characterStyles, origin, colors }: TextProps) {
-  const tables = { paragraphStyles, characterStyles };
-  const shown = story.frameIds[0] === frame.id;
-  const paragraphs = shown
-    ? (story.doc.content ?? []).map((p, i) => {
-        const attrs = paragraphAttrs(p);
-        const resolved = resolveParagraph(tables, attrs);
-        const runs = (p.content ?? []).map((t, j) => {
-          const css = runCss(resolved, resolveRun(tables, resolved, t.marks), colors);
-          return (
-            <span key={j} style={Object.keys(css).length > 0 ? css : undefined}>
-              {t.text ?? ''}
-            </span>
-          );
-        });
-        return (
-          <p key={i} lang={paragraphLanguage(resolved)} style={paragraphCss(resolved, colors, { dropSpaceBefore: i === 0 })} data-paragraph-style={attrs.style}>
-            {runs.length > 0 ? runs : <br />}
-          </p>
-        );
-      })
-    : null;
-  return (
-    <div className="galley-text" style={htmlFrameStyle(frame, origin)} data-frame-id={frame.id} data-frame-type="text" data-story-id={story.id}>
-      {frame.inset > 0 ? (
-        // The inset is a translate, not padding: a padding of 3.6 pt is 4.8 px, and Chromium puts the first baseline on a whole
-        // pixel, so it would land up to 0.375 pt off. A translate is exact (GEOMETRY.md).
-        <div className="galley-text-inset" style={{ width: pt(Math.max(0, frame.w - 2 * frame.inset)), transform: `translate(${pt(frame.inset)}, ${pt(frame.inset)})` }}>
-          {paragraphs}
-        </div>
-      ) : (
-        paragraphs
-      )}
-    </div>
-  );
-});
-
 // ------------------------------------------------------------------------------------------------------------ image
 
 /**
@@ -228,6 +171,7 @@ export function PageView({ doc, pageId, colorMode, assetUrl, resolver, softProof
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resourceKey]);
 
+  const text = useStoryLayouts(doc,pageId,colors,ready);
   const children: ReactNode[] = [];
   let svgRun: ReactNode[] = [];
   let runIndex = 0;
@@ -256,7 +200,7 @@ export function PageView({ doc, pageId, colorMode, assetUrl, resolver, softProof
       const story = doc.stories[frame.storyId];
       if (hasFill(frame)) svgRun.push(<ShapeSvg key={`${frame.id}:fill`} frame={frame} shape="rect" parts="fill" {...common} />);
       flush();
-      if (story) children.push(<TextFrameView key={frame.id} frame={frame} story={story} paragraphStyles={doc.paragraphStyles} characterStyles={doc.characterStyles} {...common} />);
+      if (story) children.push(<ThreadTextFrameView key={frame.id} frame={frame} storyId={story.id} doc={doc} colors={colors} layout={text.layouts.get(story.id)} origin={geo.origin} />);
       if (hasStroke(frame)) svgRun.push(<ShapeSvg key={`${frame.id}:stroke`} frame={frame} shape="rect" parts="stroke" {...common} />);
     } else {
       const asset = frame.assetId === null ? undefined : doc.assets[frame.assetId];
@@ -278,7 +222,7 @@ export function PageView({ doc, pageId, colorMode, assetUrl, resolver, softProof
       lang="en-US"
       data-galley-page={pageId}
       data-color-mode={colorMode}
-      data-ready={ready && proofSettled ? 'true' : 'false'}
+      data-ready={ready && proofSettled && text.ready ? 'true' : 'false'}
       style={{ width: pt(geo.width), height: pt(geo.height), ...style }}
     >
       {colorMode === 'screen' && (
