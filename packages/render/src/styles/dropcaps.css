@@ -1,0 +1,4 @@
+/* Shared by the page, print renderer and thread measurement host. No document color lives here. */
+.galley-text p[style*="--galley-drop-lines"]::first-letter, .galley-text-slot p[style*="--galley-drop-lines"]::first-letter {
+  initial-letter: var(--galley-drop-lines, normal);
+}

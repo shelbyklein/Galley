@@ -12,8 +12,7 @@
  *   - A run gets only what differs from its paragraph, so an unmarked run has no style at all.
  *   - Colors only ever come from the `ColorResolver` (screen soft proof, or export sentinels).
  *
- * Not emitted here yet (lane S, P2-04 and P2-05, extends this file): drop caps (they need `::first-letter`, so a generated
- * stylesheet rather than an inline style), `alignToBaselineGrid` (a layout decision, P2-08), and the continued-paragraph rules
+ * Drop caps use ./dropcaps.css and a paragraph custom property. `alignToBaselineGrid` (a layout decision, P2-08), and the continued-paragraph rules
  * of a thread (P2-02). Space before the first paragraph of a frame is dropped by the caller (`dropSpaceBefore`).
  */
 import type { ResolvedParagraph } from '@galley/model';
@@ -35,7 +34,7 @@ function featureSettings(features: ResolvedParagraph['features']): string | unde
 /** Declarations that depend only on the character-level properties, shared by paragraphs and runs. */
 function characterCss(r: ResolvedParagraph, colors: ColorResolver): CSSProperties {
   const css: CSSProperties = {
-    fontFamily: `"${r.fontFamily}", sans-serif`,
+    fontFamily: `${JSON.stringify(r.fontFamily)}, sans-serif`,
     fontWeight: r.fontWeight,
     fontStyle: r.fontStyle,
     fontSize: pt(r.fontSize),
@@ -65,6 +64,9 @@ export function paragraphCss(r: ResolvedParagraph, colors: ColorResolver, option
   if (r.rightIndent !== 0) css.paddingRight = pt(r.rightIndent);
   if (r.spaceBefore !== 0 && !options.dropSpaceBefore) css.paddingTop = pt(r.spaceBefore);
   if (r.spaceAfter !== 0) css.paddingBottom = pt(r.spaceAfter);
+  if (r.hyphenLadder !== null && r.hyphenLadder > 0) (css as Record<string, unknown>).hyphenateLimitLines = String(r.hyphenLadder);
+  // Chromium applies initial-letter to ::first-letter; the shared stylesheet consumes this custom property.
+  if (r.dropCapLines > 0 && r.dropCapChars === 1) (css as Record<string, unknown>)['--galley-drop-lines'] = String(r.dropCapLines);
   return stripUndefined(css);
 }
 

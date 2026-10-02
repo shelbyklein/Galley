@@ -7,3 +7,6 @@ export { bleedClipInsets, htmlFrameStyle, num, pt, sheetGeometry, type SheetGeom
 export { bolder, loadPageResources, usedFontFaces, usedImageUrls } from './fontLoading';
 export { collectPaintedColors, findNonSentinelColors, type PaintedColor } from './audit';
 export { paragraphCss, paragraphLanguage, runCss, toCssText, type ParagraphCssOptions } from './styles/resolve';
+
+export { applyDropCapDOM, dropCapCss, splitDropCapRuns } from './styles/dropcaps';
+export { StyledRuns } from './styles/StyledRuns';
