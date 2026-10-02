@@ -27,7 +27,7 @@ export function PropertyControls({ kind, value, onChange, disabled = false, laye
       <div className="gl-type-group">{number('rightIndent', 'Right indent', r.rightIndent, 'print', 0)}{number('spaceBefore', 'Before', r.spaceBefore, 'print', 0)}</div>
       <div className="gl-type-group">{number('spaceAfter', 'After', r.spaceAfter, 'print', 0)}{check('alignToBaselineGrid', 'Baseline grid', r.alignToBaselineGrid, (alignToBaselineGrid) => onChange({ print: { alignToBaselineGrid } }))}</div>
       <div className="gl-type-group">{number('hyphenMinWord', 'Min. word', r.hyphenMinWord, 'print', 1, 50, true)}{number('hyphenMinBefore', 'Before break', r.hyphenMinBefore, 'print', 1, 50, true)}</div>
-      <div className="gl-type-group">{number('hyphenMinAfter', 'After break', r.hyphenMinAfter, 'print', 1, 50, true)}<label className="gl-type-check" title="Consecutive hyphen-line limits require composition; not supported by this Chromium version">Hyphen lines <input aria-label="Hyphen lines" value={r.hyphenLadder ?? 'Unlimited'} disabled style={{ width:60 }} /><span>Requires composition</span></label></div>
+      <div className="gl-type-group">{number('hyphenMinAfter', 'After break', r.hyphenMinAfter, 'print', 1, 50, true)}<label className="gl-type-check" title="Consecutive hyphenated line limits are unavailable.">Hyphen lines <input aria-label="Hyphen lines" value={r.hyphenLadder ?? 'Unlimited'} disabled style={{ width:60 }} /><span>Unavailable</span></label></div>
       <div className="gl-type-group">{number('dropCapLines', 'Drop lines', r.dropCapLines, 'print', 0, 25, true)}{number('dropCapChars', 'Drop chars', r.dropCapChars, 'print', 1, 25, true)}</div>
     </>}
   </>;
