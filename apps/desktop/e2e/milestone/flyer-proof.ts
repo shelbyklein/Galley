@@ -19,6 +19,7 @@ export async function flyerShot(page: Page, name: string): Promise<void> {
 
 /** Word Ranges inspect the painted DOM independently of the thread engine, in coordinates relative to the page trim. */
 export async function captureFlyerLines(page: Page, ids: string[]) {
+  await waitForStable(page);
   return page.evaluate(frameIds => {
     const state = (window as any).__galley.store.getState();
     const doc = state.history.doc;
@@ -29,7 +30,7 @@ export async function captureFlyerLines(page: Page, ids: string[]) {
       const frame = doc.frames[id];
       const root = document.querySelector(`.galley-text[data-frame-id="${id}"]`);
       if (!root) throw new Error(`No rendered text frame ${id}`);
-      const lines: { text: string; cy: number; left: number; right: number }[] = [];
+      const lines: { text: string; cy: number; baseline: number; left: number; right: number }[] = [];
       for (const para of root.querySelectorAll('p')) {
         const walker = document.createTreeWalker(para, NodeFilter.SHOW_TEXT);
         const nodes: { node: Text; start: number }[] = [];
@@ -43,7 +44,7 @@ export async function captureFlyerLines(page: Page, ids: string[]) {
           if (!entry) throw new Error('Missing word location');
           return { node: entry.node, offset: offset - entry.start };
         };
-        const words: { text: string; cy: number; left: number; right: number }[] = [];
+        const words: { text: string; cy: number; left: number; right: number; range: Range }[] = [];
         for (const match of text.matchAll(/\S+/g)) {
           const begin = location(match.index, false), end = location(match.index + match[0].length, true);
           const range = document.createRange();
@@ -55,7 +56,7 @@ export async function captureFlyerLines(page: Page, ids: string[]) {
           if (Math.max(...centers) - Math.min(...centers) > zoom * 3) throw new Error('Flyer words must be unhyphenated for this independent checker');
           const cy = (centers[0]! - origin.y) / zoom;
           if (cy < frame.y || cy > frame.y + frame.h) continue;
-          words.push({ text: match[0], cy, left: (Math.min(...rects.map(r => r.left)) - origin.x) / zoom,
+          words.push({ text: match[0], cy, range, left: (Math.min(...rects.map(r => r.left)) - origin.x) / zoom,
             right: (Math.max(...rects.map(r => r.right)) - origin.x) / zoom });
         }
         const groups: typeof words[] = [];
@@ -66,7 +67,17 @@ export async function captureFlyerLines(page: Page, ids: string[]) {
         }
         for (const group of groups) {
           group.sort((a, b) => a.left - b.left);
-          lines.push({ text: group.map(w => w.text).join(' '), cy: group.reduce((sum, w) => sum + w.cy, 0) / group.length,
+          // An empty inline block's bottom sits on the real text baseline. At a line's first word it adds no width
+          // and does not introduce an interior break. Live Ranges survive the split/merge of their text nodes.
+          const before = group[0]!.range.getBoundingClientRect();
+          const marker = document.createElement('span');
+          marker.style.cssText = 'display:inline-block;width:0;height:0;padding:0;margin:0;border:0;vertical-align:baseline';
+          const at = group[0]!.range.cloneRange(); at.collapse(true); at.insertNode(marker);
+          const baseline = (marker.getBoundingClientRect().bottom - origin.y) / zoom;
+          marker.remove(); para.normalize();
+          const after = group[0]!.range.getBoundingClientRect();
+          if (Math.max(Math.abs(after.top - before.top), Math.abs(after.left - before.left)) > 0.01) throw new Error('Baseline probe changed text geometry');
+          lines.push({ text: group.map(w => w.text).join(' '), cy: group.reduce((sum, w) => sum + w.cy, 0) / group.length, baseline,
             left: Math.min(...group.map(w => w.left)), right: Math.max(...group.map(w => w.right)) });
         }
       }

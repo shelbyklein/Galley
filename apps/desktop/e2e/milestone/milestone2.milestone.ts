@@ -131,9 +131,21 @@ test('builds a styled flyer with two linked frames and contour wrap, saves/reope
     expect(fs.readFileSync(path.join(pkg, 'fonts', name))).toEqual(fs.readFileSync(path.join(originalPackage, 'fonts', name)));
   }
   await flushInput(page);
-  const painted = await captureFlyerLines(page, [left.id, right.id]);
-  expect(painted.every(f => f.lines.length > 8)).toBe(true);
-  expect(painted[1]!.lines.some(l => l.cy > 250 && l.cy < 380 && l.right < 470)).toBe(true);
+  const headingRequest = await page.evaluate(id => {
+    const g = (window as any).__galley, d = g.store.getState().history.doc;
+    const p = d.stories[d.frames[id].storyId].doc.content[0];
+    const r = g.model.resolveParagraph(d, g.model.paragraphAttrs(p));
+    return { family: r.fontFamily, weight: r.fontWeight, style: r.fontStyle };
+  }, title.id);
+  expect(headingRequest).toEqual({ family: 'Roboto', weight: 700, style: 'normal' });
+  const headingFont = await page.evaluate(request => (window as any).galley.fonts.resolve([request]), headingRequest);
+  expect(headingFont[0]).toMatchObject({ family: 'Roboto', weight: 700, style: 'normal', face: { source: 'document', format: 'variable' }, instanceAxes: { wght: 700 } });
+  await expect(page.locator(`.galley-text[data-frame-id="${title.id}"] p`).first()).toHaveCSS('font-weight', '700');
+  expect(await page.evaluate(() => document.fonts.check('normal 700 30pt "Roboto"'))).toBe(true);
+  const painted = await captureFlyerLines(page, [title.id, left.id, right.id]);
+  expect(painted[0]!.lines.map(l => l.text)).toEqual(['PROCESS NOTES']);
+  expect(painted.slice(1).every(f => f.lines.length > 8)).toBe(true);
+  expect(painted[2]!.lines.some(l => l.cy > 250 && l.cy < 380 && l.right < 470)).toBe(true);
   const proof = { frames: painted, blackFrameId: left.id, staticFamily: 'Inter', variableFamily: 'Roboto' };
   const screenFile = path.join(work, 'screen.json'); fs.writeFileSync(screenFile, JSON.stringify(proof));
   await flyerShot(page, '04-finished-flyer');
@@ -144,7 +156,7 @@ test('builds a styled flyer with two linked frames and contour wrap, saves/reope
   await clickMenuItem(app, 'file.open');
   await expect.poll(async () => await getDocumentJson(page)).toBe(saved);
   await page.keyboard.press('Meta+0'); await flushInput(page);
-  expect(await captureFlyerLines(page, [left.id, right.id])).toEqual(painted);
+  expect(await captureFlyerLines(page, [title.id, left.id, right.id])).toEqual(painted);
   await flyerShot(page, '05-reopened');
 
   await page.keyboard.press('Meta+e');

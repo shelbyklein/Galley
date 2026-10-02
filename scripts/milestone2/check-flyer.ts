@@ -9,7 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { readPackage } from '../golden/lib/app';
 
-interface Line { text: string; cy: number; left: number; right: number; pseudoHyphen?: boolean }
+interface Line { text: string; cy: number; baseline: number; left: number; right: number; pseudoHyphen?: boolean }
 interface ScreenFrame { id: string; x: number; y: number; w: number; h: number; lines: Line[] }
 interface ScreenProof {
   frames: ScreenFrame[];
@@ -39,11 +39,23 @@ async function main() {
     x0: Number(m[1]) - boxes.trim.x, y0: Number(m[2]) - boxes.trim.y,
     x1: Number(m[3]) - boxes.trim.x, y1: Number(m[4]) - boxes.trim.y, text: xmlText(m[5]!),
   }));
+  const pdfBaselines = JSON.parse(tool(process.env.GALLEY_PROOF_PYTHON ?? 'python3', [path.join(import.meta.dirname, 'pdf-baselines.py'), pdf])) as { text: string; x: number; baseline: number }[];
   const mismatches: string[] = [];
   const verticalOffsets: number[] = [];
   let lines = 0;
   let dxMax = 0;
+  let baselineMax = 0;
   for (const frame of screen.frames) {
+    const baselines = pdfBaselines.map(l => ({ ...l, x: l.x - boxes.trim.x, baseline: l.baseline - boxes.trim.y }))
+      .filter(l => l.x >= frame.x - 0.5 && l.x <= frame.x + frame.w + 0.5 && l.baseline >= frame.y - 0.5 && l.baseline <= frame.y + frame.h + 0.5)
+      .sort((a, b) => a.baseline - b.baseline || a.x - b.x);
+    if (baselines.length !== frame.lines.length) mismatches.push(`${frame.id}: ${frame.lines.length} screen baselines / ${baselines.length} PDF text origins`);
+    for (let i = 0; i < Math.min(frame.lines.length, baselines.length); i++) {
+      const a = frame.lines[i]!, b = baselines[i]!;
+      if (normalize(a.text) !== normalize(b.text)) mismatches.push(`${frame.id} baseline ${i}: screen ${JSON.stringify(a.text)} / PDF ${JSON.stringify(b.text)}`);
+      if (!Number.isFinite(a.baseline)) throw new Error(`Missing screen baseline ${frame.id} line ${i}`);
+      baselineMax = Math.max(baselineMax, Math.abs(a.baseline - b.baseline));
+    }
     const inside = words.filter(w => {
       const x = (w.x0 + w.x1) / 2, y = (w.y0 + w.y1) / 2;
       return x >= frame.x - 0.5 && x <= frame.x + frame.w + 0.5 && y >= frame.y - 0.5 && y <= frame.y + frame.h + 0.5;
@@ -72,9 +84,9 @@ async function main() {
   }
   const mean = verticalOffsets.reduce((s, v) => s + v, 0) / (verticalOffsets.length || 1);
   const dySpread = Math.max(0, ...verticalOffsets.map(v => Math.abs(v - mean)));
-  const lineMatch = { lines, mismatches: mismatches.length, details: mismatches.slice(0, 20), dxMax, dySpread };
-  checks.push({ group: 'text', name: 'UI flyer screen/PDF line agreement', expected: '20+ lines, 0 mismatches, geometry within 0.5 pt',
-    measured: JSON.stringify(lineMatch), pass: lines >= 20 && mismatches.length === 0 && dxMax < 0.5 && dySpread < 0.5 });
+  const lineMatch = { lines, mismatches: mismatches.length, details: mismatches.slice(0, 20), dxMax, baselineMax, boxCenterOffset: mean, dySpread };
+  checks.push({ group: 'text', name: 'UI flyer screen/PDF line agreement', expected: '20+ lines, 0 mismatches, horizontal bounds within 0.5 pt, absolute baselines within 0.1 pt',
+    measured: JSON.stringify(lineMatch), pass: lines >= 20 && mismatches.length === 0 && dxMax < 0.5 && baselineMax <= 0.1 && dySpread < 0.5 });
 
   const fontOutput = tool('pdffonts', [pdf]);
   const fontRows = fontOutput.trim().split('\n').slice(2).filter(Boolean);
