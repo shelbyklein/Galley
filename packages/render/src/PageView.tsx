@@ -3,7 +3,6 @@ import {
   paintOrder,
   paragraphAttrs,
   resolveParagraph,
-  resolveRun,
   type Asset,
   type BoxFrame,
   type EllipseFrame,
@@ -23,8 +22,10 @@ import { getFontEpoch, subscribeFonts } from './fontRuntime';
 import { loadPageResources, usedFontFaces, usedImageUrls } from './fontLoading';
 import { bleedClipInsets, htmlFrameStyle, num, pt, sheetGeometry } from './geometry';
 import { defaultSoftProof, getSoftProofEpoch, getSoftProofSource, subscribeSoftProof } from './softproof';
-import { paragraphCss, paragraphLanguage, runCss } from './styles/resolve';
+import { paragraphCss, paragraphLanguage } from './styles/resolve';
+import { StyledRuns } from './styles/StyledRuns';
 import './page.css';
+import './styles/dropcaps.css';
 
 export type AssetUrlFn = (asset: Asset) => string;
 
@@ -127,17 +128,9 @@ const TextFrameView = memo(function TextFrameView({ frame, story, paragraphStyle
     ? (story.doc.content ?? []).map((p, i) => {
         const attrs = paragraphAttrs(p);
         const resolved = resolveParagraph(tables, attrs);
-        const runs = (p.content ?? []).map((t, j) => {
-          const css = runCss(resolved, resolveRun(tables, resolved, t.marks), colors);
-          return (
-            <span key={j} style={Object.keys(css).length > 0 ? css : undefined}>
-              {t.text ?? ''}
-            </span>
-          );
-        });
         return (
-          <p key={i} lang={paragraphLanguage(resolved)} style={paragraphCss(resolved, colors, { dropSpaceBefore: i === 0 })} data-paragraph-style={attrs.style}>
-            {runs.length > 0 ? runs : <br />}
+          <p key={`${i}:${resolved.dropCapLines}:${resolved.dropCapChars}`} lang={paragraphLanguage(resolved)} style={paragraphCss(resolved, colors, { dropSpaceBefore: i === 0 })} data-paragraph-style={attrs.style}>
+            <StyledRuns runs={p.content ?? []} paragraph={resolved} tables={tables} colors={colors} />
           </p>
         );
       })
