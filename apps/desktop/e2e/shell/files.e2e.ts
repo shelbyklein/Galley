@@ -252,7 +252,7 @@ test.describe('Save, Save As and Open', () => {
       s.dispatch(g.model.addFrame, {
         frame: { ...base, id: 't', type: 'text', x: 10, y: 100, w: 200, h: 60, fill: null, storyId: 's', inset: 0 },
         pageId,
-        story: g.model.createStory('s', 'Hello, world', { fill: g.model.paint('black') }),
+        story: g.model.createStory('s', 'Hello, world'),
       });
       s.dispatch(g.model.addFrame, { frame: { ...base, id: 'i', type: 'image', x: 10, y: 170, w: 80, h: 80, fill: null, assetId: null, content: null }, pageId });
       s.dispatch(g.model.addLayer, { layer: g.model.makeLayer({ id: 'layer_2', name: 'Second', color: '#ff453a', locked: true }) });

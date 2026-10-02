@@ -20,7 +20,9 @@ for (const name of V1) {
       const { page } = galley;
       await page.waitForSelector('.galley-page[data-ready="true"]');
       const doc = await getDocument(page);
-      expect(doc.formatVersion).toBeGreaterThanOrEqual(1); // (tightened to 2 once the model migrates)
+      expect(doc.formatVersion).toBe(2);
+      expect(doc.paragraphStyles['basic-paragraph']).toBeDefined();
+      expect(Object.values<any>(doc.stories).every((s) => s.frameIds.length >= 1)).toBe(true);
       await snap(page, `migration-${name}`, { testInfo, target: page.locator('.galley-page') });
       await waitForStable(page);
       await expect(page.locator('.galley-page')).toHaveScreenshot(`${name}.png`, { maxDiffPixels: 0 });

@@ -41,8 +41,8 @@ test('the editor opens the poster fixture and renders it', async ({ galley }, te
   const fonts = await page.evaluate(() => ['400 16px Inter', '700 16px Inter', '800 16px Inter', '900 16px Inter'].map((f) => document.fonts.check(f)));
   expect(fonts).toEqual([true, true, true, true]);
 
-  // the poster text really is set in Inter, not a fallback: the headline is 800 weight at 160pt
-  const headline = await page.locator('[data-frame-id="spring"]').evaluate((el) => {
+  // the poster text really is set in Inter, not a fallback: the headline is 800 weight at 160pt (its paragraph style carries it)
+  const headline = await page.locator('[data-frame-id="spring"] p').evaluate((el) => {
     const cs = getComputedStyle(el);
     return { family: cs.fontFamily, weight: cs.fontWeight, size: cs.fontSize };
   });

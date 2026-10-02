@@ -9,7 +9,7 @@
 // Regions come from the model's frame geometry, so the checks follow whatever the fixture contains. Ported from the press
 // spike's verify.ts, which hard-coded the regions of one page.
 import { PDFArray, PDFDict, PDFDocument, PDFName, PDFNumber, PDFRawStream } from '@cantoo/pdf-lib';
-import { buildSentinelTable, isLayerVisible, paintOrder, resolveInk, type Frame, type GalleyDocument, type Id, type Ink, type Paint } from '@galley/model';
+import { buildSentinelTable, isLayerVisible, paintOrder, paragraphAttrs, resolveInk, resolveParagraph, type Frame, type GalleyDocument, type Id, type Ink, type Paint } from '@galley/model';
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -187,7 +187,9 @@ export async function runGoldenChecks(input: GoldenInput): Promise<Check[]> {
   for (const t of frames.filter((q) => q.frame.type === 'text' && upright(q))) {
     const story = doc.stories[(t.frame as Extract<Frame, { type: 'text' }>).storyId];
     if (!story || !(story.doc.content ?? []).some((pp) => (pp.content ?? []).length > 0)) continue;
-    const x = inkOf(story.defaults.fill);
+    // the text color: the first paragraph's resolved style (the golden fixture sets one color per story)
+    const textFill = resolveParagraph(doc, paragraphAttrs(story.doc.content![0]!)).fill;
+    const x = inkOf(textFill);
     const xe = expectedPlates(x);
     // the background: the first frame under the text that overlaps it must be a fill that covers it (after shrinking the
     // text box toward its center); anything else under or over it makes the region unknown, and it is skipped
@@ -215,7 +217,7 @@ export async function runGoldenChecks(input: GoldenInput): Promise<Check[]> {
     const underlay = bg ? expectedPlates(bg) : null;
     const name = `${label(t)}: text`;
 
-    if (isBlack100(x) && !x_overprint(story.defaults.fill) && !underlay) {
+    if (isBlack100(x) && !x_overprint(textFill) && !underlay) {
       const m = region(region_);
       const others = Math.max(m.max.C, m.max.M, m.max.Y, ...Object.values(m.spots).map((v) => v.max));
       check('black', `${name} on paper is K only: the C, M, Y and spot plates are empty`, 'max 0.0', describeMeasure(m, 'max'), others === 0);
@@ -238,7 +240,7 @@ export async function runGoldenChecks(input: GoldenInput): Promise<Check[]> {
     const full = plateValue(xe, driver) - 1.5;
     const pred = (i: number) => plateAt(seps, driver, i) >= full;
     const m = region(region_, pred);
-    const over = x_overprint(story.defaults.fill);
+    const over = x_overprint(textFill);
     let expected = xe;
     let what: string;
     if (underlay && !isPaper(underlay) && over) {

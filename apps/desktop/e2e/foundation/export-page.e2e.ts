@@ -33,7 +33,8 @@ test('the export page paints sentinels only and prints a sheet-sized PDF', async
           const cs = getComputedStyle(el);
           for (const v of [cs.fill, cs.stroke]) if (v && v !== 'none') svg.push(v);
         }
-        const text = [...page.querySelectorAll('.galley-text')].map((el) => getComputedStyle(el).color);
+        // (a paragraph carries its own color since v2: the frame box has none)
+        const text = [...page.querySelectorAll('.galley-text p')].map((el) => getComputedStyle(el).color);
         const box = page.getBoundingClientRect();
         return { svg, text, paper: page.querySelectorAll('.galley-paper').length, pageBox: { w: box.width, h: box.height }, images: page.querySelectorAll('img').length };
       })()`);
