@@ -35,8 +35,12 @@ async function exportPdf(sender: Electron.WebContents, request: ExportPdfRequest
     const result = await runExportPipeline({ files: request.files, options: request.options, pageId: request.pageId, title: request.suggestedName }, progress);
 
     progress({ stage: 'saving', message: 'Saving the PDF' });
-    await fs.promises.mkdir(path.dirname(target), { recursive: true });
-    await fs.promises.writeFile(target, result.bytes);
+    try {
+      await fs.promises.mkdir(path.dirname(target), { recursive: true });
+      await fs.promises.writeFile(target, result.bytes);
+    } catch (error) {
+      throw new Error(`Could not save the PDF: ${messageOf(error)}`);
+    }
     return {
       status: 'saved',
       summary: {
