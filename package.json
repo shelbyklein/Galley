@@ -14,6 +14,7 @@
     "test": "vitest run",
     "test:e2e": "npm run build && npm run test:e2e -w @galley/desktop",
     "test:milestone1": "npm run build && npm run test:milestone1 -w @galley/desktop",
+    "test:milestone2": "npm run build && npm run test:milestone2 -w @galley/desktop",
     "test:golden": "tsx scripts/golden/run.ts",
     "test:text": "node scripts/placeholder.mjs test:text",
     "test:geometry": "tsx scripts/geometry/run.ts",
