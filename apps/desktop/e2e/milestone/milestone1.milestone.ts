@@ -233,6 +233,11 @@ test('builds the Spring poster through the UI, saves and reopens it, and exports
     const free = await drawWith(page, 'type', { x: 656, y: 1015 }, { x: 700, y: 1035 });
     ids.free = free.id;
     await typeInto(page, free.id, 'FREE');
+    // Snapping puts this short frame at 14 pt high, below the default 15 pt leading. Phase 2 correctly treats its
+    // text as overset; enlarge it through the control strip so the word is laid out before the print milestone.
+    await setGeometry(page, { h: 20 });
+    await expect.poll(async () => (await getDoc(page)).frames[free.id].h).toBe(20);
+    await expect(page.locator(`.galley-text[data-frame-id="${free.id}"]`)).toContainText('FREE');
   });
 
   await test.step('3h. Rectangle tool: the Studio Blue footer bar between the margins', async () => {
