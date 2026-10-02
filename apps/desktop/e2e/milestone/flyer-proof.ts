@@ -67,12 +67,14 @@ export async function captureFlyerLines(page: Page, ids: string[]) {
         }
         for (const group of groups) {
           group.sort((a, b) => a.left - b.left);
-          // An empty inline block's bottom sits on the real text baseline. At a line's first word it adds no width
-          // and does not introduce an interior break. Live Ranges survive the split/merge of their text nodes.
+          // An empty inline block's bottom sits on the real text baseline. Put it after the first word so it cannot
+          // occupy the preceding line while that word wraps. Live Ranges survive text-node splitting and merging.
           const before = group[0]!.range.getBoundingClientRect();
           const marker = document.createElement('span');
           marker.style.cssText = 'display:inline-block;width:0;height:0;padding:0;margin:0;border:0;vertical-align:baseline';
-          const at = group[0]!.range.cloneRange(); at.collapse(true); at.insertNode(marker);
+          const at = group[0]!.range.cloneRange(); at.collapse(false); at.insertNode(marker);
+          const during = group[0]!.range.getBoundingClientRect();
+          if (Math.max(Math.abs(during.top - before.top), Math.abs(during.left - before.left)) > 0.01) throw new Error('Baseline probe changed live text geometry');
           const baseline = (marker.getBoundingClientRect().bottom - origin.y) / zoom;
           marker.remove(); para.normalize();
           const after = group[0]!.range.getBoundingClientRect();
