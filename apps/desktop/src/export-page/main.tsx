@@ -17,7 +17,7 @@ import './export.css';
 
 export interface ExportLoadResult {
   pageId: string;
-  /** The printed sheet in points (trim plus bleed/slug): the page size for printToPDF. */
+  /** The printed sheet in points (trim plus bleed/slug). The PDF's MediaBox is exactly this after prepress. */
   sheet: { width: number; height: number };
   /** Sentinel RGB to ink table for this document; the prepress step uses the same table. */
   sentinels: SentinelEntry[];
@@ -60,14 +60,17 @@ window.galleyExport = {
     table = buildSentinelTable(doc);
     const sheet = sheetSize(page);
 
-    // the printed page is exactly the sheet
+    // The printed sheet is exactly `sheet` (the .galley-page element). The `@page` size is a little larger: Chromium rounds
+    // the page size to whole points, in either direction, and a page smaller than the sheet makes it shrink the content
+    // to fit. A whole number of points that is at least one more than the sheet is never smaller than it, and the
+    // prepress step crops the PDF to the exact sheet (packages/render/GEOMETRY.md, "Page size").
     let style = document.getElementById('galley-page-size');
     if (!style) {
       style = document.createElement('style');
       style.id = 'galley-page-size';
       document.head.appendChild(style);
     }
-    style.textContent = `@page { size: ${sheet.width}pt ${sheet.height}pt; margin: 0; }`;
+    style.textContent = `@page { size: ${Math.ceil(sheet.width) + 1}pt ${Math.ceil(sheet.height) + 1}pt; margin: 0; }`;
 
     root ??= createRoot(document.getElementById('root')!);
     flushSync(() => {

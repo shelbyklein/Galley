@@ -7,6 +7,8 @@ import { registerCoreCommands } from './commands/core';
 import { installKeyboardShortcuts } from './commands/keyboard';
 import { commands } from './commands/registry';
 import { useEditorStore } from './store';
+import './dialogs/export/register'; // lane A: File > Export > PDF/X-4… (⌘E) and its dialog
+import './status/register'; // lane A: soft proofing through the output profile
 import './theme.css';
 
 /** TEMPORARY (lane C replaces it with real File > Open): open the package the main process was told to open at startup. */

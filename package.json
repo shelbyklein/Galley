@@ -10,13 +10,14 @@
   "scripts": {
     "dev": "npm run dev -w @galley/desktop",
     "build": "npm run typecheck && npm run build -w @galley/desktop",
-    "typecheck": "npm run typecheck --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present && tsc --noEmit -p scripts",
     "test": "vitest run",
     "test:e2e": "npm run build && npm run test:e2e -w @galley/desktop",
-    "test:golden": "node scripts/placeholder.mjs test:golden",
+    "test:golden": "tsx scripts/golden/run.ts",
     "test:text": "node scripts/placeholder.mjs test:text",
-    "test:geometry": "node scripts/placeholder.mjs test:geometry",
-    "fixtures": "tsx scripts/fixtures/build-poster-basic.ts"
+    "test:geometry": "tsx scripts/geometry/run.ts",
+    "fixtures": "tsx scripts/fixtures/build-poster-basic.ts",
+    "fixtures:golden": "tsx scripts/golden/build-fixtures.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

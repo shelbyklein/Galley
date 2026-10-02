@@ -3,17 +3,28 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Galley prepress: sentinel colors to CMYK/spot, page boxes, marks, PDF/X-4. Empty stub until lane A (P1-05).",
+  "description": "Galley prepress: sentinel colors to CMYK/spot, page boxes, crop marks, PDF/X-4, output profiles and soft proofing, golden separation measurement. Node only (main process and scripts).",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./geometry": "./src/geometry.ts",
+    "./profiles": "./src/profiles.ts",
+    "./softproof": "./src/softproof.ts",
+    "./verify": "./src/verify/index.ts"
   },
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --noEmit -p ."
   },
   "dependencies": {
-    "@galley/model": "*"
+    "@cantoo/pdf-lib": "^2.11.1",
+    "@galley/model": "*",
+    "lcms-wasm": "^1.0.5",
+    "pako": "^3.0.2",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@types/pako": "^2.0.4"
   }
 }
