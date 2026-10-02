@@ -1,0 +1,1936 @@
+{
+  "assets": {},
+  "formatVersion": 1,
+  "frames": {
+    "blue-text": {
+      "fill": null,
+      "h": 27,
+      "id": "blue-text",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "Studio Blue text on orange",
+      "rotation": 0,
+      "storyId": "story_blue-text",
+      "stroke": null,
+      "type": "text",
+      "w": 112,
+      "x": 44,
+      "y": 376
+    },
+    "body-1": {
+      "fill": null,
+      "h": 96,
+      "id": "body-1",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "Body text",
+      "rotation": 0,
+      "storyId": "story_body-1",
+      "stroke": null,
+      "type": "text",
+      "w": 252,
+      "x": 36,
+      "y": 530
+    },
+    "body-2": {
+      "fill": null,
+      "h": 96,
+      "id": "body-2",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "Body text, fractional position",
+      "rotation": 0,
+      "storyId": "story_body-2",
+      "stroke": null,
+      "type": "text",
+      "w": 276.1,
+      "x": 300.3,
+      "y": 530.1
+    },
+    "cap-black": {
+      "fill": null,
+      "h": 14,
+      "id": "cap-black",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_cap-black",
+      "stroke": null,
+      "type": "text",
+      "w": 80,
+      "x": 312,
+      "y": 134
+    },
+    "cap-blue": {
+      "fill": null,
+      "h": 14,
+      "id": "cap-blue",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_cap-blue",
+      "stroke": null,
+      "type": "text",
+      "w": 80,
+      "x": 496,
+      "y": 134
+    },
+    "cap-cyan": {
+      "fill": null,
+      "h": 14,
+      "id": "cap-cyan",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_cap-cyan",
+      "stroke": null,
+      "type": "text",
+      "w": 80,
+      "x": 36,
+      "y": 134
+    },
+    "cap-gray": {
+      "fill": null,
+      "h": 14,
+      "id": "cap-gray",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_cap-gray",
+      "stroke": null,
+      "type": "text",
+      "w": 80,
+      "x": 220,
+      "y": 314
+    },
+    "cap-magenta": {
+      "fill": null,
+      "h": 14,
+      "id": "cap-magenta",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_cap-magenta",
+      "stroke": null,
+      "type": "text",
+      "w": 80,
+      "x": 128,
+      "y": 134
+    },
+    "cap-orange": {
+      "fill": null,
+      "h": 14,
+      "id": "cap-orange",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_cap-orange",
+      "stroke": null,
+      "type": "text",
+      "w": 80,
+      "x": 404,
+      "y": 134
+    },
+    "cap-pms": {
+      "fill": null,
+      "h": 14,
+      "id": "cap-pms",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_cap-pms",
+      "stroke": null,
+      "type": "text",
+      "w": 80,
+      "x": 312,
+      "y": 224
+    },
+    "cap-pms-swatch": {
+      "fill": null,
+      "h": 14,
+      "id": "cap-pms-swatch",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_cap-pms-swatch",
+      "stroke": null,
+      "type": "text",
+      "w": 80,
+      "x": 496,
+      "y": 224
+    },
+    "cap-pms-tint": {
+      "fill": null,
+      "h": 14,
+      "id": "cap-pms-tint",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_cap-pms-tint",
+      "stroke": null,
+      "type": "text",
+      "w": 80,
+      "x": 404,
+      "y": 224
+    },
+    "cap-pms2": {
+      "fill": null,
+      "h": 14,
+      "id": "cap-pms2",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_cap-pms2",
+      "stroke": null,
+      "type": "text",
+      "w": 80,
+      "x": 36,
+      "y": 314
+    },
+    "cap-pms2-tint": {
+      "fill": null,
+      "h": 14,
+      "id": "cap-pms2-tint",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_cap-pms2-tint",
+      "stroke": null,
+      "type": "text",
+      "w": 80,
+      "x": 128,
+      "y": 314
+    },
+    "cap-rich": {
+      "fill": null,
+      "h": 14,
+      "id": "cap-rich",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_cap-rich",
+      "stroke": null,
+      "type": "text",
+      "w": 80,
+      "x": 312,
+      "y": 314
+    },
+    "cap-teal": {
+      "fill": null,
+      "h": 14,
+      "id": "cap-teal",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_cap-teal",
+      "stroke": null,
+      "type": "text",
+      "w": 80,
+      "x": 36,
+      "y": 224
+    },
+    "cap-teal-swatch": {
+      "fill": null,
+      "h": 14,
+      "id": "cap-teal-swatch",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_cap-teal-swatch",
+      "stroke": null,
+      "type": "text",
+      "w": 80,
+      "x": 220,
+      "y": 224
+    },
+    "cap-teal-tint": {
+      "fill": null,
+      "h": 14,
+      "id": "cap-teal-tint",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_cap-teal-tint",
+      "stroke": null,
+      "type": "text",
+      "w": 80,
+      "x": 128,
+      "y": 224
+    },
+    "cap-yellow": {
+      "fill": null,
+      "h": 14,
+      "id": "cap-yellow",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "",
+      "rotation": 0,
+      "storyId": "story_cap-yellow",
+      "stroke": null,
+      "type": "text",
+      "w": 80,
+      "x": 220,
+      "y": 134
+    },
+    "head-blue": {
+      "fill": null,
+      "h": 40,
+      "id": "head-blue",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "Studio Blue text on paper",
+      "rotation": 0,
+      "storyId": "story_head-blue",
+      "stroke": null,
+      "type": "text",
+      "w": 400,
+      "x": 36,
+      "y": 640
+    },
+    "head-spot": {
+      "fill": null,
+      "h": 40,
+      "id": "head-spot",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "PANTONE 185 C text on paper",
+      "rotation": 0,
+      "storyId": "story_head-spot",
+      "stroke": null,
+      "type": "text",
+      "w": 400,
+      "x": 36,
+      "y": 690
+    },
+    "ko-black": {
+      "fill": null,
+      "h": 27,
+      "id": "ko-black",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "Knockout black on orange",
+      "rotation": 0,
+      "storyId": "story_ko-black",
+      "stroke": null,
+      "type": "text",
+      "w": 112,
+      "x": 168,
+      "y": 346
+    },
+    "ko-spot": {
+      "fill": null,
+      "h": 27,
+      "id": "ko-spot",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "Knockout black on PANTONE 185 C",
+      "rotation": 0,
+      "storyId": "story_ko-spot",
+      "stroke": null,
+      "type": "text",
+      "w": 260,
+      "x": 308,
+      "y": 376
+    },
+    "late-spot": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "pms-185-c",
+        "tint": 40
+      },
+      "h": 60,
+      "id": "late-spot",
+      "layerId": "layer_1",
+      "name": "Late spot tint",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 276,
+      "x": 300,
+      "y": 452
+    },
+    "late-spot-text": {
+      "fill": null,
+      "h": 27,
+      "id": "late-spot-text",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "Knockout black on PANTONE 185 C 40%",
+      "rotation": 0,
+      "storyId": "story_late-spot-text",
+      "stroke": null,
+      "type": "text",
+      "w": 260,
+      "x": 308,
+      "y": 462
+    },
+    "late-teal": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "teal",
+        "tint": 50
+      },
+      "h": 60,
+      "id": "late-teal",
+      "layerId": "layer_1",
+      "name": "Late teal tint",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 252,
+      "x": 36,
+      "y": 452
+    },
+    "late-teal-text": {
+      "fill": null,
+      "h": 27,
+      "id": "late-teal-text",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "Knockout black on teal 50%",
+      "rotation": 0,
+      "storyId": "story_late-teal-text",
+      "stroke": null,
+      "type": "text",
+      "w": 236,
+      "x": 44,
+      "y": 462
+    },
+    "ov-black": {
+      "fill": null,
+      "h": 27,
+      "id": "ov-black",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "Overprint black on orange",
+      "rotation": 0,
+      "storyId": "story_ov-black",
+      "stroke": null,
+      "type": "text",
+      "w": 112,
+      "x": 44,
+      "y": 346
+    },
+    "ov-spot": {
+      "fill": null,
+      "h": 27,
+      "id": "ov-spot",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "Overprint black on PANTONE 185 C",
+      "rotation": 0,
+      "storyId": "story_ov-spot",
+      "stroke": null,
+      "type": "text",
+      "w": 260,
+      "x": 308,
+      "y": 346
+    },
+    "panel-orange": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "warm-orange",
+        "tint": 100
+      },
+      "h": 96,
+      "id": "panel-orange",
+      "layerId": "layer_1",
+      "name": "Orange panel",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 252,
+      "x": 36,
+      "y": 340
+    },
+    "panel-spot": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "pms-185-c",
+        "tint": 100
+      },
+      "h": 96,
+      "id": "panel-spot",
+      "layerId": "layer_1",
+      "name": "Spot panel",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 276,
+      "x": 300,
+      "y": 340
+    },
+    "paper-text": {
+      "fill": null,
+      "h": 27,
+      "id": "paper-text",
+      "inset": 0,
+      "layerId": "layer_1",
+      "name": "[Paper] text on orange",
+      "rotation": 0,
+      "storyId": "story_paper-text",
+      "stroke": null,
+      "type": "text",
+      "w": 112,
+      "x": 168,
+      "y": 376
+    },
+    "patch-black": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "black",
+        "tint": 100
+      },
+      "h": 60,
+      "id": "patch-black",
+      "layerId": "layer_1",
+      "name": "[Black] 100K",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 80,
+      "x": 312,
+      "y": 72
+    },
+    "patch-blue": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "studio-blue",
+        "tint": 100
+      },
+      "h": 60,
+      "id": "patch-blue",
+      "layerId": "layer_1",
+      "name": "Studio Blue",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 80,
+      "x": 496,
+      "y": 72
+    },
+    "patch-cyan": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "cyan",
+        "tint": 100
+      },
+      "h": 60,
+      "id": "patch-cyan",
+      "layerId": "layer_1",
+      "name": "Cyan",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 80,
+      "x": 36,
+      "y": 72
+    },
+    "patch-gray": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "black",
+        "tint": 50
+      },
+      "h": 60,
+      "id": "patch-gray",
+      "layerId": "layer_1",
+      "name": "[Black] at 50%",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 80,
+      "x": 220,
+      "y": 252
+    },
+    "patch-magenta": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "magenta",
+        "tint": 100
+      },
+      "h": 60,
+      "id": "patch-magenta",
+      "layerId": "layer_1",
+      "name": "Magenta",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 80,
+      "x": 128,
+      "y": 72
+    },
+    "patch-orange": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "warm-orange",
+        "tint": 100
+      },
+      "h": 60,
+      "id": "patch-orange",
+      "layerId": "layer_1",
+      "name": "Warm Orange",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 80,
+      "x": 404,
+      "y": 72
+    },
+    "patch-pms": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "pms-185-c",
+        "tint": 100
+      },
+      "h": 60,
+      "id": "patch-pms",
+      "layerId": "layer_1",
+      "name": "PANTONE 185 C",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 80,
+      "x": 312,
+      "y": 162
+    },
+    "patch-pms-swatch": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "pms-185-c-40",
+        "tint": 100
+      },
+      "h": 60,
+      "id": "patch-pms-swatch",
+      "layerId": "layer_1",
+      "name": "185 C 40% swatch",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 80,
+      "x": 496,
+      "y": 162
+    },
+    "patch-pms-tint": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "pms-185-c",
+        "tint": 40
+      },
+      "h": 60,
+      "id": "patch-pms-tint",
+      "layerId": "layer_1",
+      "name": "185 C, paint at 40%",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 80,
+      "x": 404,
+      "y": 162
+    },
+    "patch-pms2": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "pms-2995-c",
+        "tint": 100
+      },
+      "h": 60,
+      "id": "patch-pms2",
+      "layerId": "layer_1",
+      "name": "PANTONE 2995 C",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 80,
+      "x": 36,
+      "y": 252
+    },
+    "patch-pms2-tint": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "pms-2995-c",
+        "tint": 70
+      },
+      "h": 60,
+      "id": "patch-pms2-tint",
+      "layerId": "layer_1",
+      "name": "2995 C, paint at 70%",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 80,
+      "x": 128,
+      "y": 252
+    },
+    "patch-rich": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "rich-black",
+        "tint": 100
+      },
+      "h": 60,
+      "id": "patch-rich",
+      "layerId": "layer_1",
+      "name": "Rich Black",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 80,
+      "x": 312,
+      "y": 252
+    },
+    "patch-teal": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "teal",
+        "tint": 100
+      },
+      "h": 60,
+      "id": "patch-teal",
+      "layerId": "layer_1",
+      "name": "Teal",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 80,
+      "x": 36,
+      "y": 162
+    },
+    "patch-teal-swatch": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "teal-50",
+        "tint": 100
+      },
+      "h": 60,
+      "id": "patch-teal-swatch",
+      "layerId": "layer_1",
+      "name": "Teal 50% swatch",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 80,
+      "x": 220,
+      "y": 162
+    },
+    "patch-teal-tint": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "teal",
+        "tint": 50
+      },
+      "h": 60,
+      "id": "patch-teal-tint",
+      "layerId": "layer_1",
+      "name": "Teal, paint at 50%",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 80,
+      "x": 128,
+      "y": 162
+    },
+    "patch-yellow": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "yellow",
+        "tint": 100
+      },
+      "h": 60,
+      "id": "patch-yellow",
+      "layerId": "layer_1",
+      "name": "Yellow",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 80,
+      "x": 220,
+      "y": 72
+    },
+    "side-bar": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "warm-orange",
+        "tint": 100
+      },
+      "h": 100,
+      "id": "side-bar",
+      "layerId": "layer_1",
+      "name": "Side bar",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 36,
+      "x": -9,
+      "y": 640
+    },
+    "top-bar": {
+      "fill": {
+        "overprint": false,
+        "swatchId": "studio-blue",
+        "tint": 100
+      },
+      "h": 45,
+      "id": "top-bar",
+      "layerId": "layer_1",
+      "name": "Top bar",
+      "rotation": 0,
+      "stroke": null,
+      "type": "rect",
+      "w": 630,
+      "x": -9,
+      "y": -9
+    }
+  },
+  "guides": {},
+  "layerOrder": [
+    "layer_1"
+  ],
+  "layers": {
+    "layer_1": {
+      "color": "#4da3ff",
+      "id": "layer_1",
+      "locked": false,
+      "name": "Layer 1",
+      "visible": true
+    }
+  },
+  "meta": {
+    "colorProfile": null,
+    "engineVersion": "44.5.1",
+    "title": "Swatch chart"
+  },
+  "pageOrder": [
+    "page_1"
+  ],
+  "pages": {
+    "page_1": {
+      "bleed": {
+        "bottom": 9,
+        "left": 9,
+        "right": 9,
+        "top": 9
+      },
+      "columns": {
+        "count": 1,
+        "gutter": 12
+      },
+      "height": 792,
+      "id": "page_1",
+      "items": [
+        "top-bar",
+        "side-bar",
+        "patch-cyan",
+        "cap-cyan",
+        "patch-magenta",
+        "cap-magenta",
+        "patch-yellow",
+        "cap-yellow",
+        "patch-black",
+        "cap-black",
+        "patch-orange",
+        "cap-orange",
+        "patch-blue",
+        "cap-blue",
+        "patch-teal",
+        "cap-teal",
+        "patch-teal-tint",
+        "cap-teal-tint",
+        "patch-teal-swatch",
+        "cap-teal-swatch",
+        "patch-pms",
+        "cap-pms",
+        "patch-pms-tint",
+        "cap-pms-tint",
+        "patch-pms-swatch",
+        "cap-pms-swatch",
+        "patch-pms2",
+        "cap-pms2",
+        "patch-pms2-tint",
+        "cap-pms2-tint",
+        "patch-gray",
+        "cap-gray",
+        "patch-rich",
+        "cap-rich",
+        "panel-orange",
+        "ov-black",
+        "ko-black",
+        "blue-text",
+        "paper-text",
+        "panel-spot",
+        "ov-spot",
+        "ko-spot",
+        "late-teal",
+        "late-teal-text",
+        "late-spot",
+        "late-spot-text",
+        "body-1",
+        "body-2",
+        "head-blue",
+        "head-spot"
+      ],
+      "margins": {
+        "bottom": 36,
+        "left": 36,
+        "right": 36,
+        "top": 36
+      },
+      "slug": {
+        "bottom": 36,
+        "left": 36,
+        "right": 36,
+        "top": 36
+      },
+      "width": 612
+    }
+  },
+  "stories": {
+    "story_blue-text": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "studio-blue",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 16,
+        "fontStyle": "normal",
+        "fontWeight": 800,
+        "leading": 21,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Blue text",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_blue-text"
+    },
+    "story_body-1": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 11,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 16.5,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Twenty studios open their doors for one day. Watch screen printing, letterpress and riso demos, browse prints, and meet the people who make them.",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_body-1"
+    },
+    "story_body-2": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 11,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 16.5,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Twenty studios open their doors for one day. Watch screen printing, letterpress and riso demos, browse prints, and meet the people who make them.",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_body-2"
+    },
+    "story_cap-black": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 8,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 9.75,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "[Black] 100K",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_cap-black"
+    },
+    "story_cap-blue": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 8,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 9.75,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Studio Blue",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_cap-blue"
+    },
+    "story_cap-cyan": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 8,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 9.75,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Cyan",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_cap-cyan"
+    },
+    "story_cap-gray": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 8,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 9.75,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "[Black] at 50%",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_cap-gray"
+    },
+    "story_cap-magenta": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 8,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 9.75,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Magenta",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_cap-magenta"
+    },
+    "story_cap-orange": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 8,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 9.75,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Warm Orange",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_cap-orange"
+    },
+    "story_cap-pms": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 8,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 9.75,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "PANTONE 185 C",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_cap-pms"
+    },
+    "story_cap-pms-swatch": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 8,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 9.75,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "185 C 40% swatch",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_cap-pms-swatch"
+    },
+    "story_cap-pms-tint": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 8,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 9.75,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "185 C, paint at 40%",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_cap-pms-tint"
+    },
+    "story_cap-pms2": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 8,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 9.75,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "PANTONE 2995 C",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_cap-pms2"
+    },
+    "story_cap-pms2-tint": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 8,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 9.75,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "2995 C, paint at 70%",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_cap-pms2-tint"
+    },
+    "story_cap-rich": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 8,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 9.75,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Rich Black",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_cap-rich"
+    },
+    "story_cap-teal": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 8,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 9.75,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Teal",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_cap-teal"
+    },
+    "story_cap-teal-swatch": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 8,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 9.75,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Teal 50% swatch",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_cap-teal-swatch"
+    },
+    "story_cap-teal-tint": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 8,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 9.75,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Teal, paint at 50%",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_cap-teal-tint"
+    },
+    "story_cap-yellow": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 8,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "leading": 9.75,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Yellow",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_cap-yellow"
+    },
+    "story_head-blue": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "studio-blue",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 26,
+        "fontStyle": "normal",
+        "fontWeight": 800,
+        "leading": 30,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Studio Blue headline",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_head-blue"
+    },
+    "story_head-spot": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "pms-185-c",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 26,
+        "fontStyle": "normal",
+        "fontWeight": 800,
+        "leading": 30,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "PANTONE 185 C text",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_head-spot"
+    },
+    "story_ko-black": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 16,
+        "fontStyle": "normal",
+        "fontWeight": 800,
+        "leading": 21,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "KNOCKOUT",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_ko-black"
+    },
+    "story_ko-spot": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 16,
+        "fontStyle": "normal",
+        "fontWeight": 800,
+        "leading": 21,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Knockout on spot",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_ko-spot"
+    },
+    "story_late-spot-text": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 16,
+        "fontStyle": "normal",
+        "fontWeight": 800,
+        "leading": 21,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Knockout label",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_late-spot-text"
+    },
+    "story_late-teal-text": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 16,
+        "fontStyle": "normal",
+        "fontWeight": 800,
+        "leading": 21,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Knockout label",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_late-teal-text"
+    },
+    "story_ov-black": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": true,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 16,
+        "fontStyle": "normal",
+        "fontWeight": 800,
+        "leading": 21,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "OVERPRINT",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_ov-black"
+    },
+    "story_ov-spot": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": true,
+          "swatchId": "black",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 16,
+        "fontStyle": "normal",
+        "fontWeight": 800,
+        "leading": 21,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "SPOT + K overprint",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_ov-spot"
+    },
+    "story_paper-text": {
+      "defaults": {
+        "align": "left",
+        "fill": {
+          "overprint": false,
+          "swatchId": "paper",
+          "tint": 100
+        },
+        "fontFamily": "Inter",
+        "fontSize": 16,
+        "fontStyle": "normal",
+        "fontWeight": 800,
+        "leading": 21,
+        "tracking": 0
+      },
+      "doc": {
+        "content": [
+          {
+            "content": [
+              {
+                "text": "Paper text",
+                "type": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "doc"
+      },
+      "id": "story_paper-text"
+    }
+  },
+  "swatchOrder": [
+    "registration",
+    "paper",
+    "black",
+    "cyan",
+    "magenta",
+    "yellow",
+    "warm-orange",
+    "studio-blue",
+    "teal",
+    "teal-50",
+    "rich-black",
+    "pms-185-c",
+    "pms-185-c-40",
+    "pms-2995-c"
+  ],
+  "swatches": {
+    "black": {
+      "id": "black",
+      "name": "[Black]",
+      "type": "cmyk",
+      "values": [
+        0,
+        0,
+        0,
+        100
+      ]
+    },
+    "cyan": {
+      "id": "cyan",
+      "name": "Cyan",
+      "type": "cmyk",
+      "values": [
+        100,
+        0,
+        0,
+        0
+      ]
+    },
+    "magenta": {
+      "id": "magenta",
+      "name": "Magenta",
+      "type": "cmyk",
+      "values": [
+        0,
+        100,
+        0,
+        0
+      ]
+    },
+    "paper": {
+      "id": "paper",
+      "name": "[Paper]",
+      "type": "cmyk",
+      "values": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "pms-185-c": {
+      "id": "pms-185-c",
+      "name": "PANTONE 185 C",
+      "type": "spot",
+      "values": [
+        0,
+        91,
+        76,
+        0
+      ]
+    },
+    "pms-185-c-40": {
+      "baseId": "pms-185-c",
+      "id": "pms-185-c-40",
+      "name": "PANTONE 185 C 40%",
+      "percent": 40,
+      "type": "tint"
+    },
+    "pms-2995-c": {
+      "id": "pms-2995-c",
+      "name": "PANTONE 2995 C",
+      "type": "spot",
+      "values": [
+        88,
+        15,
+        0,
+        0
+      ]
+    },
+    "registration": {
+      "id": "registration",
+      "name": "[Registration]",
+      "type": "cmyk",
+      "values": [
+        100,
+        100,
+        100,
+        100
+      ]
+    },
+    "rich-black": {
+      "id": "rich-black",
+      "name": "Rich Black",
+      "type": "cmyk",
+      "values": [
+        75,
+        68,
+        67,
+        90
+      ]
+    },
+    "studio-blue": {
+      "id": "studio-blue",
+      "name": "Studio Blue",
+      "type": "cmyk",
+      "values": [
+        100,
+        80,
+        0,
+        20
+      ]
+    },
+    "teal": {
+      "id": "teal",
+      "name": "Teal",
+      "type": "cmyk",
+      "values": [
+        85,
+        10,
+        40,
+        10
+      ]
+    },
+    "teal-50": {
+      "baseId": "teal",
+      "id": "teal-50",
+      "name": "Teal 50%",
+      "percent": 50,
+      "type": "tint"
+    },
+    "warm-orange": {
+      "id": "warm-orange",
+      "name": "Warm Orange",
+      "type": "cmyk",
+      "values": [
+        0,
+        60,
+        100,
+        0
+      ]
+    },
+    "yellow": {
+      "id": "yellow",
+      "name": "Yellow",
+      "type": "cmyk",
+      "values": [
+        0,
+        0,
+        100,
+        0
+      ]
+    }
+  }
+}

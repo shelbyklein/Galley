@@ -16,7 +16,8 @@
     "test:golden": "tsx scripts/golden/run.ts",
     "test:text": "node scripts/placeholder.mjs test:text",
     "test:geometry": "tsx scripts/geometry/run.ts",
-    "fixtures": "tsx scripts/fixtures/build-poster-basic.ts"
+    "fixtures": "tsx scripts/fixtures/build-poster-basic.ts",
+    "fixtures:golden": "tsx scripts/golden/build-fixtures.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

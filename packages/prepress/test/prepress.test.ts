@@ -97,6 +97,9 @@ describe.skipIf(!haveProfile)('prepress on a Chromium-like PDF', () => {
       const cs = res.lookup(PDFName.of('ColorSpace'), PDFDict);
       const hasAll = [...cs.entries()].some(([name]) => name.decodeText() === 'GalleyRegistration');
       expect(hasAll).toBe(marks);
+      // and the registration color is not in the file at all when there are no marks (the golden check "no /All marks")
+      const separationAll = [...out.context.enumerateIndirectObjects()].filter(([, o]) => o instanceof PDFArray && o.size() >= 2 && o.get(0)?.toString() === '/Separation' && o.get(1)?.toString() === '/All');
+      expect(separationAll.length).toBe(marks ? 1 : 0);
     }
   });
 

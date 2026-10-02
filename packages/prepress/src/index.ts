@@ -72,7 +72,9 @@ export async function prepress(input: Uint8Array, opts: PrepressOptions): Promis
     const fn = ctx.register(ctx.obj({ FunctionType: 2, Domain: [0, 1], C0: [0, 0, 0, 0], C1: alt, N: 1 }));
     sepRefs.set(spot, ctx.register(ctx.obj([N('Separation'), N(spot), N('DeviceCMYK'), fn])));
   }
-  const regRef = ctx.register(ctx.obj([N('Separation'), N('All'), N('DeviceCMYK'), ctx.register(ctx.obj({ FunctionType: 2, Domain: [0, 1], C0: [0, 0, 0, 0], C1: [1, 1, 1, 1], N: 1 }))]));
+  // The registration color (/Separation /All) exists only when there are marks to draw in it: with marks off the file must
+  // not contain it at all.
+  const regRef = opts.marks ? ctx.register(ctx.obj([N('Separation'), N('All'), N('DeviceCMYK'), ctx.register(ctx.obj({ FunctionType: 2, Domain: [0, 1], C0: [0, 0, 0, 0], C1: [1, 1, 1, 1], N: 1 }))])) : null;
   const gsRefs = new Map<string, PDFRef>();
   for (const stroke of [false, true])
     for (const fill of [false, true]) {
@@ -156,7 +158,7 @@ export async function prepress(input: Uint8Array, opts: PrepressOptions): Promis
     const body = ctx.register(ctx.flateStream(latin1ToBytes('q\n' + shift + r.out + '\nQ\n')));
     const newContents: PDFRef[] = [body];
     if (opts.marks) {
-      resSub(ctx, res, 'ColorSpace').set(N('GalleyRegistration'), regRef);
+      resSub(ctx, res, 'ColorSpace').set(N('GalleyRegistration'), regRef!);
       newContents.push(ctx.register(ctx.flateStream(latin1ToBytes(marksStream(markGeometry, 'GalleyRegistration')))));
     }
     page.node.set(N('Contents'), ctx.obj(newContents));
