@@ -85,8 +85,15 @@ async function main(): Promise<void> {
     failed += bad.length;
     total += checks.length;
     console.log(`\n## ${c.id}  (bleed ${c.options.bleed ? 'on' : 'off'}, marks ${c.options.marks ? 'on' : 'off'})  ${checks.length - bad.length}/${checks.length} checks passed, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
-    console.log(formatChecks(bad.length > 0 || process.env.GOLDEN_VERBOSE ? checks : checks.filter((x) => x.group === 'structure' && x.name.startsWith('qpdf') ? true : false)));
-    if (bad.length === 0 && !process.env.GOLDEN_VERBOSE) console.log(`  (all ${checks.length} checks passed; GOLDEN_VERBOSE=1 lists them; the PDF and its plates are in build/golden/${c.id}/)`);
+    const groups = new Map<string, [number, number]>();
+    for (const x of checks) {
+      const g = groups.get(x.group) ?? [0, 0];
+      groups.set(x.group, [g[0] + (x.pass ? 1 : 0), g[1] + 1]);
+    }
+    console.log('  ' + [...groups].map(([g, [p, n]]) => `${g} ${p}/${n}`).join(', '));
+    if (bad.length > 0) console.log(formatChecks(bad));
+    if (process.env.GOLDEN_VERBOSE) console.log(formatChecks(checks));
+    console.log(`  (the PDF, its plates and a preview are in build/golden/${c.id}/; GOLDEN_VERBOSE=1 lists every check)`);
   }
   console.log(`\nGolden: ${total - failed}/${total} checks passed${failed ? `, ${failed} FAILED` : ''}`);
   process.exit(failed ? 1 : 0);
