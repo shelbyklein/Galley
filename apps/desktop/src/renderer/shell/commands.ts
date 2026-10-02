@@ -34,7 +34,7 @@ export const TOOLS: readonly ToolDef[] = [
   { id: 'tool.zoom', tool: 'zoom', label: 'Zoom Tool', shortcut: 'Z' },
 ];
 
-const PANEL_SHORTCUTS: Record<PanelId, string> = { pages: 'F12', layers: 'F7', swatches: 'F5' };
+const PANEL_SHORTCUTS: Record<PanelId, string> = { pages: 'F12', layers: 'F7', swatches: 'F5', paragraphStyles: 'Mod+F11', characterStyles: 'Mod+Shift+F11' };
 
 /** The leaf frames the proxy's fill and stroke apply to: the selection, with groups expanded. */
 function selectedLeafIds(): Id[] {

@@ -1,3 +1,4 @@
+import { TypeControlStrip } from './type/TypeControlStrip';
 import { moveFrames, setFrameProps, type Frame, type GalleyDocument, type Id } from '@galley/model';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { commands } from '../../commands/registry';
@@ -30,6 +31,11 @@ import { displayUnit, formatAngle, formatLength, parseAngle, parseLength, trimNu
  * reference point puts the frame's center at 72 pt (see ./transform.ts).
  */
 export function ControlStrip() {
+  const typeMode = useEditorStore((s) => s.activeTool === 'type' || s.textSelection !== null);
+  return typeMode ? <TypeControlStrip /> : <ObjectControlStrip />;
+}
+
+function ObjectControlStrip() {
   const doc = useEditorStore(selectDoc);
   const selection = useEditorStore((s) => s.selection);
   const geometry = useMemo(() => selectionGeometry(doc, selection), [doc, selection]);

@@ -1,0 +1,26 @@
+.gl-style-list { padding:5px 0; }
+.gl-style-row { width:100%; display:flex; align-items:center; justify-content:space-between; gap:5px; padding:5px 10px; border:0; background:transparent; color:var(--gl-text-row); text-align:left; }
+.gl-style-row:hover { background:var(--gl-bg-row-hover); }
+.gl-style-row[aria-selected="true"], .gl-style-row.is-picked { background:var(--gl-bg-row-selected); color:var(--gl-text-bright); }
+.gl-style-row small { font-size:9px; color:var(--gl-text-label); }
+.gl-style-actions { display:flex; flex-wrap:wrap; gap:6px; padding:7px 10px; border-top:1px solid var(--gl-line-soft); }
+.gl-style-actions button, .gl-style-save button, .gl-style-layer-tabs button, .gl-style-defined button { border:1px solid var(--gl-line-field); border-radius:var(--gl-radius); background:var(--gl-bg-button); padding:3px 6px; font-size:10px; }
+.gl-style-actions button:hover, .gl-style-save button:hover { background:var(--gl-bg-button-hover); }
+.gl-style-actions button:disabled { color:var(--gl-text-disabled); }
+.gl-style-layers { padding:8px 10px; font-size:10px; }
+.gl-style-layer { padding:8px; margin-top:7px; border:1px solid var(--gl-line-soft); border-radius:var(--gl-radius); overflow-wrap:anywhere; }
+.gl-style-layer p { color:var(--gl-text-label); margin:4px 0 0; }
+.gl-style-layer-web { border-style:dashed; }
+.gl-style-editor { padding:10px; border-top:1px solid var(--gl-line-soft); }
+.gl-style-editor > label { display:flex; justify-content:space-between; align-items:center; margin:9px 0; }
+.gl-style-editor > label input, .gl-style-editor > label select { width:180px; }
+.gl-style-layer-tabs { display:flex; gap:4px; margin:10px 0; }
+.gl-style-layer-tabs button[aria-selected="true"] { background:var(--gl-bg-row-selected); }
+.gl-style-property-controls { display:flex; flex-wrap:wrap; gap:10px; }
+.gl-style-property-controls .gl-type-group { width:100%; }
+.gl-style-property-controls .gl-type-select { justify-content:space-between; }
+.gl-style-property-controls .gl-type-features { grid-template-columns:repeat(2,1fr); }
+.gl-style-defined { display:flex; flex-wrap:wrap; gap:4px; margin-top:10px; }
+.gl-style-save { display:flex; justify-content:flex-end; gap:6px; margin-top:12px; }
+.gl-style-web pre { color:var(--gl-text-label); white-space:pre-wrap; }
+.gl-style-error { color:var(--gl-warning); padding:0 10px; }

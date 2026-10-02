@@ -1,0 +1,23 @@
+.gl-type-strip { display:flex; gap:12px; align-items:center; width:100%; min-width:0; }
+.gl-type-toggle { display:grid; gap:2px; }
+.gl-type-toggle button { width:24px; height:17px; padding:0; background:var(--gl-bg-field); border:1px solid var(--gl-line-field); border-radius:var(--gl-radius); }
+.gl-type-toggle button[aria-pressed="true"] { background:var(--gl-bg-tool-active); color:var(--gl-text-bright); }
+.gl-type-scroll { display:flex; gap:14px; overflow-x:auto; min-width:0; padding-bottom:2px; scrollbar-width:thin; scrollbar-color:var(--gl-line-field) var(--gl-bg-control); }
+.gl-type-group { display:grid; grid-auto-rows:17px; gap:3px; flex:none; }
+.gl-type-select { display:flex; align-items:center; gap:5px; font-size:10px; color:var(--gl-text-label); }
+.gl-type-select > span { min-width:42px; }
+.gl-type-select select, .gl-type-style-select select, .gl-style-editor select, .gl-style-editor input[type="text"] { font:inherit; color:var(--gl-text); background:var(--gl-bg-field); border:1px solid var(--gl-line-field); border-radius:var(--gl-radius); height:18px; }
+.gl-type-check { display:flex; align-items:center; gap:3px; white-space:nowrap; font-size:10px; color:var(--gl-text-label); }
+.gl-type-check input { margin:0; accent-color:var(--gl-accent); }
+.gl-type-features { grid-template-columns:repeat(2,auto); }
+.gl-type-feature-note { font-size:10px; color:var(--gl-text-muted); }
+.gl-type-style-select { margin-left:auto; min-width:165px; padding-left:12px; border-left:1px solid var(--gl-line-field); }
+.gl-type-style-select label { display:flex; gap:6px; align-items:center; font-size:10px; }
+.gl-type-style-select select { max-width:150px; }
+.gl-type-clear { justify-self:end; font-size:10px; padding:0; border:0; background:transparent; color:var(--gl-text-label); }
+.gl-type-clear:disabled { color:var(--gl-text-disabled); }
+.gl-type-strip :focus-visible, .gl-style-panel :focus-visible { outline:1px solid var(--gl-accent); outline-offset:1px; }
+
+.gl-type-strip { white-space:nowrap; }
+.gl-type-strip .gl-field-label { flex:none; }
+.gl-type-strip .gl-field-input { min-width:35px; }

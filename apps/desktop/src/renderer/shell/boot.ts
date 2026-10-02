@@ -1,3 +1,4 @@
+import { registerTypeCommands } from './control-strip/type/commands';
 /**
  * Starts the shell: registers lane C's commands, opens the startup document, connects the native menu and the window
  * chrome. Called once by renderer/main.tsx, before React renders. Owned by lane C.
@@ -46,6 +47,7 @@ function reportDocumentState(): void {
 
 export async function startShell(): Promise<void> {
   registerShellCommands();
+  registerTypeCommands();
   activeLayerFollowsSelection();
   const api = window.galley;
   if (api) {

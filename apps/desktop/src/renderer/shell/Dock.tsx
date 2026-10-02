@@ -1,3 +1,5 @@
+import { ParagraphStylesPanel } from '../panels/paragraph-styles/StylePanel';
+import { CharacterStylesPanel } from '../panels/character-styles/CharacterStylesPanel';
 import { LayersPanel, PagesPanel, SwatchesPanel } from '../panels';
 
 /**
@@ -10,6 +12,8 @@ export function Dock() {
       <PagesPanel />
       <LayersPanel />
       <SwatchesPanel />
+      <ParagraphStylesPanel />
+      <CharacterStylesPanel />
     </div>
   );
 }
