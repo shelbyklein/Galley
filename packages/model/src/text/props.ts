@@ -68,7 +68,8 @@ const printCharShape = {
 };
 
 const printParaShape = {
-  ...printCharShape,
+  fontSize: printCharShape.fontSize,
+  leading: printCharShape.leading,
   /** Points; negative makes a hanging indent. */
   firstLineIndent: ptSchema,
   leftIndent: sizeSchema,
@@ -137,8 +138,12 @@ export type LayerName = (typeof LAYER_NAMES)[number];
 
 // ---------------------------------------------------------------------------------------------------------- resolved
 
-/** A paragraph with every property settled: the output of resolving the style chain and the local overrides. */
-export type ResolvedParagraph = Required<SharedParaProps> & Required<PrintParaProps> & { web: WebProps };
+/**
+ * A paragraph, or a run inside one, with every property settled: the output of resolving the style chain and the local
+ * overrides. `baselineShift` is only ever set by a character style or an override mark (a paragraph's is 0), and `web` only
+ * by paragraph layers; both are here so that a paragraph and a run resolve to the same shape.
+ */
+export type ResolvedParagraph = Required<SharedParaProps> & Required<PrintParaProps> & { baselineShift: number; web: WebProps };
 
 /**
  * What every style chain starts from, and what `[Basic Paragraph]` holds in a new document: Inter Regular 12/15 pt in
@@ -180,7 +185,6 @@ const SHARED_PARA_KEYS = ['fontFamily', 'fontWeight', 'fontStyle', 'fill', 'trac
 const PRINT_PARA_KEYS = [
   'fontSize',
   'leading',
-  'baselineShift',
   'firstLineIndent',
   'leftIndent',
   'rightIndent',
@@ -202,12 +206,12 @@ export const CHARACTER_PROPS: { readonly shared: readonly string[]; readonly pri
   shared: SHARED_PARA_KEYS.filter((k) => k !== 'role'),
   print: ['fontSize', 'leading', 'baselineShift'],
 };
-/** Every paragraph property name by layer (web properties are an open set of their own). */
+/** Every paragraph property name by layer (web properties are an open set of their own). A paragraph has no baseline shift. */
 export const PARAGRAPH_PROPS: { readonly shared: readonly string[]; readonly print: readonly string[] } = { shared: SHARED_PARA_KEYS, print: PRINT_PARA_KEYS };
 
 /** `[Basic Paragraph]`'s three layers: every shared and print property set explicitly, the web layer empty. */
 export function basicParagraphLayers(): ParagraphLayers {
-  const { web: _web, ...flat } = structuredClone(BASIC_PARAGRAPH_PROPS);
+  const flat = structuredClone(BASIC_PARAGRAPH_PROPS);
   const shared: Record<string, unknown> = {};
   const print: Record<string, unknown> = {};
   for (const k of SHARED_PARA_KEYS) shared[k] = flat[k];

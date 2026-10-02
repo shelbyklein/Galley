@@ -277,7 +277,6 @@
       "print": {
         "align": "left",
         "alignToBaselineGrid": false,
-        "baselineShift": 0,
         "dropCapChars": 1,
         "dropCapLines": 0,
         "firstLineIndent": 0,
