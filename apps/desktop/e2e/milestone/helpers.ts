@@ -168,7 +168,20 @@ export async function typeInto(page: Page, frameId: string, text: string): Promi
   await expect.poll(async () => {
     const doc = await getDoc(page);
     return storyText(doc, doc.frames[frameId].storyId);
-  }).toBe(text);
+  }).toBe(text).catch(async error => {
+    const doc = await getDoc(page);
+    const frame = doc.frames[frameId];
+    fs.mkdirSync(path.join(APP_DIR, 'test-results'), { recursive: true });
+    fs.writeFileSync(path.join(APP_DIR, 'test-results', 'type-failure.json'), JSON.stringify({
+      expected: text, frame, story: doc.stories[frame.storyId],
+      paragraphs: doc.paragraphStyles, characters: doc.characterStyles,
+      editing: await page.evaluate(() => {
+        const e = (window as any).__galleyText?.editor;
+        return e ? { result: e.res, source: e.story.doc.toJSON(), visible: e.view.state.doc.toJSON() } : null;
+      }),
+    }, null, 2));
+    throw error;
+  });
   await page.keyboard.press('Escape');
   await expect(editor).toHaveCount(0);
   expect((await getEditorState(page)).selection).toEqual([frameId]); // the frame stays selected

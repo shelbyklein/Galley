@@ -99,10 +99,13 @@ test('builds a styled flyer with two linked frames and contour wrap, saves/reope
   }
   await editor.locator('[data-type-control="hyphenate"]').uncheck();
   await editor.getByRole('button', { name: 'Save Style', exact: true }).click();
-  await styles.getByRole('option', { name: /^Body$/ }).click();
   const bodyDoc = await getDoc(page);
   const bodyId = Object.values<any>(bodyDoc.paragraphStyles).find(s => s.name === 'Body')!.id;
-  expect(bodyDoc.stories[bodyDoc.frames[left.id].storyId].doc.content.every((p: any) => p.attrs.style === bodyId)).toBe(true);
+  await styles.locator(`[data-style-id="${bodyId}"]`).click();
+  await expect.poll(async () => {
+    const d = await getDoc(page);
+    return d.stories[d.frames[left.id].storyId].doc.content.every((p: any) => p.attrs.style === bodyId);
+  }).toBe(true);
   expect(storyText(bodyDoc, bodyDoc.frames[left.id].storyId).trim()).toBe(COPY);
   await flyerShot(page, '02-threaded-body-style');
 
@@ -117,6 +120,8 @@ test('builds a styled flyer with two linked frames and contour wrap, saves/reope
   await chooseTool(page, 'select');
   await clickPage(page, { x: 70, y: 170 });
   await clickMenuItem(app, 'view.showTextThreads');
+  await chooseTool(page, 'type');
+  await expect(typeStrip).toBeVisible();
   await flyerShot(page, '03-type-mode-wrap');
   await page.keyboard.press('Meta+Shift+a');
 
@@ -193,5 +198,6 @@ test('builds a styled flyer with two linked frames and contour wrap, saves/reope
   fs.copyFileSync(pdf, path.join(artifacts, 'Process Notes.pdf'));
   fs.copyFileSync(screenFile, path.join(artifacts, 'screen.json'));
   fs.copyFileSync(path.join(FLYER_SHOTS, 'proof.json'), path.join(artifacts, 'proof.json'));
+  fs.cpSync(FLYER_SHOTS, path.join(artifacts, 'screens'), { recursive: true, force: true });
   console.log(`Flyer: ${result.lineMatch.lines} lines, ${result.lineMatch.mismatches} mismatches; ${result.checks.length} PDF/font/ink checks passed.`);
 });
