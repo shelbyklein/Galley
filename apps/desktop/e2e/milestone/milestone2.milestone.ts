@@ -134,13 +134,14 @@ test('builds a styled flyer with two linked frames and contour wrap, saves/reope
   const headingRequest = await page.evaluate(id => {
     const g = (window as any).__galley, d = g.store.getState().history.doc;
     const p = d.stories[d.frames[id].storyId].doc.content[0];
-    const r = g.model.resolveParagraph(d, g.model.paragraphAttrs(p));
+    const paragraph = g.model.resolveParagraph(d, g.model.paragraphAttrs(p));
+    const r = g.model.resolveRun(d, paragraph, p.content?.[0]?.marks);
     return { family: r.fontFamily, weight: r.fontWeight, style: r.fontStyle };
   }, title.id);
   expect(headingRequest).toEqual({ family: 'Roboto', weight: 700, style: 'normal' });
   const headingFont = await page.evaluate(request => (window as any).galley.fonts.resolve([request]), headingRequest);
   expect(headingFont[0]).toMatchObject({ family: 'Roboto', weight: 700, style: 'normal', face: { source: 'document', format: 'variable' }, instanceAxes: { wght: 700 } });
-  await expect(page.locator(`.galley-text[data-frame-id="${title.id}"] p`).first()).toHaveCSS('font-weight', '700');
+  await expect(page.locator(`.galley-text[data-frame-id="${title.id}"] p span`).first()).toHaveCSS('font-weight', '700');
   expect(await page.evaluate(() => document.fonts.check('normal 700 30pt "Roboto"'))).toBe(true);
   const painted = await captureFlyerLines(page, [title.id, left.id, right.id]);
   expect(painted[0]!.lines.map(l => l.text)).toEqual(['PROCESS NOTES']);
