@@ -22,7 +22,7 @@ import { baseDoc, imageAsset, rectFrame } from './helpers';
 function richDoc(): GalleyDocument {
   const doc = baseDoc();
   doc.assets.ast_1 = imageAsset('ast_1');
-  doc.stories.sty_1 = createStory('sty_1', 'Hello\nWorld');
+  doc.stories.sty_1 = createStory('sty_1', 'Hello\nWorld', { frameIds: ['t1'] });
   doc.frames = {
     r1: rectFrame('r1'),
     t1: { id: 't1', type: 'text', name: '', layerId: 'layer_1', x: 0, y: 0, w: 100, h: 50, rotation: 0, fill: null, stroke: null, storyId: 'sty_1', inset: 2 },
@@ -101,7 +101,14 @@ describe('schema: dangling ids and structure', () => {
     ['an image frame with a missing asset', (d) => (d.frames.i1.assetId = 'ghost'), /asset "ghost"/],
     ['a tint swatch with a missing base', (d) => (d.swatches['spot185-40'].baseId = 'ghost'), /base swatch "ghost"/],
     ['a guide on a missing page', (d) => (d.guides.gd_1.pageId = 'ghost'), /page "ghost"/],
-    ['a story default color with a missing swatch', (d) => (d.stories.sty_1.defaults.fill.swatchId = 'ghost'), /swatch "ghost"/],
+    ['a paragraph style color with a missing swatch', (d) => (d.paragraphStyles['basic-paragraph'].shared.fill.swatchId = 'ghost'), /swatch "ghost"/],
+    ['a paragraph with a missing style', (d) => (d.stories.sty_1.doc.content[0].attrs.style = 'ghost'), /paragraph style "ghost"/],
+    ['a style based on a missing style', (d) => ((d.paragraphStyles.x = { id: 'x', name: 'X', basedOn: 'ghost', shared: {}, print: {}, web: {} }), d.paragraphStyleOrder.push('x')), /style "ghost" does not exist/],
+    ['a style based on itself', (d) => ((d.paragraphStyles.x = { id: 'x', name: 'X', basedOn: 'x', shared: {}, print: {}, web: {} }), d.paragraphStyleOrder.push('x')), /based on itself/],
+    ['a style cycle through two styles', (d) => ((d.paragraphStyles.x = { id: 'x', name: 'X', basedOn: 'y', shared: {}, print: {}, web: {} }), (d.paragraphStyles.y = { id: 'y', name: 'Y', basedOn: 'x', shared: {}, print: {}, web: {} }), d.paragraphStyleOrder.push('x', 'y')), /based on itself/],
+    ['a missing built-in paragraph style', (d) => (delete d.paragraphStyles['basic-paragraph'], (d.paragraphStyleOrder = [])), /basic-paragraph|Basic Paragraph/],
+    ['a bad frame text wrap', (d) => (d.frames.r1.textWrap = { mode: 'contour', offset: -3 }), /textWrap/],
+    ['a bad baseline grid', (d) => (d.baselineGrid.increment = 0), /baselineGrid/],
     ['a page order naming a missing page', (d) => d.pageOrder.push('ghost'), /ghost/],
     ['a layer order missing a layer', (d) => (d.layerOrder = []), /at least one layer|missing from the order/],
     ['an asset without a link', (_d, l) => delete l.links.ast_1, /no entry in links\.json/],
@@ -112,8 +119,11 @@ describe('schema: dangling ids and structure', () => {
     ['two swatches with one name', (d) => (d.swatches.orange.name = 'PANTONE 185 C'), /already used/],
     ['a tint of a tint', (d) => (d.swatches['spot185-40'].baseId = 'orange') && (d.swatches.orange = { id: 'orange', name: 'Orange', type: 'tint', baseId: 'spot185-40', percent: 10 }), /another tint/],
     ['a group inside itself', (d) => (d.frames.g1.childIds = ['g1']), /contains itself|also listed/],
-    ['an unused story', (d) => (d.stories.extra = { ...d.stories.sty_1, id: 'extra' }), /not used by any text frame/],
-    ['one story shared by two frames', (d) => ((d.frames.t2 = { ...d.frames.t1, id: 't2' }), d.pages.page_1.items.push('t2')), /one story per frame/],
+    ['an unused story', (d) => (d.stories.extra = { ...d.stories.sty_1, id: 'extra', frameIds: [] }), /not used by any text frame/],
+    ['a text frame its story does not list', (d) => ((d.frames.t2 = { ...d.frames.t1, id: 't2' }), d.pages.page_1.items.push('t2')), /does not list this frame exactly once/],
+    ['a thread naming a frame that is not a text frame', (d) => d.stories.sty_1.frameIds.push('r1'), /not a text frame/],
+    ['a thread listing a frame twice', (d) => d.stories.sty_1.frameIds.push('t1'), /listed twice|exactly once/],
+    ['a thread naming a missing frame', (d) => d.stories.sty_1.frameIds.push('ghost'), /ghost/],
     ['a child on a different layer than its group', (d) => ((d.layers.l2 = { id: 'l2', name: 'L2', color: '#112233', visible: true, locked: false }), d.layerOrder.push('l2'), (d.frames.r1.layerId = 'l2')), /different layer/],
     ['an image frame with an asset but no content', (d) => (d.frames.i1.content = null), /both be set or both be null/],
   ];

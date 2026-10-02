@@ -1,7 +1,8 @@
 import { createId, type Id } from './ids';
-import type { GalleyDocument, Insets, Layer, Page } from './schema';
+import type { BaselineGrid, GalleyDocument, Insets, Layer, Page } from './schema';
 import { FORMAT_VERSION } from './schema';
 import { builtinSwatches } from './swatch';
+import { builtinCharacterStyles, builtinParagraphStyles } from './text/styles';
 
 /** Equal insets on all four sides. */
 export function uniformInsets(n: number): Insets {
@@ -9,6 +10,9 @@ export function uniformInsets(n: number): Insets {
 }
 
 export const DEFAULT_LAYER_COLOR = '#4da3ff';
+
+/** InDesign's default baseline grid: a line every 12 pt from the top of the page. */
+export const DEFAULT_BASELINE_GRID: BaselineGrid = { start: 0, increment: 12 };
 
 export interface PageSpec {
   id?: Id;
@@ -57,11 +61,16 @@ export interface CreateDocumentOptions {
   layer?: Partial<Layer> & { id?: Id };
 }
 
-/** A new document: one empty page, one layer, and the built-in swatches ([Paper], [Black], [Registration]). */
+/**
+ * A new document: one empty page, one layer, the built-in swatches ([Paper], [Black], [Registration]), the built-in styles
+ * ([Basic Paragraph], [None]) and the default baseline grid.
+ */
 export function createDocument(options: CreateDocumentOptions): GalleyDocument {
   const page = makePage(options.page);
   const layer = makeLayer(options.layer);
   const swatches = builtinSwatches();
+  const paragraphStyles = builtinParagraphStyles();
+  const characterStyles = builtinCharacterStyles();
   return {
     formatVersion: FORMAT_VERSION,
     meta: {
@@ -77,6 +86,11 @@ export function createDocument(options: CreateDocumentOptions): GalleyDocument {
     swatches,
     frames: {},
     stories: {},
+    paragraphStyleOrder: Object.keys(paragraphStyles),
+    paragraphStyles,
+    characterStyleOrder: Object.keys(characterStyles),
+    characterStyles,
+    baselineGrid: { ...DEFAULT_BASELINE_GRID },
     assets: {},
     guides: {},
   };

@@ -13,7 +13,7 @@ import { baseDoc, imageAsset, rectFrame } from './helpers';
 function docWithAssets() {
   const doc = baseDoc();
   doc.assets.ast_1 = imageAsset('ast_1', { path: 'assets/photo.jpg' });
-  doc.stories.sty_1 = createStory('sty_1', 'Hello');
+  doc.stories.sty_1 = createStory('sty_1', 'Hello', { frameIds: ['t1'] });
   doc.frames = {
     r1: rectFrame('r1'),
     t1: { id: 't1', type: 'text', name: '', layerId: 'layer_1', x: 36, y: 36, w: 200, h: 100, rotation: 0, fill: null, stroke: null, storyId: 'sty_1', inset: 0 },
@@ -29,15 +29,15 @@ describe('serialization', () => {
     expect(parseDocument(serializeDocument(doc))).toEqual(doc);
   });
 
-  it('writes formatVersion 1 and the engine version, and splits asset links into links.json', () => {
+  it('writes formatVersion 2 and the engine version, and splits asset links into links.json', () => {
     const files = serializeDocument(docWithAssets());
     const document = JSON.parse(files.document);
     const links = JSON.parse(files.links);
-    expect(document.formatVersion).toBe(1);
-    expect(FORMAT_VERSION).toBe(1);
+    expect(document.formatVersion).toBe(2);
+    expect(FORMAT_VERSION).toBe(2);
     expect(document.meta.engineVersion).toBe('44.5.1');
     expect(document.assets.ast_1).toEqual({ id: 'ast_1', kind: 'image', width: 3000, height: 2000, ppi: 300, colorSpace: 'rgb' });
-    expect(links).toEqual({ formatVersion: 1, links: { ast_1: { path: 'assets/photo.jpg', hash: `sha256:${'a'.repeat(64)}` } } });
+    expect(links).toEqual({ formatVersion: 2, links: { ast_1: { path: 'assets/photo.jpg', hash: `sha256:${'a'.repeat(64)}` } } });
   });
 
   it('stamps the running engine version on save without touching the document', () => {
@@ -74,12 +74,12 @@ describe('serialization', () => {
     delete noVersion.formatVersion;
     expect(() => parseDocument({ ...good, document: JSON.stringify(noVersion) })).toThrow(/formatVersion/);
     const newer = JSON.parse(good.document);
-    newer.formatVersion = 2;
+    newer.formatVersion = 3;
     expect(() => parseDocument({ ...good, document: JSON.stringify(newer) })).toThrow(/newer version of Galley/);
     expect(() => parseDocument({ ...good, document: JSON.stringify(newer) })).toThrow(DocumentParseError);
   });
 
-  it('has an empty migration table at v1 (lane T adds migrations[1] for formatVersion 2)', () => {
-    expect(Object.keys(migrations)).toEqual([]);
+  it('has one migration, from v1 (see migration.test.ts for what it does)', () => {
+    expect(Object.keys(migrations)).toEqual(['1']);
   });
 });

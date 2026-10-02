@@ -1,6 +1,7 @@
 /**
- * The Galley document model, v1 (`formatVersion: 1`). One zod schema per object; the TypeScript types are inferred
- * from the schemas, so the file format and the types cannot drift apart.
+ * The Galley document model, v2 (`formatVersion: 2`). One zod schema per object; the TypeScript types are inferred
+ * from the schemas, so the file format and the types cannot drift apart. The text model (stories, styles, threads, text
+ * wrap, baseline grid) is described in ../TEXT-MODEL.md; v1 files migrate on open (./migrate/v1.ts).
  *
  * Shape (everything is stored by id, in flat records; ordering lives in explicit arrays):
  *
@@ -10,7 +11,10 @@
  *     layerOrder, layers   bottom to top
  *     swatchOrder, swatches   cmyk | spot | tint
  *     frames               rect | ellipse | line | text | image | group
- *     stories              one per text frame
+ *     stories              ProseMirror text, each owning the ordered chain (thread) of its text frames
+ *     paragraphStyleOrder, paragraphStyles   shared | print | web layers, basedOn; [Basic Paragraph] built in
+ *     characterStyleOrder, characterStyles   the same for runs; [None] built in
+ *     baselineGrid         start and increment, points
  *     assets               linked images (path + hash live in links.json on disk)
  *     guides               ruler guides, positioned on a page
  *
@@ -29,9 +33,11 @@ import { z } from 'zod';
 import { idSchema, type Id } from './ids';
 import { paintSchema, strokeSchema, swatchSchema } from './swatch';
 import { storySchema } from './text/story';
+import { characterStyleSchema, paragraphStyleSchema } from './text/styles';
+import { textWrapSchema } from './text/wrap';
 import { positiveSchema, ptSchema, sizeSchema } from './units';
 
-export const FORMAT_VERSION = 1;
+export const FORMAT_VERSION = 2;
 
 // ---------------------------------------------------------------------------------------------------------------- pages
 
@@ -145,6 +151,8 @@ const frameBox = {
   /** `null` is [None]. */
   fill: paintSchema.nullable(),
   stroke: strokeSchema.nullable(),
+  /** How text in other frames flows around this frame; absent is none. */
+  textWrap: textWrapSchema.optional(),
 };
 
 export const rectFrameSchema = z.strictObject({ ...frameCommon, ...frameBox, type: z.literal('rect') });
@@ -156,7 +164,7 @@ export const textFrameSchema = z.strictObject({
   ...frameCommon,
   ...frameBox,
   type: z.literal('text'),
-  /** The frame's story. Exactly one frame per story in Phase 1; Phase 2 adds threads. */
+  /** The frame's story. The story lists this frame in its thread (`story.frameIds`); several frames can share a story. */
   storyId: idSchema,
   /** Space between the frame edge and the text on all four sides, points. */
   inset: sizeSchema,
@@ -229,6 +237,10 @@ export const metaSchema = z.strictObject({
 });
 export type Meta = z.infer<typeof metaSchema>;
 
+/** The document's baseline grid: where it starts (points from the top of the page's trim box) and its increment (points). */
+export const baselineGridSchema = z.strictObject({ start: sizeSchema, increment: positiveSchema });
+export type BaselineGrid = z.infer<typeof baselineGridSchema>;
+
 export const documentSchema = z.strictObject({
   formatVersion: z.literal(FORMAT_VERSION),
   meta: metaSchema,
@@ -240,6 +252,11 @@ export const documentSchema = z.strictObject({
   swatches: z.record(idSchema, swatchSchema),
   frames: z.record(idSchema, frameSchema),
   stories: z.record(idSchema, storySchema),
+  paragraphStyleOrder: z.array(idSchema),
+  paragraphStyles: z.record(idSchema, paragraphStyleSchema),
+  characterStyleOrder: z.array(idSchema),
+  characterStyles: z.record(idSchema, characterStyleSchema),
+  baselineGrid: baselineGridSchema,
   assets: z.record(idSchema, assetSchema),
   guides: z.record(idSchema, guideSchema),
 });

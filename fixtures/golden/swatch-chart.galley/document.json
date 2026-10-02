@@ -1,6 +1,23 @@
 {
   "assets": {},
-  "formatVersion": 1,
+  "baselineGrid": {
+    "increment": 12,
+    "start": 0
+  },
+  "characterStyleOrder": [
+    "none"
+  ],
+  "characterStyles": {
+    "none": {
+      "basedOn": null,
+      "id": "none",
+      "name": "[None]",
+      "print": {},
+      "shared": {},
+      "web": {}
+    }
+  },
+  "formatVersion": 2,
   "frames": {
     "blue-text": {
       "fill": null,
@@ -899,25 +916,74 @@
       "width": 612
     }
   },
-  "stories": {
-    "story_blue-text": {
-      "defaults": {
+  "paragraphStyleOrder": [
+    "basic-paragraph"
+  ],
+  "paragraphStyles": {
+    "basic-paragraph": {
+      "basedOn": null,
+      "id": "basic-paragraph",
+      "name": "[Basic Paragraph]",
+      "print": {
         "align": "left",
+        "alignToBaselineGrid": false,
+        "baselineShift": 0,
+        "dropCapChars": 1,
+        "dropCapLines": 0,
+        "firstLineIndent": 0,
+        "fontSize": 12,
+        "hyphenLadder": null,
+        "hyphenMinAfter": null,
+        "hyphenMinBefore": null,
+        "hyphenMinWord": null,
+        "hyphenate": true,
+        "leading": 15,
+        "leftIndent": 0,
+        "rightIndent": 0,
+        "spaceAfter": 0,
+        "spaceBefore": 0
+      },
+      "shared": {
+        "features": {},
         "fill": {
           "overprint": false,
-          "swatchId": "studio-blue",
+          "swatchId": "black",
           "tint": 100
         },
         "fontFamily": "Inter",
-        "fontSize": 16,
         "fontStyle": "normal",
-        "fontWeight": 800,
-        "leading": 21,
+        "fontWeight": 400,
+        "kerning": "metrics",
+        "language": "en-US",
+        "role": null,
+        "textCase": "normal",
         "tracking": 0
       },
+      "web": {}
+    }
+  },
+  "stories": {
+    "story_blue-text": {
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 16,
+                  "leading": 21
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "studio-blue",
+                    "tint": 100
+                  },
+                  "fontWeight": 800
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "Blue text",
@@ -929,26 +995,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "blue-text"
+      ],
       "id": "story_blue-text"
     },
     "story_body-1": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 11,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 16.5,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 11,
+                  "leading": 16.5
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "Twenty studios open their doors for one day. Watch screen printing, letterpress and riso demos, browse prints, and meet the people who make them.",
@@ -960,26 +1031,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "body-1"
+      ],
       "id": "story_body-1"
     },
     "story_body-2": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 11,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 16.5,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 11,
+                  "leading": 16.5
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "Twenty studios open their doors for one day. Watch screen printing, letterpress and riso demos, browse prints, and meet the people who make them.",
@@ -991,26 +1067,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "body-2"
+      ],
       "id": "story_body-2"
     },
     "story_cap-black": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 8,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 9.75,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 8,
+                  "leading": 9.75
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "[Black] 100K",
@@ -1022,26 +1103,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "cap-black"
+      ],
       "id": "story_cap-black"
     },
     "story_cap-blue": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 8,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 9.75,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 8,
+                  "leading": 9.75
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "Studio Blue",
@@ -1053,26 +1139,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "cap-blue"
+      ],
       "id": "story_cap-blue"
     },
     "story_cap-cyan": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 8,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 9.75,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 8,
+                  "leading": 9.75
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "Cyan",
@@ -1084,26 +1175,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "cap-cyan"
+      ],
       "id": "story_cap-cyan"
     },
     "story_cap-gray": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 8,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 9.75,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 8,
+                  "leading": 9.75
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "[Black] at 50%",
@@ -1115,26 +1211,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "cap-gray"
+      ],
       "id": "story_cap-gray"
     },
     "story_cap-magenta": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 8,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 9.75,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 8,
+                  "leading": 9.75
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "Magenta",
@@ -1146,26 +1247,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "cap-magenta"
+      ],
       "id": "story_cap-magenta"
     },
     "story_cap-orange": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 8,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 9.75,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 8,
+                  "leading": 9.75
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "Warm Orange",
@@ -1177,26 +1283,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "cap-orange"
+      ],
       "id": "story_cap-orange"
     },
     "story_cap-pms": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 8,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 9.75,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 8,
+                  "leading": 9.75
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "PANTONE 185 C",
@@ -1208,26 +1319,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "cap-pms"
+      ],
       "id": "story_cap-pms"
     },
     "story_cap-pms-swatch": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 8,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 9.75,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 8,
+                  "leading": 9.75
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "185 C 40% swatch",
@@ -1239,26 +1355,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "cap-pms-swatch"
+      ],
       "id": "story_cap-pms-swatch"
     },
     "story_cap-pms-tint": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 8,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 9.75,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 8,
+                  "leading": 9.75
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "185 C, paint at 40%",
@@ -1270,26 +1391,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "cap-pms-tint"
+      ],
       "id": "story_cap-pms-tint"
     },
     "story_cap-pms2": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 8,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 9.75,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 8,
+                  "leading": 9.75
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "PANTONE 2995 C",
@@ -1301,26 +1427,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "cap-pms2"
+      ],
       "id": "story_cap-pms2"
     },
     "story_cap-pms2-tint": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 8,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 9.75,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 8,
+                  "leading": 9.75
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "2995 C, paint at 70%",
@@ -1332,26 +1463,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "cap-pms2-tint"
+      ],
       "id": "story_cap-pms2-tint"
     },
     "story_cap-rich": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 8,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 9.75,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 8,
+                  "leading": 9.75
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "Rich Black",
@@ -1363,26 +1499,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "cap-rich"
+      ],
       "id": "story_cap-rich"
     },
     "story_cap-teal": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 8,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 9.75,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 8,
+                  "leading": 9.75
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "Teal",
@@ -1394,26 +1535,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "cap-teal"
+      ],
       "id": "story_cap-teal"
     },
     "story_cap-teal-swatch": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 8,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 9.75,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 8,
+                  "leading": 9.75
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "Teal 50% swatch",
@@ -1425,26 +1571,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "cap-teal-swatch"
+      ],
       "id": "story_cap-teal-swatch"
     },
     "story_cap-teal-tint": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 8,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 9.75,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 8,
+                  "leading": 9.75
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "Teal, paint at 50%",
@@ -1456,26 +1607,31 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "cap-teal-tint"
+      ],
       "id": "story_cap-teal-tint"
     },
     "story_cap-yellow": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 8,
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "leading": 9.75,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 8,
+                  "leading": 9.75
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  }
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "Yellow",
@@ -1487,26 +1643,32 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "cap-yellow"
+      ],
       "id": "story_cap-yellow"
     },
     "story_head-blue": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "studio-blue",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 26,
-        "fontStyle": "normal",
-        "fontWeight": 800,
-        "leading": 30,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 26,
+                  "leading": 30
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "studio-blue",
+                    "tint": 100
+                  },
+                  "fontWeight": 800
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "Studio Blue headline",
@@ -1518,26 +1680,32 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "head-blue"
+      ],
       "id": "story_head-blue"
     },
     "story_head-spot": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "pms-185-c",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 26,
-        "fontStyle": "normal",
-        "fontWeight": 800,
-        "leading": 30,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 26,
+                  "leading": 30
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "pms-185-c",
+                    "tint": 100
+                  },
+                  "fontWeight": 800
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "PANTONE 185 C text",
@@ -1549,26 +1717,32 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "head-spot"
+      ],
       "id": "story_head-spot"
     },
     "story_ko-black": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 16,
-        "fontStyle": "normal",
-        "fontWeight": 800,
-        "leading": 21,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 16,
+                  "leading": 21
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  },
+                  "fontWeight": 800
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "KNOCKOUT",
@@ -1580,26 +1754,32 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "ko-black"
+      ],
       "id": "story_ko-black"
     },
     "story_ko-spot": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 16,
-        "fontStyle": "normal",
-        "fontWeight": 800,
-        "leading": 21,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 16,
+                  "leading": 21
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  },
+                  "fontWeight": 800
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "Knockout on spot",
@@ -1611,26 +1791,32 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "ko-spot"
+      ],
       "id": "story_ko-spot"
     },
     "story_late-spot-text": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 16,
-        "fontStyle": "normal",
-        "fontWeight": 800,
-        "leading": 21,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 16,
+                  "leading": 21
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  },
+                  "fontWeight": 800
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "Knockout label",
@@ -1642,26 +1828,32 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "late-spot-text"
+      ],
       "id": "story_late-spot-text"
     },
     "story_late-teal-text": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 16,
-        "fontStyle": "normal",
-        "fontWeight": 800,
-        "leading": 21,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 16,
+                  "leading": 21
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "black",
+                    "tint": 100
+                  },
+                  "fontWeight": 800
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "Knockout label",
@@ -1673,26 +1865,32 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "late-teal-text"
+      ],
       "id": "story_late-teal-text"
     },
     "story_ov-black": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": true,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 16,
-        "fontStyle": "normal",
-        "fontWeight": 800,
-        "leading": 21,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 16,
+                  "leading": 21
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": true,
+                    "swatchId": "black",
+                    "tint": 100
+                  },
+                  "fontWeight": 800
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "OVERPRINT",
@@ -1704,26 +1902,32 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "ov-black"
+      ],
       "id": "story_ov-black"
     },
     "story_ov-spot": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": true,
-          "swatchId": "black",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 16,
-        "fontStyle": "normal",
-        "fontWeight": 800,
-        "leading": 21,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 16,
+                  "leading": 21
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": true,
+                    "swatchId": "black",
+                    "tint": 100
+                  },
+                  "fontWeight": 800
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "SPOT + K overprint",
@@ -1735,26 +1939,32 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "ov-spot"
+      ],
       "id": "story_ov-spot"
     },
     "story_paper-text": {
-      "defaults": {
-        "align": "left",
-        "fill": {
-          "overprint": false,
-          "swatchId": "paper",
-          "tint": 100
-        },
-        "fontFamily": "Inter",
-        "fontSize": 16,
-        "fontStyle": "normal",
-        "fontWeight": 800,
-        "leading": 21,
-        "tracking": 0
-      },
       "doc": {
         "content": [
           {
+            "attrs": {
+              "overrides": {
+                "print": {
+                  "fontSize": 16,
+                  "leading": 21
+                },
+                "shared": {
+                  "fill": {
+                    "overprint": false,
+                    "swatchId": "paper",
+                    "tint": 100
+                  },
+                  "fontWeight": 800
+                }
+              },
+              "style": "basic-paragraph"
+            },
             "content": [
               {
                 "text": "Paper text",
@@ -1766,6 +1976,9 @@
         ],
         "type": "doc"
       },
+      "frameIds": [
+        "paper-text"
+      ],
       "id": "story_paper-text"
     }
   },

@@ -5,7 +5,6 @@ import {
   createSequentialIds,
   createStory,
   paint,
-  SWATCH_BLACK,
   type AddFrameArgs,
   type Asset,
   type CommandDef,
@@ -51,7 +50,7 @@ export function textFrameArgs(id: Id, storyId: Id, text = 'Hello', props: Partia
   return {
     frame: { id, type: 'text', name: '', layerId: 'layer_1', x: 36, y: 36, w: 200, h: 100, rotation: 0, fill: null, stroke: null, storyId, inset: 0, ...props },
     pageId: 'page_1',
-    story: createStory(storyId, text, { fill: paint(SWATCH_BLACK) }),
+    story: createStory(storyId, text),
   };
 }
 
