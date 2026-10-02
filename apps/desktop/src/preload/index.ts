@@ -2,9 +2,11 @@
 // Lanes A and B add their own entries to `api` (export, place image); keep the object additive so merges are a union.
 import { contextBridge, ipcRenderer } from 'electron';
 import { IPC, type GalleyApi, type MenuCommandMessage } from '../shared/ipc';
+import { fontBridge } from './fonts';
 import { pressBridge } from './press';
 
 const api: GalleyApi = {
+  fonts: fontBridge,
   press: pressBridge, // lane A: PDF export and soft proofing (preload/press.ts)
   engineVersion: process.versions.electron,
   e2e: process.env.GALLEY_E2E === '1',

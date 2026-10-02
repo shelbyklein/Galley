@@ -1,3 +1,4 @@
+import { FontWarnings } from './FontWarnings';
 import { useEffect, useSyncExternalStore } from 'react';
 import { exportDialog } from './exportState';
 import './export-dialog.css';
@@ -41,6 +42,7 @@ export function ExportDialog() {
                 <small>Drawn in registration color, so they print on every plate.</small>
               </label>
             </fieldset>
+            <FontWarnings />
             {running && (
               <p className="gl-export-progress" data-testid="export-progress" role="status">
                 <span className="gl-export-spinner" aria-hidden="true" />
@@ -60,6 +62,14 @@ export function ExportDialog() {
               Trim {formatPt(s.summary.trim.width)} × {formatPt(s.summary.trim.height)}, sheet {formatPt(s.summary.sheet.width)} × {formatPt(s.summary.sheet.height)}. Output intent: {s.summary.profile.name}
               {s.summary.spots.length > 0 ? `. Spot colors: ${s.summary.spots.join(', ')}` : ''}.
             </p>
+            {s.summary.fonts && s.summary.fonts.length > 0 && (
+              <details data-testid="export-font-report" className="gl-export-font-report">
+                <summary>Font report ({s.summary.fonts.length})</summary>
+                <ul>{s.summary.fonts.map((font) => <li key={`${font.family}:${font.weight}:${font.style}`}>
+                  {font.family} {font.weight} {font.style}: {font.status === 'instanced' ? 'static TrueType instance' : font.status === 'type3' ? 'Type 3 (CFF)' : font.status === 'substituted' ? `substituted with ${font.resolvedFamily}` : 'TrueType'} ({font.source})
+                </li>)}</ul>
+              </details>
+            )}
             {s.summary.warnings.length > 0 && (
               <ul className="gl-export-warnings" data-testid="export-warnings">
                 {s.summary.warnings.map((w) => (

@@ -1,3 +1,5 @@
+import type { FontBinding } from '@galley/fonts/types';
+import { setFontSource } from '@galley/render/fonts';
 // Export page entry. Owned by lane A (apps/desktop/src/export-page/**).
 //
 // The hidden export window loads this page, calls `window.galleyExport.load(...)` with a document, waits for it to
@@ -25,7 +27,7 @@ export interface ExportLoadResult {
 
 export interface GalleyExportApi {
   /** Render one page (default: the first) in export mode. Resolves once fonts and images have loaded and painted. */
-  load(files: PackageFiles, pageId?: string): Promise<ExportLoadResult>;
+  load(files: PackageFiles, pageId?: string, fonts?: FontBinding[]): Promise<ExportLoadResult>;
   /** Painted colors on the rendered page that are not sentinels. Empty means export-clean. */
   audit(): PaintedColor[];
 }
@@ -52,7 +54,8 @@ async function waitForReady(): Promise<void> {
 }
 
 window.galleyExport = {
-  async load(files, pageId) {
+  async load(files, pageId, fonts) {
+    if (fonts) setFontSource(async () => fonts);
     const doc = parseDocument(files);
     const id = pageId ?? doc.pageOrder[0]!;
     const page = doc.pages[id];

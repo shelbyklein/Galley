@@ -58,6 +58,7 @@ async function exportPdf(sender: Electron.WebContents, request: ExportPdfRequest
         trim: result.trim,
         spots: result.report.spots,
         warnings: result.warnings,
+        fonts: result.fonts,
       },
     };
   } catch (error) {

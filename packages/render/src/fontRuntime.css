@@ -1,0 +1,3 @@
+/* Keep automatic optical sizing consistent with export instances (all non-weight axes stay at their defaults). */
+.galley-text { font-optical-sizing: none; font-synthesis: none; }
+.galley-page[data-color-mode="screen"] [data-missing-font] { background-color: #ffd5e7; }

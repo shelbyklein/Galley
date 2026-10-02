@@ -1,0 +1,4 @@
+.gl-font-status { position: relative; color: #ffbdcf; font-size: 11px; }
+.gl-font-status summary { cursor: pointer; }
+.gl-font-status > div { position: absolute; bottom: 26px; right: 0; width: 300px; padding: 12px; background: #28282c; border: 1px solid #69606b; border-radius: 6px; box-shadow: 0 6px 24px #0008; }
+.gl-font-status ul { margin: 8px 0 0; padding-left: 18px; }

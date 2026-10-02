@@ -1,3 +1,4 @@
+import type { FontBinding } from '@galley/fonts/types';
 // The hidden export window: loads src/export-page, renders one page of the document in export mode (every document color
 // a sentinel RGB), and prints it with Chromium's printToPDF. The result is an RGB PDF that @galley/prepress turns into a
 // press-ready PDF/X-4.
@@ -37,7 +38,7 @@ function exportPageTarget(): { url: string } | { file: string } {
  * Render one page of the document in a hidden window and print it. The window is always destroyed, also on failure.
  * Throws when the page paints a color that is not a sentinel: that color would reach the press as RGB.
  */
-export async function renderPageToPdf(files: DocumentFiles, pageId?: string): Promise<ChromiumRender> {
+export async function renderPageToPdf(files: DocumentFiles, pageId?: string, fonts?: FontBinding[]): Promise<ChromiumRender> {
   const win = new BrowserWindow({
     show: false,
     width: 1200,
@@ -50,7 +51,7 @@ export async function renderPageToPdf(files: DocumentFiles, pageId?: string): Pr
     else await win.loadFile(target.file);
     const run = <T>(code: string): Promise<T> => win.webContents.executeJavaScript(code, true) as Promise<T>;
 
-    const loaded = await run<LoadResult>(`window.galleyExport.load(${JSON.stringify(files)}, ${JSON.stringify(pageId ?? null)})`);
+    const loaded = await run<LoadResult>(`window.galleyExport.load(${JSON.stringify(files)}, ${JSON.stringify(pageId ?? null)}, ${JSON.stringify(fonts ?? null)})`);
     const stray = await run<PaintedColor[]>('window.galleyExport.audit()');
     if (stray.length > 0) {
       const list = stray.slice(0, 5).map((c) => `${c.where} ${c.property}: ${c.value}`).join('; ');

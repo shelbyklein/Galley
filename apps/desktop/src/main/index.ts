@@ -10,6 +10,7 @@ import { applyMenuSpec, installStartupMenu, NO_WINDOW_COMMANDS, setMenuDispatche
 import { discardScratchPackage, handleAssetProtocol, initialPackagePath, registerAssetScheme } from './package';
 import { RecentFiles } from './recents';
 import { registerExportHandlers } from './export';
+import { registerFontScheme, registerFontHandlers } from './fonts';
 import { registerPlaceImage } from './place-image';
 
 /** Set by Playwright e2e runs (apps/desktop/e2e/helpers/launch.ts). */
@@ -29,6 +30,7 @@ const tempUserData = !explicitUserData && E2E ? fs.mkdtempSync(join(os.tmpdir(),
 if (explicitUserData || tempUserData) app.setPath('userData', explicitUserData || tempUserData);
 
 registerAssetScheme();
+registerFontScheme();
 
 // ------------------------------------------------------------------------------------------------ window state
 
@@ -123,6 +125,7 @@ setMenuDispatcher((message, clicked) => {
 
 app.whenReady().then(() => {
   handleAssetProtocol();
+  registerFontHandlers();
   registerExportHandlers(); // lane A: File > Export > PDF/X-4 and soft proofing (main/export)
   installStartupMenu();
 

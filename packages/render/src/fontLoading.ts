@@ -1,3 +1,4 @@
+import { loadExactFonts } from './fontRuntime';
 import { isLayerVisible, paintOrder, paragraphAttrs, resolveParagraph, resolveRun, type GalleyDocument, type Id } from '@galley/model';
 
 /**
@@ -38,6 +39,7 @@ export function usedImageUrls(doc: GalleyDocument, pageId: Id, assetUrl: (asset:
 
 /** Load the faces and decode the images. Resolves when everything that will draw is ready (failures do not block). */
 export async function loadPageResources(faces: readonly string[], imageUrls: readonly string[]): Promise<void> {
+  await loadExactFonts(faces);
   const tasks: Promise<unknown>[] = [];
   const fonts = (globalThis as { document?: Document }).document?.fonts;
   if (fonts) for (const face of faces) tasks.push(fonts.load(face).catch(() => undefined));

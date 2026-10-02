@@ -1,3 +1,4 @@
+import { FontStatus } from '../fonts/FontStatus';
 import { ProfileStatus } from '../status/ProfileStatus';
 import { inches, mm, type Page } from '@galley/model';
 import { presetForSize } from '../dialogs/presets';
@@ -72,6 +73,7 @@ export function StatusBar() {
             File {'›'} Export {'›'} PDF/X-4{'…'}
           </button>
         )}
+        <FontStatus />
         <ProfileStatus />
       </span>
     </>
