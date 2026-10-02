@@ -40,6 +40,7 @@ exported pages contain only the page. A unit test (`src/entries.test.ts`) enforc
 | `npm run build` | typecheck all workspaces, then `electron-vite build` into `apps/desktop/out/` |
 | `npm test` | Vitest across all workspaces (`vitest.config.ts` projects); one workspace: `npm test -w @galley/model` |
 | `npm run test:e2e` | builds, then runs Playwright against the built app |
+| `npm run test:milestone1` | builds, then runs the Milestone 1 journey (`e2e/milestone/`, own Playwright config): builds the poster through the UI, saves, reopens and exports it, and measures the PDF. Screenshots to `apps/desktop/test-results/milestone1/` |
 | `npm run test:golden` / `test:text` / `test:geometry` | placeholders that print "not yet implemented"; lanes A and T fill them in |
 | `npm run fixtures` | regenerates `fixtures/poster-basic.galley/{document,links}.json` from `scripts/fixtures/poster-basic.ts` |
 | `npm run typecheck` | `tsc --noEmit` in every workspace |
@@ -243,6 +244,14 @@ test('...', async ({ galley }, testInfo) => {
 - `waitForStable(page)` (called by both) waits for `.galley-page[data-ready="true"]`, fonts, image decode and two frames.
 - To test the export page, create a hidden `BrowserWindow` through `app.evaluate` (see `export-page.e2e.ts`).
 - Playwright runs one worker; windows show on screen while tests run.
+- **Milestone journeys** (`e2e/milestone/*.milestone.ts`, `npm run test:milestone1`) are long end-to-end scripts with their own
+  config (`playwright.milestone.config.ts`), so `test:e2e` does not run them. `milestone1.milestone.ts` builds the Phase 1
+  poster through the UI (⌘N dialog, Swatches panel, tool buttons and pointer drags, typing in text frames, control-strip
+  fields, ⌘D with a stubbed file dialog), saves, closes, relaunches and reopens it, exports it, and measures the PDF with
+  `scripts/milestone1/check-poster.ts` (the golden suite plus its own plate measurements). Inspection screenshots go to
+  `apps/desktop/test-results/milestone1/` (a default `test:e2e` run clears `test-results/`, so look at them before it).
+  `shotWhileDragging` takes a screenshot with the pointer button held: Playwright's `page.screenshot` resizes the page and
+  Chromium answers with a synthetic pointer move that drags the gesture elsewhere.
 
 ## Fixtures
 
