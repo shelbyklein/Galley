@@ -184,5 +184,12 @@ test('builds a styled flyer with two linked frames and contour wrap, saves/reope
   fs.writeFileSync(path.join(FLYER_SHOTS, 'proof.json'), JSON.stringify(result, null, 2));
   const rendered = spawnSync('pdftoppm', ['-png', '-r', '90', '-singlefile', pdf, path.join(FLYER_SHOTS, '07-exported-pdf')], { encoding: 'utf8', env: TOOL_ENV });
   expect(rendered.status, rendered.stderr).toBe(0);
+  // Keep the verified editable example and press PDF locally; the system ICC embedded in the PDF is not published.
+  const artifacts = path.join(REPO_ROOT, 'build', 'milestone2');
+  fs.mkdirSync(artifacts, { recursive: true });
+  fs.cpSync(pkg, path.join(artifacts, 'Process Notes.galley'), { recursive: true, force: true });
+  fs.copyFileSync(pdf, path.join(artifacts, 'Process Notes.pdf'));
+  fs.copyFileSync(screenFile, path.join(artifacts, 'screen.json'));
+  fs.copyFileSync(path.join(FLYER_SHOTS, 'proof.json'), path.join(artifacts, 'proof.json'));
   console.log(`Flyer: ${result.lineMatch.lines} lines, ${result.lineMatch.mismatches} mismatches; ${result.checks.length} PDF/font/ink checks passed.`);
 });
