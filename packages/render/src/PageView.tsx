@@ -19,6 +19,7 @@ import {
 } from '@galley/model';
 import { memo, useEffect, useMemo, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from 'react';
 import { createColorResolver, type ColorMode, type ColorResolver, type SoftProofFn } from './color';
+import { getFontEpoch, subscribeFonts } from './fontRuntime';
 import { loadPageResources, usedFontFaces, usedImageUrls } from './fontLoading';
 import { bleedClipInsets, htmlFrameStyle, num, pt, sheetGeometry } from './geometry';
 import { defaultSoftProof, getSoftProofEpoch, getSoftProofSource, subscribeSoftProof } from './softproof';
@@ -216,7 +217,8 @@ export function PageView({ doc, pageId, colorMode, assetUrl, resolver, softProof
 
   const faces = usedFontFaces(doc, pageId);
   const urls = usedImageUrls(doc, pageId, assetUrl);
-  const resourceKey = JSON.stringify([faces, urls]);
+  const fontEpoch = useSyncExternalStore(subscribeFonts, getFontEpoch, getFontEpoch);
+  const resourceKey = JSON.stringify([faces, urls, fontEpoch]);
   const [ready, setReady] = useState(false);
   useEffect(() => {
     let live = true;

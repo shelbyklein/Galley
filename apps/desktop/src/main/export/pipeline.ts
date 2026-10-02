@@ -1,3 +1,7 @@
+import { documentFontRequests } from '@galley/fonts/document';
+import type { FontReportEntry } from '@galley/fonts/types';
+import { fontReport } from '@galley/prepress/fonts';
+import { resolveFonts } from '../fonts';
 // The export pipeline: document -> export copy (bleed / marks options) -> hidden window + printToPDF -> prepress -> PDF/X-4.
 // No dialogs or IPC here (see handlers.ts), so tests and scripts can run the same code path through `__galleyExport`.
 import { buildSentinelTable, parseDocument, serializeDocument, type DocumentFiles } from '@galley/model';
@@ -25,6 +29,7 @@ export interface ExportPipelineResult {
   trim: { width: number; height: number };
   profile: { name: string; kind: 'press' | 'fallback'; path: string };
   warnings: string[];
+  fonts: FontReportEntry[];
 }
 
 export async function runExportPipeline(request: ExportPipelineRequest, onProgress: (p: ExportProgress) => void = () => {}): Promise<ExportPipelineResult> {
@@ -41,7 +46,9 @@ export async function runExportPipeline(request: ExportPipelineRequest, onProgre
   const sentinels = buildSentinelTable(exportDoc);
 
   onProgress({ stage: 'rendering', message: 'Rendering the page' });
-  const rendered = await renderPageToPdf(exportFiles, pageId);
+  const fontBindings = await resolveFonts(documentFontRequests(exportDoc, pageId), true);
+  const fonts = fontReport(fontBindings);
+  const rendered = await renderPageToPdf(exportFiles, pageId, fontBindings);
   // The renderer and the prepress step must agree on every sentinel: they build the table from the same function.
   if (JSON.stringify(rendered.sentinels) !== JSON.stringify(sentinels)) throw new Error('The export page and the prepress step disagree about the sentinel colors; refusing to export wrong inks.');
 
@@ -57,10 +64,10 @@ export async function runExportPipeline(request: ExportPipelineRequest, onProgre
     marks: request.options.marks,
   });
 
-  const warnings: string[] = [];
+  const warnings: string[] = fonts.flatMap((font) => font.warning ? [font.warning] : []);
   if (profiles.note) warnings.push(profiles.note);
   if (report.streams.some((s) => s.kind === 'type3')) {
-    warnings.push('Some text was exported as Type 3 fonts (variable fonts and CFF .otf fonts do). Type 3 is valid in PDF/X-4, but some print shops flag it.');
+    warnings.push('Some text was exported as Type 3 fonts (CFF outlines do). Type 3 is valid in PDF/X-4, but some print shops flag it.');
   }
   if (report.unmatched.length > 0) warnings.push(`${report.unmatched.length} color(s) in the page were not document colors and were left as RGB: ${report.unmatched.slice(0, 3).join('; ')}`);
   if (report.unhandled.length > 0) warnings.push(`${report.unhandled.length} color operator(s) could not be converted: ${report.unhandled.slice(0, 3).join('; ')}`);
@@ -76,5 +83,6 @@ export async function runExportPipeline(request: ExportPipelineRequest, onProgre
     trim: { width: page.width, height: page.height },
     profile: { name: profiles.output.name, kind: profiles.output.kind, path: profiles.output.path },
     warnings,
+    fonts,
   };
 }

@@ -1,3 +1,4 @@
+import type { FontReportEntry } from '@galley/fonts/types';
 // Types and channel names for PDF export and soft proofing, shared by the main process (src/main/export), the preload
 // script and the renderer (src/renderer/dialogs/export, src/renderer/status). Owned by lane A, kept apart from
 // shared/ipc.ts so the two lanes extend the bridge without touching the same lines.
@@ -49,6 +50,8 @@ export interface ExportPdfSummary {
   spots: string[];
   /** Things the user should know: fallback profile, Type 3 fonts, unconverted colors. Empty when there is nothing to say. */
   warnings: string[];
+  /** Exact font sources and embedding outcomes for the export log. */
+  fonts?: FontReportEntry[];
 }
 
 export type ExportPdfResponse =

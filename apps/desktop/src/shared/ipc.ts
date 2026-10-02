@@ -1,4 +1,5 @@
 // Types and channel names shared by the main process, the preload script and the renderer windows.
+import type { FontBridge } from '@galley/fonts/types';
 import type { PressBridge } from './export-ipc';
 // Lane C owns the file, menu and window parts. Lanes A and B add their own sections (export, place image) below the
 // marked blocks; the bridge is additive on purpose so the merge is a union.
@@ -121,6 +122,7 @@ export type TextEditAction = 'undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'selec
 export interface GalleyApi {
   /** PDF/X-4 export and soft proofing (lane A; see shared/export-ipc.ts). */
   press: PressBridge;
+  fonts: FontBridge;
   /** `process.versions.electron`: stamped into documents as `meta.engineVersion`. */
   engineVersion: string;
   /** True when the app was started by an e2e test (GALLEY_E2E=1): the renderer then exposes `window.__galley` for tests. */

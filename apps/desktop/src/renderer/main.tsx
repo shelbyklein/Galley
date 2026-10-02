@@ -1,4 +1,7 @@
 import '@galley/render/fonts';
+import './fonts/bootstrap';
+import './fonts/fonts.css';
+import { refreshFontFamilies } from './fonts';
 import * as model from '@galley/model';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -16,6 +19,7 @@ import './theme.css';
 async function main(): Promise<void> {
   registerCoreCommands(useEditorStore);
   installKeyboardShortcuts();
+  await refreshFontFamilies();
   await startShell(); // lane C: shell commands, native menu, startup document
 
   if (window.galley?.e2e) {
