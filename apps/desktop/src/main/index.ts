@@ -4,6 +4,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'node:path';
 import { IPC, type PackageFiles } from '../shared/ipc';
 import { registerExportHandlers } from './export';
+import { registerPlaceImage } from './place-image';
 import { handleAssetProtocol, initialPackagePath, readPackage, registerAssetScheme, setActivePackage } from './package';
 
 /** Set by Playwright e2e runs (apps/desktop/e2e/helpers/launch.ts). */
@@ -58,6 +59,7 @@ app.whenReady().then(() => {
     setActivePackage(dir);
     return readPackage(dir);
   });
+  registerPlaceImage();
   createMainWindow();
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createMainWindow();

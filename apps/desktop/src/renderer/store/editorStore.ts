@@ -42,12 +42,27 @@ export type ToolId = 'select' | 'type' | 'line' | 'rectangle' | 'rectangle-frame
 export interface Viewport {
   /** CSS pixels per point: 1 is 100%, as in InDesign (one point is one screen pixel, 72 ppi). */
   zoom: number;
-  /** Translation of the page stack in screen pixels. Lane B defines the exact origin when it builds the viewport. */
+  /**
+   * Where the current page's top-left corner (page point 0, 0, the trim box) sits, in CSS pixels from the top-left of
+   * the canvas pasteboard (the area below and to the right of the rulers). Page point (x, y) is at screen pixel
+   * `(panX + x * zoom, panY + y * zoom)`. While `fit` is true the canvas computes zoom and pan itself and writes them here.
+   */
   panX: number;
   panY: number;
   /** While true the canvas keeps fitting the page to the window; any explicit zoom or pan clears it. */
   fit: boolean;
 }
+
+/** Display settings of the canvas (rulers, guides, ruler units). Not part of the document and not in undo history. */
+export interface ViewSettings {
+  rulersVisible: boolean;
+  /** Ruler, margin, column, bleed and slug guides. Hidden guides are not drawn and not snapped to. */
+  guidesVisible: boolean;
+  /** Units of the rulers (and, for lane C, of the control strip fields). The model is always points. */
+  units: DisplayUnits;
+}
+
+export type DisplayUnits = 'pt' | 'in' | 'mm';
 
 export interface EditorState {
   // ----- document and history
@@ -83,6 +98,9 @@ export interface EditorState {
   setViewport(patch: Partial<Viewport>): void;
   activeTool: ToolId;
   setActiveTool(tool: ToolId): void;
+  /** Rulers, guides and units (View menu). */
+  view: ViewSettings;
+  setView(patch: Partial<ViewSettings>): void;
 }
 
 export type EditorStore = StoreApi<EditorState>;
@@ -156,6 +174,8 @@ export function createEditorState(initial: GalleyDocument = blankDocument()) {
       setViewport: (patch) => set((s) => ({ viewport: { ...s.viewport, ...patch } })),
       activeTool: 'select',
       setActiveTool: (tool) => set({ activeTool: tool }),
+      view: { rulersVisible: true, guidesVisible: true, units: 'pt' },
+      setView: (patch) => set((s) => ({ view: { ...s.view, ...patch } })),
     };
   };
 }

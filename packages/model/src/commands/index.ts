@@ -16,6 +16,7 @@ export {
   type ReorderOp,
 } from './frame';
 export { addGuide, moveGuide, removeGuide } from './guide';
+export { transformFrames, type FrameGeometry } from './transform';
 export { addLayer, moveLayer, removeLayer, setLayerProps, type LayerProps } from './layer';
 export { addPage, movePage, removePage, setPageProps, type PageProps } from './page';
 export { setStoryDefaults, setStoryDoc } from './story';
@@ -25,6 +26,7 @@ import { addAsset, removeAsset, setAssetProps } from './asset';
 import { setMeta } from './doc';
 import { addFrame, groupFrames, moveFrames, moveFramesToLayer, moveFramesToPage, removeFrames, reorderFrames, setFrameProps, ungroupFrames } from './frame';
 import { addGuide, moveGuide, removeGuide } from './guide';
+import { transformFrames } from './transform';
 import { addLayer, moveLayer, removeLayer, setLayerProps } from './layer';
 import { addPage, movePage, removePage, setPageProps } from './page';
 import { setStoryDefaults, setStoryDoc } from './story';
@@ -48,6 +50,7 @@ export const allCommands = {
   removeFrames,
   reorderFrames,
   setFrameProps,
+  transformFrames,
   ungroupFrames,
   addGuide,
   moveGuide,
