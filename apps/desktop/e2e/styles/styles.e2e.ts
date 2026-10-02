@@ -38,7 +38,7 @@ test('create, base, apply, redefine, clear overrides and apply/remove character 
   await paraPanel.getByRole('button', { name: 'Edit', exact: true }).click();
   editor = page.getByTestId('paragraph-style-editor');
   await editor.getByRole('tab', { name: 'Web (read-only)', exact: true }).click();
-  await expect(editor.getByText('Stored, edited in Phase 6')).toBeVisible();
+  await expect(editor.getByText('Web editing is unavailable.')).toBeVisible();
   await expect(editor.locator('.gl-style-web input')).toHaveCount(0);
   await editor.getByRole('button', { name: 'Cancel', exact: true }).click();
   await styleCreate(page, 'character', 'Emphasis', '[None]');
