@@ -64,6 +64,18 @@ That is a property of the layout engine, identical on screen and in print (same 
 tests that compare screen with PDF are unaffected. It is exactly what **P2-08** has to prove for leadings of 12, 13, 13.5,
 14.5 and 15.25 pt; this file only records that the offset can be up to 0.5 pt off the ideal.
 
+### Phase 2 verification
+
+P2-08 verifies identical line breaks at all five required leadings; arbitrary leading remains allowed. Unaligned native
+text still has pixel quantization inside its line boxes. The UI-built flyer measures actual DOM baselines and PDF text
+origins independently: 61 lines match, with at most 0.374951 pt of absolute baseline error. Its 0.5 pt bound rejects a
+1 pt uniform displacement even when every line's text matches.
+
+Grid-aligned stories use native CSS layout at `zoom: 32` with a reciprocal transform in measurement, editing, static
+rendering and export. This reduces paint quantization to 0.0234375 pt. Measured first-baseline padding and grid-derived
+leading are view data; the source paragraph's leading is preserved. Grid tests measure actual PDF text origins, rather
+than line-box centers, and pass the stricter 0.1 pt acceptance bound (maximum measured PDF error 0.0328 pt).
+
 ## Page size
 
 `printToPDF({ preferCSSPageSize: true })` gives the page size in the CSS `@page` rule, but Chromium **rounds each side to
@@ -89,8 +101,8 @@ is not needed: nothing in the renderer depends on the page size being a multiple
 - Place text and image frames only with `htmlFrameStyle`. Never `left`/`top`/`width`/`height` in pt on a frame that has to
   print exactly, and never `overflow: hidden` on a frame or a slot (use `clip-path`).
 - Inside a frame, lay out in whole pixels where it matters and use `transform` for everything fractional.
-- Phase 2 text slots (lane T): a slot is a frame; give it `htmlFrameStyle`, and move its content with a transform, not a margin.
-  Keep leadings at multiples of 0.75 pt until P2-08 says otherwise.
+- Phase 2 text slots: a slot is a frame; keep its exact transform positioning and move its content with a transform, not
+  a margin. P2-08 permits arbitrary leading; retain the shared higher-precision layout for grid-aligned stories.
 - Colors never come from this module: see `color.ts` and the export-mode sentinels.
 
 ## How it is measured

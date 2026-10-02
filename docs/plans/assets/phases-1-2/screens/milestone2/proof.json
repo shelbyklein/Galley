@@ -1,0 +1,248 @@
+{
+  "checks": [
+    {
+      "group": "structure",
+      "name": "qpdf --check",
+      "expected": "no syntax or stream errors",
+      "measured": "clean",
+      "pass": true
+    },
+    {
+      "group": "structure",
+      "name": "MediaBox (pt)",
+      "expected": "0 0 684 864",
+      "measured": "0 0 684 864",
+      "pass": true
+    },
+    {
+      "group": "structure",
+      "name": "TrimBox (pt)",
+      "expected": "36 36 648 828",
+      "measured": "36 36 648 828",
+      "pass": true
+    },
+    {
+      "group": "structure",
+      "name": "TrimBox is exactly the page size",
+      "expected": "612 x 792",
+      "measured": "612 x 792",
+      "pass": true
+    },
+    {
+      "group": "structure",
+      "name": "BleedBox (pt)",
+      "expected": "27 27 657 837",
+      "measured": "27 27 657 837",
+      "pass": true
+    },
+    {
+      "group": "structure",
+      "name": "boxes nested: Trim within Bleed within Media",
+      "expected": "true",
+      "measured": "true",
+      "pass": true
+    },
+    {
+      "group": "pdfx",
+      "name": "header version",
+      "expected": "%PDF-1.6",
+      "measured": "%PDF-1.6",
+      "pass": true
+    },
+    {
+      "group": "pdfx",
+      "name": "Info /GTS_PDFXVersion",
+      "expected": "(PDF/X-4)",
+      "measured": "(PDF/X-4)",
+      "pass": true
+    },
+    {
+      "group": "pdfx",
+      "name": "Info /Trapped",
+      "expected": "/False",
+      "measured": "/False",
+      "pass": true
+    },
+    {
+      "group": "pdfx",
+      "name": "XMP pdfxid:GTS_PDFXVersion",
+      "expected": "PDF/X-4",
+      "measured": "PDF/X-4",
+      "pass": true
+    },
+    {
+      "group": "pdfx",
+      "name": "trailer /ID (document ID)",
+      "expected": "2 strings",
+      "measured": "2 strings",
+      "pass": true
+    },
+    {
+      "group": "pdfx",
+      "name": "OutputIntent /S /GTS_PDFX with an embedded CMYK profile",
+      "expected": "GTS_PDFX, N=4",
+      "measured": "/GTS_PDFX, N=4",
+      "pass": true
+    },
+    {
+      "group": "pdfx",
+      "name": "not encrypted",
+      "expected": "false",
+      "measured": "false",
+      "pass": true
+    },
+    {
+      "group": "marks",
+      "name": "registration color (/Separation /All) is used for the marks",
+      "expected": ">= 1",
+      "measured": "1",
+      "pass": true
+    },
+    {
+      "group": "fonts",
+      "name": "all fonts embedded",
+      "expected": "2/2",
+      "measured": "2/2",
+      "pass": true
+    },
+    {
+      "group": "rgb",
+      "name": "no DeviceRGB vector color (rg, RG, cs /DeviceRGB)",
+      "expected": "0",
+      "measured": "0 of 2 streams scanned",
+      "pass": true
+    },
+    {
+      "group": "rgb",
+      "name": "no RGB image, shading, group or color-space resource",
+      "expected": "0",
+      "measured": "0",
+      "pass": true
+    },
+    {
+      "group": "spot",
+      "name": "spot colors have their own named plates",
+      "expected": "(none)",
+      "measured": "(none)",
+      "pass": true
+    },
+    {
+      "group": "ink",
+      "name": "frm_07th93vtyb: Studio Orange",
+      "expected": "C0.0 M60.0 Y100.0 K0.0",
+      "measured": "C0.0 M60.0 Y100.0 K0.0",
+      "pass": true
+    },
+    {
+      "group": "black",
+      "name": "frm_3qvz00dc26: text on paper is K only: the C, M, Y and spot plates are empty",
+      "expected": "max 0.0",
+      "measured": "C0.0 M0.0 Y0.0 K100.0",
+      "pass": true
+    },
+    {
+      "group": "black",
+      "name": "frm_3qvz00dc26: text on paper: the Black plate carries the ink",
+      "expected": "K max >= 99",
+      "measured": "K max 100.0",
+      "pass": true
+    },
+    {
+      "group": "black",
+      "name": "frm_e3t73nphq9: text on paper is K only: the C, M, Y and spot plates are empty",
+      "expected": "max 0.0",
+      "measured": "C0.0 M0.0 Y0.0 K100.0",
+      "pass": true
+    },
+    {
+      "group": "black",
+      "name": "frm_e3t73nphq9: text on paper: the Black plate carries the ink",
+      "expected": "K max >= 99",
+      "measured": "K max 100.0",
+      "pass": true
+    },
+    {
+      "group": "marks",
+      "name": "a crop mark prints on every plate (/Separation /All), spot plates included",
+      "expected": "all plates >= 90",
+      "measured": "C100.0 M100.0 Y100.0 K100.0",
+      "pass": true
+    },
+    {
+      "group": "marks",
+      "name": "a registration target is present (top)",
+      "expected": "K max >= 90",
+      "measured": "K max 100.0",
+      "pass": true
+    },
+    {
+      "group": "marks",
+      "name": "the slug between marks is empty",
+      "expected": "all plates 0",
+      "measured": "C0.0 M0.0 Y0.0 K0.0",
+      "pass": true
+    },
+    {
+      "group": "text",
+      "name": "UI flyer screen/PDF line agreement",
+      "expected": "20+ lines, 0 mismatches, horizontal bounds and absolute baselines within 0.5 pt",
+      "measured": "{\"lines\":61,\"mismatches\":0,\"details\":[],\"dxMax\":0.005923556198922597,\"baselineMax\":0.3749509390433303,\"boxCenterOffset\":0.10309830634936144,\"dySpread\":0.606971799899258}",
+      "pass": true
+    },
+    {
+      "group": "fonts",
+      "name": "static font Inter is embedded as real TrueType",
+      "expected": "embedded CID TrueType, no Type 3",
+      "measured": "[{\"name\":\"BAAAAA+Inter-Regular\",\"type\":\"CID TrueType\",\"embedded\":true}]",
+      "pass": true
+    },
+    {
+      "group": "fonts",
+      "name": "variable font Roboto is embedded as real TrueType",
+      "expected": "embedded CID TrueType, no Type 3",
+      "measured": "[{\"name\":\"AAAAAA+Roboto-Regular\",\"type\":\"CID TrueType\",\"embedded\":true}]",
+      "pass": true
+    },
+    {
+      "group": "fonts",
+      "name": "flyer has no outlined Type 3 fonts",
+      "expected": "all fonts embedded, no Type 3",
+      "measured": "[{\"name\":\"AAAAAA+Roboto-Regular\",\"type\":\"CID TrueType\",\"embedded\":true},{\"name\":\"BAAAAA+Inter-Regular\",\"type\":\"CID TrueType\",\"embedded\":true}]",
+      "pass": true
+    },
+    {
+      "group": "ink",
+      "name": "styled threaded body remains pure K100",
+      "expected": "C0 M0 Y0 K100 and no spot ink",
+      "measured": "{\"C\":0,\"M\":0,\"Y\":0,\"K\":100}",
+      "pass": true
+    }
+  ],
+  "lineMatch": {
+    "lines": 61,
+    "mismatches": 0,
+    "details": [],
+    "dxMax": 0.005923556198922597,
+    "baselineMax": 0.3749509390433303,
+    "boxCenterOffset": 0.10309830634936144,
+    "dySpread": 0.606971799899258
+  },
+  "fonts": [
+    {
+      "name": "AAAAAA+Roboto-Regular",
+      "type": "CID TrueType",
+      "embedded": true
+    },
+    {
+      "name": "BAAAAA+Inter-Regular",
+      "type": "CID TrueType",
+      "embedded": true
+    }
+  ],
+  "fontOutput": "name                                 type              encoding         emb sub uni object ID\n------------------------------------ ----------------- ---------------- --- --- --- ---------\nAAAAAA+Roboto-Regular                CID TrueType      Identity-H       yes yes yes      4  0\nBAAAAA+Inter-Regular                 CID TrueType      Identity-H       yes yes yes      5  0\n",
+  "negativeControl": {
+    "displacementPt": 1,
+    "rejected": true,
+    "baselineMax": 1.3749509390433303
+  }
+}

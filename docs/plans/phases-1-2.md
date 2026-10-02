@@ -251,3 +251,38 @@ No user data, installs or external services are involved. Each lane lands as its
 - Coordinator owns GitHub and integration; each resumed lane reports its own Tracker Trapper run and acceptance evidence.
 
 - **Resume readiness:** pass · 2026-10-02 · R1-R13 rechecked; current UI evidence is `assets/phases-1-2/screens/milestone1/06-finished-poster.png`, target type-mode mockup and flow remain linked; R7 restored with plan `220A01DC-5B7A-4C21-808C-C75CA4CAD1EA`; R9 current model and efforts verified/named. Original scope and human flyer/closure gates remain.
+
+## Phase 2 integration, 2026-10-02
+
+All three resumed lanes used GPT-6.1 Sol in the preserved worktrees; no additional Claude lane was started. N (`28956f9`), S (`c74a4b5`) and T (`0034fb8`, followed by focused fixes `1403c3f` and `f7441ca`) are merged on main, in that order. Their worktrees remain intact. The coordinator reconciled shared shell, model and renderer additions rather than replacing one lane with another.
+
+The UI-built Process Notes flyer passes 31 PDF/font/ink checks: 61 independently measured screen/PDF lines with zero mismatches, maximum horizontal error 0.005924 pt, and maximum absolute baseline error 0.374951 pt. Both document fonts survive Save As byte-for-byte and embed as CID TrueType, including the cached Roboto variable-font instance used by the editor. A negative control displacing every screen baseline by 1 pt is rejected while the line text still matches. The editable package, PDF and proof remain local under `build/milestone2/`; the PDF is not published because it contains the system ICC profile.
+
+Integration fixes preserve existing behavior: pointer gestures ignore unrelated or released-pointer moves; bundled Inter retains the original fallback metrics and v1 fixture pixels; document-package changes invalidate resource readiness immediately; completed font loading refreshes the active text editor, with rethreading deferred during composition; IME changes preserve the full overset story and undo as one edit.
+
+A final poster regression exposed native typing into a frame shorter than one line: the derived view lacked a source paragraph anchor and inserted an extra empty paragraph. `1403c3f` adds an empty editing anchor only when the whole thread has no laid-out piece, leaving fits and overset boundaries unchanged. Three keyboard/IME regressions preserve source styles, marked tails, caret order and undo. The poster milestone retains the exact short-frame text assertion, then enlarges the frame through the actual controls so it prints; all 40 PDF checks and the unchanged saved/reopened render pass.
+
+A separate pixel check caught invisible native IME preedit: the transparent editing overlay retained composition DOM while the static story still painted the stored text. The focused fix gives the editor real proofed ink through CSS variables and swaps only the composing story's paint until its committed static layout settles. The failing baseline had zero glyph pixels. Acceptance measures visible Japanese preedit, unchanged source and native DOM, proof-color updates, unrelated-story visibility, cancellation restoring the original image, and one commit/one undo. Boundary and overset cases restore normal static painting. Current-main captures show [Japanese preedit](assets/phases-1-2/screens/text/ime-preedit-japanese.png) and [its live proof color](assets/phases-1-2/screens/text/ime-preedit-proof-color.png). These are CDP composition checks; hardware macOS IME remains unverified.
+
+P2-08's named leading fork was not triggered: 12, 13, 13.5, 14.5 and 15.25 pt preserve line parity. Grid-aligned stories use the same higher-precision native layout in measurement, editor and export; measured screen/PDF grid error remains below 0.1 pt. Source leading stays unchanged. Object wrap currently routes text on one side of an object; ellipse contours and rotated ellipse contours are supported, while other objects use their bounds. Rotated text-frame wrap projection is unverified.
+
+P2-05 remains blocked on the consecutive-hyphenated-line limit: the pinned Chromium engine lacks this control, and a custom paragraph composer is excluded. The supported controls are built and tested, with this control visibly disabled. Shelby must choose whether to defer it or expand scope. P2-10's automatic portion passes, but its agreed real InDesign flyer gate remains pending. Neither box is checked and the issue remains open.
+
+Reviewed visual evidence is stored beside this plan: [type mode with linked frames and wrap](assets/phases-1-2/screens/milestone2/03-type-mode-wrap.png), [independently rendered flyer PDF](assets/phases-1-2/screens/milestone2/07-exported-pdf.png), [baseline grid](assets/phases-1-2/screens/text/baseline-grid.png), and [CFF export warning](assets/phases-1-2/screens/fonts/font-export-cff-warning.png). The generated PDF and editable package remain available locally at `build/milestone2/Process Notes.pdf` and `build/milestone2/Process Notes.galley`.
+
+The root Tracker run is `5D2C339A-768C-4365-895B-F14EEDAA06D6`, attached to this session's verified Codex JSONL and shared default store; use the existing plan and stable task IDs on resume. All lane runs have ended. T's focused zero-fit run `A488181E-9193-4F81-8F33-F36908BFF41B` and composition-paint run `6C10D632-830B-49B9-BFDA-A00D52135132` finished after acceptance; P2-03 is completed at revision 8. The remaining handoff is the P2-05 scope decision and P2-10 real-flyer selection/acceptance.
+
+Final acceptance on `main` at `e4abdcd` completed with exit 0:
+
+| Check | Result |
+|---|---|
+| Build and typechecks | PASS |
+| Unit tests | 517/517 across 54 files |
+| End-to-end app tests | 219/219, zero skips |
+| Golden print checks | 503/503 |
+| Geometry checks | 11/11 |
+| Threading suite | 69/69; 2,580 randomized edits and 2,205 screen/PDF lines with zero mismatches |
+| Poster UI milestone | PASS; 40/40 PDF checks and zero saved/reopened pixel differences |
+| Flyer UI milestone | PASS; 31/31 PDF/font/ink checks, 61 lines with zero mismatches |
+
+The final flyer, grid, thread and wrap screenshots match the already inspected images byte-for-byte. The two new native preedit images were inspected from this final main run. This verifies automated and rendered behavior; it does not replace Shelby's real-flyer acceptance gate.
