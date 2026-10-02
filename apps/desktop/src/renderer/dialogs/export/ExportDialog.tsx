@@ -67,6 +67,7 @@ export function ExportDialog() {
                 <summary>Font report ({s.summary.fonts.length})</summary>
                 <ul>{s.summary.fonts.map((font) => <li key={`${font.family}:${font.weight}:${font.style}`}>
                   {font.family} {font.weight} {font.style}: {font.status === 'instanced' ? 'static TrueType instance' : font.status === 'type3' ? 'Type 3 (CFF)' : font.status === 'substituted' ? `substituted with ${font.resolvedFamily}` : 'TrueType'} ({font.source})
+                  {font.resolvedWeight !== font.weight && font.status !== 'instanced' ? `, using ${font.styleName} ${font.resolvedWeight}` : ''}
                 </li>)}</ul>
               </details>
             )}

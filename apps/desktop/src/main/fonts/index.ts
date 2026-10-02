@@ -23,7 +23,13 @@ export function fontFamilies(): FontFamilyInfo[] {
     { path: '/System/Library/Fonts', source: 'system' }, { path: '/Library/Fonts', source: 'system' },
     { path: path.join(os.homedir(), 'Library/Fonts'), source: 'system' },
     { path: path.dirname(require.resolve('@fontsource/inter/package.json')) + '/files', source: 'bundled' },
-  ], path.join(app.getPath('userData'), 'font-cache-v3.json')).filter((face) => (face.source !== 'bundled' || /inter-latin-\d+-/.test(path.basename(face.path))) && (face.source !== 'system' || !face.family.startsWith('.')));
+  ], path.join(app.getPath('userData'), 'font-cache-v3.json')).filter((face) => {
+    // Match the established CSS imports exactly. WOFF siblings have different font tables;
+    // adding 800/900 italic would change v1's nearest-weight 700 italic rendering.
+    if (face.source === 'bundled') return /^inter-latin-(?:(?:400|700)-(?:normal|italic)|(?:800|900)-normal)\.woff2$/.test(path.basename(face.path));
+    // Inter is the bundled family; offering unrelated installed Inter versions would mix styles.
+    return !face.family.startsWith('.') && face.family.toLowerCase() !== 'inter';
+  });
   const folder = getActivePackage() ? path.join(getActivePackage()!, 'fonts') : '';
   // Inspect folder signatures as well as its name: externally restored/replaced package fonts must reload.
   const docFiles = folder ? fontFiles(folder).map((file) => { try { const s = fs.statSync(file); return `${file}:${s.size}:${s.mtimeMs}`; } catch { return `${file}:missing`; } }).join('|') : '';
@@ -48,7 +54,8 @@ export async function resolveFonts(requests: FontRequest[], exporting = false): 
       else if (/\.(ttc|otc)$/i.test(face.path)) files.set(key, { bytes: await sfntBytes(face) });
       else files.set(key, { path: face.path });
     }
-    bindings.push({ ...request, face, missing, url: `${FONT_SCHEME}://face/${key}`, ...(axes && face.embeddable ? { instanceAxes: axes } : {}) });
+    const cssFiles = !missing && face.source === 'bundled' ? [face.path, face.path.replace('inter-latin-', 'inter-latin-ext-')] : undefined;
+    bindings.push({ ...request, face, missing, url: `${FONT_SCHEME}://face/${key}`, ...(axes && face.embeddable ? { instanceAxes: axes } : {}), ...(cssFiles ? { cssFiles } : {}) });
   }
   return bindings;
 }

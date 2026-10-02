@@ -13,10 +13,13 @@ export interface FontFamilyInfo { family: string; faces: FontFaceInfo[]; source:
 export interface FontRequest { family: string; weight: number; style: 'normal' | 'italic' }
 export interface FontBinding extends FontRequest {
   face: FontFaceInfo; url: string; missing: boolean; instanceAxes?: Record<string, number>;
+  /** The established bundled CSS loads both source subsets in this order. */
+  cssFiles?: string[];
 }
 export interface FontReportEntry extends FontRequest {
   resolvedFamily: string; styleName: string; source: FontFaceInfo['source']; path: string;
   fsType: number; status: 'truetype' | 'instanced' | 'type3' | 'substituted';
+  resolvedWeight: number; cssFiles?: string[];
   warning: string | null;
 }
 export interface FontBridge {
