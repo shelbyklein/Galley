@@ -17,7 +17,7 @@ apps/desktop/
   src/renderer/           the editor window
     store/                zustand store: document + history + UI      shared (minimal changes)
     commands/             command registry, shortcuts, core commands   shared (registry.ts)
-    shell/                title bar, control strip, tools, dock        lane C
+    shell/                title bar, control strip, tools, dock, menus lane C
     canvas/               pasteboard, viewport, overlay                lane B
     tools/                the tools                                    lane B
     panels/ dialogs/      Pages, Layers, Swatches; New Document        lane C
@@ -163,13 +163,52 @@ ready and returns `{ pageId, sheet, sentinels }`, and `window.galleyExport.audit
 sheet. Lane A's export command opens it in a hidden window and prints it. `e2e/foundation/export-page.e2e.ts` shows the
 whole flow, including `printToPDF`.
 
-## Opening documents (temporary)
+## Documents, files, menus and the shell (lane C)
 
-Lane C builds real file handling. Until then `src/main/package.ts` opens one package at startup, from `--open <path>`,
-else `$GALLEY_OPEN`, else (only under `npm run dev`) `fixtures/poster-basic.galley`, and serves its images through the
-`galley-asset://pkg/<relative path>` protocol (refusing paths outside the folder). The renderer calls
-`window.galley.getInitialDocument()` and `openDocument(parseDocument(files))`. With nothing to open, the store holds a
-blank Letter document.
+**Packages.** `X.galley/` holds `document.json`, `links.json`, `assets/` (and `fonts/` from Phase 2). `src/main/packageIO.ts`
+reads and writes them (atomic writes; Save As to a new place copies the linked images and `fonts/`); `recents.ts` keeps the
+recent-files list in the user-data folder; `files.ts` registers the IPC handlers (the Open and Save As panels, the
+Save / Don't Save / Cancel prompt). The renderer parses and serializes with `@galley/model`
+(`renderer/shell/files/documentActions.ts`: new, open, save, save as, close, `confirmUnsavedChanges`). One document per
+window: New and Open replace it after the prompt, and Close (Cmd-W) closes the window.
+
+**Startup document.** `--open <path>`, else `$GALLEY_OPEN` (the e2e hook), else (only under `npm run dev`)
+`fixtures/poster-basic.galley`. It is a launch hook: it is opened but not added to the recent files. With nothing to open
+the store holds a blank Letter document.
+
+**The active package** (`src/main/package.ts`) is the folder `galley-asset://pkg/<relative path>?v=<n>` serves. A saved or
+opened document: its `X.galley` folder. A never-saved document: a scratch package in the OS temp folder, created by
+`ensureActivePackage()` the first time something needs a place for an image (lane B's place-image handler calls it and
+copies the picked file into `<dir>/assets/`); Save As copies the images into the real package and deletes the scratch.
+`getActivePackage()` and `getMissingLinks()` are for other main-process code (lane A's export must refuse to print while
+links are missing: the protocol serves a placeholder SVG for a missing file, which would otherwise be printed).
+`bumpAssetGeneration()` (`shared/assets.ts`) changes every image URL when a package is opened, so an `<img>` never keeps
+the previous document's picture.
+
+**Window state and closing.** The renderer reports `{ dirty, title, path }` to the main process (`setDocumentState`); main
+sets the dirty dot and, on a close with unsaved changes, asks the renderer to run the prompt (`closeRequested`), which
+ends in `files.closeWindow()` or `files.cancelClose()`. e2e runs use a fresh temp user-data folder unless
+`GALLEY_USER_DATA` is set.
+
+**Menus** (`renderer/shell/menu/`). The command registry is the source of truth. `menuSpec.ts` describes the menu bar
+(File, Edit, Object, Type, View, Window) from it; `menuBridge.ts` sends the description to the main process
+(`setMenu`), which builds the native `Menu` (`src/main/menu.ts`), and runs `commands.execute(id)` when an item is
+clicked. An id that is not registered is shown disabled; a registered command in a menu's `category` that the table does
+not list is appended to that menu. Native accelerators are set only for shortcuts with Cmd/Ctrl (or a function key),
+because a bare-key accelerator would swallow typing; the window's key handler (`commands/keyboard.ts`) is still what runs
+every shortcut, and the bridge drops a second run of the same command within 200 ms (accelerator and key handler both
+firing). Edit commands (undo, cut, copy, paste, select all) edit the text of a focused field instead. A modal dialog
+blocks shortcuts. Tests read and click the native menu through the main process (`e2e/shell/helpers.ts`).
+
+**The shell** (`renderer/shell/`, `panels/`, `dialogs/`). `shellStore.ts` holds UI state that is not the document and not
+shared with other lanes: which panels are shown and collapsed (remembered), the fill/stroke proxy target, the control
+strip's reference point and linked proportions, the open package path, broken links, recent files, notices and the
+open dialog. The one piece of lane C state other lanes need is in the editor store: `activeLayerId` (the layer new
+objects go on). The Layers panel sets it, it follows the selection, and the store keeps it a layer that exists. Docked panels are built on `panels/Panel.tsx` and listed in `shell/Dock.tsx`. Icons are SVG
+files in `shell/icons/` used as CSS masks (`shell/Icon.tsx`); renderer code contains no shape markup. Frames on a hidden
+or locked layer cannot be selected: `store/selectable.ts` filters the selection in the store, so every way of selecting
+obeys it. The control strip's geometry (reference point, X/Y/W/H, rotation) is in `shell/control-strip/transform.ts`;
+X and Y are the position of the reference point on the rotated box, and W, H and rotation hold it in place.
 
 ## End-to-end tests
 

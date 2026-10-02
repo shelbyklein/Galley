@@ -1,11 +1,23 @@
 /**
  * Images in a `.galley` package are loaded by windows through a custom protocol the main process serves:
- *   galley-asset://pkg/<path relative to the package folder>
+ *   galley-asset://pkg/<path relative to the package folder>[?v=<generation>]
  * The main process resolves it against the currently open package (src/main/package.ts) and refuses anything that
- * escapes the folder. Both the editor window and the hidden export window use the same URLs.
+ * escapes the folder; the query is ignored. Both the editor window and the hidden export window use the same URLs.
  */
 export const ASSET_SCHEME = 'galley-asset';
 
+let generation = 0;
+
+/**
+ * Call when a different package becomes the open one. Image URLs then change (`?v=n`), so an `<img>` whose path is
+ * the same in the new document (`assets/photo.jpg` in two documents, or a missing file put back) loads the new file
+ * instead of keeping the old picture. Lane C calls it on every open.
+ */
+export function bumpAssetGeneration(): void {
+  generation++;
+}
+
 export function assetUrl(relativePath: string): string {
-  return `${ASSET_SCHEME}://pkg/${relativePath.split('/').map(encodeURIComponent).join('/')}`;
+  const url = `${ASSET_SCHEME}://pkg/${relativePath.split('/').map(encodeURIComponent).join('/')}`;
+  return generation > 0 ? `${url}?v=${generation}` : url;
 }

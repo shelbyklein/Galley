@@ -3,6 +3,7 @@ import { BrowserWindow, dialog, ipcMain } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
 import { EXPORT_IPC, type ExportPdfRequest, type ExportPdfResponse, type ExportProgress } from '../../shared/export-ipc';
+import { getMissingLinks } from '../package';
 import { runExportPipeline, type ExportPipelineRequest } from './pipeline';
 import { currentProfileInfo, softProofColors } from './softproof';
 
@@ -15,6 +16,12 @@ function messageOf(error: unknown): string {
 
 async function exportPdf(sender: Electron.WebContents, request: ExportPdfRequest): Promise<ExportPdfResponse> {
   if (exporting) return { status: 'error', message: 'An export is already running.' };
+  // A missing image would print as the editor's placeholder, so a press PDF is refused until the links are fixed.
+  const missing = getMissingLinks();
+  if (missing.length > 0) {
+    const list = missing.map((m) => m.path).join(', ');
+    return { status: 'error', message: `${missing.length} linked ${missing.length === 1 ? 'image is' : 'images are'} missing (${list}). Restore ${missing.length === 1 ? 'it' : 'them'} before exporting.` };
+  }
   exporting = true;
   try {
     const parent = BrowserWindow.fromWebContents(sender);

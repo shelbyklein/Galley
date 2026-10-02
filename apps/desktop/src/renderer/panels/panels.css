@@ -1,0 +1,343 @@
+/* Docked panels: Pages, Layers, Swatches. Owned by lane C. Tokens come from theme.css and shell/shell.css. */
+.gl-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 0;
+  border-bottom: 1px solid var(--gl-line);
+}
+.gl-panel[data-panel='pages'] {
+  flex: 0 0 auto;
+  max-height: 42%;
+}
+.gl-panel[data-panel='swatches'] {
+  flex-grow: 1.25;
+}
+.gl-panel.is-collapsed {
+  flex: 0 0 auto;
+}
+
+.gl-panel-header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  height: var(--gl-panel-header-h);
+  padding: 0 8px 0 4px;
+  background: var(--gl-bg-control);
+  cursor: default;
+}
+.gl-panel-toggle {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  padding: 0 8px 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--gl-text);
+  font-weight: 600;
+  text-align: left;
+}
+.gl-panel-caret {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--gl-text-muted);
+}
+.gl-panel-caret.is-collapsed {
+  border-left: 5px solid var(--gl-text-muted);
+  border-right: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+}
+.gl-panel-menu {
+  position: relative;
+}
+.gl-panel-menu-button {
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--gl-text-faint);
+  font-size: 14px;
+  line-height: 1;
+}
+.gl-panel-menu-button:hover {
+  color: var(--gl-text);
+}
+
+.gl-panel-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.gl-panel-footer {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 2px;
+  height: 28px;
+  padding: 0 8px 0 12px;
+  border-top: 1px solid var(--gl-line);
+}
+.gl-panel-note {
+  color: var(--gl-text-faint);
+  font-size: 10px;
+}
+.gl-footer-spacer {
+  flex: 1;
+}
+.gl-footer-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--gl-radius);
+  background: transparent;
+  color: var(--gl-text-muted);
+}
+.gl-footer-button:hover:not(:disabled) {
+  background: var(--gl-bg-button);
+  color: var(--gl-text);
+}
+.gl-footer-button:disabled {
+  color: var(--gl-text-disabled);
+}
+
+/* ------------------------------------------------------------------------------------------------- pages */
+
+.gl-pages-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: flex-start;
+  gap: 12px 14px;
+  min-height: 104px;
+  padding: 14px 12px 8px;
+}
+.gl-page-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  touch-action: none;
+}
+.gl-page-item.is-dragging {
+  opacity: 0.5;
+}
+.gl-page-item.is-drop-target .gl-thumb {
+  outline: 2px dashed var(--gl-accent);
+  outline-offset: 2px;
+}
+.gl-thumb {
+  position: relative;
+  overflow: hidden;
+  background: #fff; /* paper */
+  box-shadow: 0 0 0 1px var(--gl-line-field);
+}
+.gl-page-item.is-current .gl-thumb {
+  box-shadow: 0 0 0 2px var(--gl-accent);
+}
+.gl-thumb-frame {
+  position: absolute;
+  box-sizing: border-box;
+}
+.gl-thumb-text {
+  background: repeating-linear-gradient(to bottom, currentColor 0 1px, transparent 1px 3px);
+  opacity: 0.55;
+}
+.gl-thumb-image {
+  overflow: hidden;
+  background: var(--gl-bg-row-selected);
+}
+.gl-thumb-image img {
+  position: absolute;
+  max-width: none;
+}
+.gl-page-number {
+  color: var(--gl-text-label);
+  font-size: 10px;
+}
+
+/* ------------------------------------------------------------------------------------------------ layers */
+
+.gl-layers {
+  padding-bottom: 4px;
+}
+.gl-layer-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 8px 0 10px;
+  background: var(--gl-bg-row-hover);
+  color: var(--gl-text-row);
+  touch-action: none;
+}
+.gl-layer-row.is-active {
+  background: var(--gl-bg-layer-active);
+}
+.gl-layer-row.is-dragging {
+  opacity: 0.55;
+}
+.gl-layer-row.is-drop-target {
+  box-shadow: inset 0 2px 0 var(--gl-accent);
+}
+.gl-layer-row.is-hidden .gl-layer-name {
+  color: var(--gl-text-muted);
+}
+.gl-layer-eye,
+.gl-layer-lock,
+.gl-layer-disclosure {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--gl-text-label);
+}
+.gl-layer-disclosure {
+  width: 12px;
+}
+.gl-layer-eye.is-off {
+  color: transparent; /* hidden: the eye is gone, as in InDesign */
+}
+.gl-layer-eye.is-off:hover {
+  color: var(--gl-text-disabled);
+}
+.gl-layer-lock {
+  color: var(--gl-text-disabled);
+}
+.gl-layer-lock.is-on {
+  color: var(--gl-text-label);
+}
+.gl-layer-color-wrap {
+  position: relative;
+  display: inline-flex;
+}
+.gl-layer-color {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: 0;
+}
+.gl-layer-name {
+  flex: 1;
+  min-width: 0;
+  margin-left: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gl-layer-rename {
+  flex: 1;
+  min-width: 0;
+  height: 18px;
+  margin-left: 4px;
+  padding: 0 4px;
+  border: 1px solid var(--gl-accent);
+  border-radius: var(--gl-radius);
+  background: var(--gl-bg-field);
+  color: var(--gl-text);
+  font: inherit;
+  user-select: text;
+  outline: none;
+}
+.gl-palette-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 8px 6px 38px;
+  background: var(--gl-bg-row-hover);
+}
+.gl-palette-swatch {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid var(--gl-line);
+  border-radius: 3px;
+}
+.gl-palette-swatch.is-current {
+  box-shadow: 0 0 0 2px var(--gl-text);
+}
+.gl-object-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 22px;
+  padding-right: 16px;
+  color: var(--gl-text-row);
+}
+.gl-object-row:hover {
+  background: var(--gl-bg-row-hover);
+}
+.gl-object-row.is-selected {
+  background: var(--gl-bg-row-selected);
+}
+.gl-object-row.is-blocked {
+  color: var(--gl-text-disabled);
+}
+.gl-object-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gl-object-marker {
+  position: absolute;
+  right: 17px;
+  width: 9px;
+  height: 9px;
+}
+
+/* ---------------------------------------------------------------------------------------------- swatches */
+
+.gl-tint-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px 6px;
+  color: var(--gl-text-label);
+}
+.gl-swatch-list {
+  padding-bottom: 6px;
+}
+.gl-swatch-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 22px;
+  padding: 0 12px;
+  color: var(--gl-text-row);
+}
+.gl-swatch-row:hover {
+  background: var(--gl-bg-row-hover);
+}
+.gl-swatch-row.is-selected {
+  background: var(--gl-bg-row-selected);
+}
+.gl-swatch-name {
+  white-space: nowrap;
+}
+.gl-swatch-detail {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--gl-text-faint);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gl-swatch-row.is-applied .gl-swatch-name {
+  font-weight: 600;
+}
+.gl-swatch-kind {
+  margin-left: auto;
+  color: var(--gl-text-muted);
+}

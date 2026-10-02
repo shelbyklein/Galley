@@ -7,11 +7,8 @@
  * active package, so `galley-asset://` serves it; Save As copies the active package's assets into the new package.
  */
 import { BrowserWindow, dialog, ipcMain } from 'electron';
-import fs from 'node:fs';
-import os from 'node:os';
-import path from 'node:path';
 import { IPC, type PlacedImage } from '../../shared/ipc';
-import { getActivePackage, setActivePackage } from '../package';
+import { ensureActivePackage } from '../package';
 import { linkImage } from './link';
 
 /** Register the `place-image` IPC handler. */
@@ -23,11 +20,7 @@ export function registerPlaceImage(): void {
     const source = result.filePaths[0];
     if (result.canceled || !source) return null;
 
-    let pkg = getActivePackage();
-    if (!pkg) {
-      pkg = fs.mkdtempSync(path.join(os.tmpdir(), 'galley-scratch-'));
-      setActivePackage(pkg);
-    }
-    return linkImage(pkg, source);
+    // An unsaved document gets a scratch package (lane C's package.ts); Save As copies its images into the real one.
+    return linkImage(ensureActivePackage(), source);
   });
 }

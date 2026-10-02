@@ -1,6 +1,8 @@
 import { Canvas } from '../canvas';
+import { DialogHost } from '../dialogs';
 import { ControlStrip } from './control-strip/ControlStrip';
 import { Dock } from './Dock';
+import { Notices } from './Notices';
 import { StatusBar } from './StatusBar';
 import { TitleBar } from './TitleBar';
 import { ToolsPanel } from './ToolsPanel';
@@ -15,7 +17,7 @@ import './shell.css';
  *   +----------------- status bar -------------+
  *
  * The `data-region` hooks on the wrappers are what e2e tests (and the smoke screenshot) key on, so they live here,
- * not in the region components that lanes B and C rework.
+ * not in the region components that lanes B and C rework. Notices float over the canvas region; dialogs over everything.
  */
 export function Shell() {
   return (
@@ -31,6 +33,7 @@ export function Shell() {
       </aside>
       <main className="gl-canvas" data-region="canvas">
         <Canvas />
+        <Notices />
       </main>
       <aside className="gl-dock" data-region="dock">
         <Dock />
@@ -38,6 +41,7 @@ export function Shell() {
       <footer className="gl-statusbar" data-region="statusbar">
         <StatusBar />
       </footer>
+      <DialogHost />
     </div>
   );
 }
