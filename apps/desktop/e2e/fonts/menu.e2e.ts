@@ -26,7 +26,8 @@ test('the Type font menus list installed families and load the selected real sty
   const actual = await page.evaluate(async ({ frameId, request }) => {
     const g = (window as any).__galley, d = g.store.getState().history.doc;
     const p = d.stories[d.frames[frameId].storyId].doc.content[0];
-    const r = g.model.resolveParagraph(d, g.model.paragraphAttrs(p));
+    const paragraph = g.model.resolveParagraph(d, g.model.paragraphAttrs(p));
+    const r = g.model.resolveRun(d, paragraph, p.content?.[0]?.marks);
     const bridge = (window as unknown as { galley: { fonts: FontBridge } }).galley.fonts;
     const bindings = await bridge.resolve([request]);
     const loaded = await document.fonts.load(`${request.style} ${request.weight} 16px ${JSON.stringify(request.family)}`);
