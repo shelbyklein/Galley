@@ -2,6 +2,8 @@
 
 A desktop page-layout app built on web technology. Its main output is press-ready PDF for brochures, pamphlets and posters. Its second output is responsive HTML. Content is written once and served by two rulesets.
 
+**Architecture requirement reaffirmed (2026-10-02):** CSS must drive document layout and rendering, not just the app interface. Keep Chromium/CSS; a browser-hosted custom Rust renderer does not meet this requirement.
+
 ## Decisions so far
 
 | Question | Decision |
@@ -181,6 +183,8 @@ Phases 1–2 are planned in detail in [docs/plans/phases-1-2.md](docs/plans/phas
 **Milestone:** rebuild a real one-page flyer you've made in InDesign.
 
 ### Phase 3: Color and images
+
+Implementation plan: [phase-3.md](docs/plans/phase-3.md), tracked in [issue #2](https://github.com/shelbyklein/Galley/issues/2). Existing CMYK/spot/tints and soft proofing carry forward; remaining work is image-content adjustment, links/PPI, and user swatch libraries. Phase 2 acceptance gates remain open independently.
 - Swatches: CMYK, spot libraries, tints
 - Soft proofing
 - Placing images with fit and crop
