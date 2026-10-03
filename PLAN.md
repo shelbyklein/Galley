@@ -184,7 +184,7 @@ Phases 1–2 are planned in detail in [docs/plans/phases-1-2.md](docs/plans/phas
 
 ### Phase 3: Color and images
 
-Implementation plan: [phase-3.md](docs/plans/phase-3.md), tracked in [issue #2](https://github.com/shelbyklein/Galley/issues/2). Existing CMYK/spot/tints and soft proofing carry forward; remaining work is image-content adjustment, links/PPI, and user swatch libraries. Phase 2 acceptance gates remain open independently.
+Implementation plan: [phase-3.md](docs/plans/phase-3.md), tracked in [issue #2](https://github.com/shelbyklein/Galley/issues/2). Implemented on 2026-10-03: image-content adjustment, package Links/PPI and safe relinking, user swatch libraries, and proofed swatch-dialog drafts. Existing CMYK/spot/tints and soft proofing carry forward. See the implementation plan for validation and [tryout guide](docs/TRYOUT.md). Phase 2 acceptance gates remain open independently.
 - Swatches: CMYK, spot libraries, tints
 - Soft proofing
 - Placing images with fit and crop

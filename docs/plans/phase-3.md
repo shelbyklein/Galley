@@ -33,7 +33,7 @@ Phase 2’s human flyer acceptance and consecutive-hyphen-limit decision remain 
 Code, tests, plan and inspected screenshots committed and pushed to main. Locally runnable app and preserved tryout launcher; no signed/installed release. Generated PDFs and private/system profiles remain local. Phase 3 issue and Tracker checklist updated on each accepted task; closure awaits Shelby.
 
 ## Execution and handoff
-Mode: orchestrated, with one implementation lane and coordinator review to honor Shelby’s GPT-6.1 Sol choice without overlapping editors. Coordinator: current verified GPT-6 Astra (`gpt-6-astra`), medium. Implementation: GPT-6.1 Sol (`gpt-6.1-sol`), high. No Claude agents. The implementation lane works P3-01 → P3-02 → P3-03 on an isolated branch; owns product code and focused tests. Coordinator owns this plan, GitHub, final integration, screenshots and P3-04. Existing finished T/S/N agents/worktrees are preserved, not restarted. Coordinator alone pushes and updates GitHub. Every agent uses its own Tracker run/session and stable task IDs. No implementation dispatch until readiness passes. This section is the self-contained handoff together with task acceptance above.
+Mode: `linear`, with one GPT-6.1 Sol implementation executor working the tasks in order and coordinator review; no parallel implementation lanes or overlapping editors. Coordinator: current verified GPT-6 Astra (`gpt-6-astra`), medium. Implementation: GPT-6.1 Sol (`gpt-6.1-sol`), high. No Claude agents. The implementation lane works P3-01 → P3-02 → P3-03 on an isolated branch; owns product code and focused tests. Coordinator owns this plan, GitHub, final integration, screenshots and P3-04. Existing finished T/S/N agents/worktrees are preserved, not restarted. Coordinator alone pushes and updates GitHub. Every agent uses its own Tracker run/session and stable task IDs. No implementation dispatch until readiness passes. This section is the self-contained handoff together with task acceptance above.
 
 ## Exclusions
 No Rust/custom composition engine, HTML publishing, new image formats, gradient UI, proprietary spot libraries, profile bundling, original-source file watching, format migrations, icon installation, packaged app, Phase 4 preflight or Type 3 rewrite. Keep `spikes/**` and existing icon concepts untouched.
@@ -46,3 +46,14 @@ No schema migration. New feature commits are individually revertible. Work only 
 
 ## Work preparation
 Scope authorized by continuing the roadmap; now, per Shelby. Issue: https://github.com/shelbyklein/Galley/issues/2. Tracker plan: `20E5F984-5E7F-41F1-BAF5-7B5824BC9AEC`; stable IDs P3-01 through P3-04 match. Readiness: R1–R13 pass, 2026-10-02. Current-model metadata verified in this session JSONL. Human review remains required for closure; no blocking Phase 3 product decisions.
+
+## Implementation and review, 2026-10-03
+P3-01 is integrated as `634e0ce`, P3-02 as `e5d6d41`, and P3-03 as `30edf97`. The GPT-6.1 Sol implementation lane is finished; its isolated worktree is preserved. A separate test-only commit `b4cfb0a` gives the existing 600-sequence property test 30 seconds instead of the runner default 5 seconds; no cases, assertions or interactive performance budgets changed.
+
+Verified on product revision `30edf97`: build/typechecks; 530 unit tests in 59 files; all eight new Electron feature tests; 503 golden print checks; 11 geometry checks; and the flyer milestone with 31 PDF/font/ink checks, 61 lines and zero screen/PDF line mismatches. The first full app run passed 226/227 cases, with an unexpected window closure during an empty-frame drawing gesture before image placement. No matching crash report identified a cause. The exact case then passed five logged repeats, and the full drawing group passed 17/17, without a product change. The subsequent clean full-app confirmation run passed 227/227 with zero skips or retries (7.0 minutes, exit 0), including the previously affected case. Browser-process diagnostics are retained locally; no cause was asserted and no speculative product change was made.
+
+The coordinator captured and inspected these actual editor views on the integrated product:
+- [Image Content and Links](assets/phase-3/screens/editor-images-links.png)
+- [Swatch library menu](assets/phase-3/screens/editor-library-menu.png)
+
+[Tryout guide](../TRYOUT.md). Existing tryout launcher and editable documents are preserved; relaunch the built app to use the updated code. Phase 2’s human flyer and hyphen-limit decisions remain open. Phase 3 issue closure awaits Shelby’s review.
