@@ -16,9 +16,9 @@ import type { MissingLink, RecentFile } from '../../shared/ipc';
 import type { NewDocumentSpec } from '../dialogs/presets';
 import { REF_TOP_LEFT, type RefPoint } from './control-strip/transform';
 
-export type PanelId = 'pages' | 'layers' | 'swatches' | 'paragraphStyles' | 'characterStyles' | 'textWrap';
-export const PANEL_IDS: readonly PanelId[] = ['pages', 'layers', 'swatches', 'paragraphStyles', 'characterStyles','textWrap'];
-export const PANEL_TITLES: Record<PanelId, string> = { pages: 'Pages', layers: 'Layers', swatches: 'Swatches', paragraphStyles: 'Paragraph Styles', characterStyles: 'Character Styles',textWrap:'Text Wrap' };
+export type PanelId = 'pages' | 'layers' | 'swatches' | 'paragraphStyles' | 'characterStyles' | 'textWrap' | 'imageContent' | 'links';
+export const PANEL_IDS: readonly PanelId[] = ['pages', 'layers', 'swatches', 'paragraphStyles', 'characterStyles','textWrap', 'imageContent', 'links'];
+export const PANEL_TITLES: Record<PanelId, string> = { pages: 'Pages', layers: 'Layers', swatches: 'Swatches', paragraphStyles: 'Paragraph Styles', characterStyles: 'Character Styles',textWrap:'Text Wrap', imageContent: 'Image Content', links: 'Links' };
 
 export interface PanelState {
   visible: boolean;
@@ -84,6 +84,8 @@ const DEFAULT_PANELS: Record<PanelId, PanelState> = {
   paragraphStyles: { visible: false, collapsed: false },
   characterStyles: { visible: false, collapsed: false },
   textWrap: {visible:false,collapsed:false},
+  imageContent: { visible: false, collapsed: false },
+  links: { visible: false, collapsed: false },
 };
 
 function loadPanels(): Record<PanelId, PanelState> {

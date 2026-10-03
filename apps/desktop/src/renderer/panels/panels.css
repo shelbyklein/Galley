@@ -341,3 +341,10 @@
   margin-left: auto;
   color: var(--gl-text-muted);
 }
+
+.gl-image-controls { padding: 8px; display: grid; gap: 8px; }
+.gl-panel-note { margin: 8px; color: var(--gl-muted, #9299a4); font-size: 11px; line-height: 1.4; }
+.gl-image-controls .gl-panel-note { margin: 0; }
+.gl-image-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.gl-image-grid .gl-field { min-width: 0; }
+.gl-image-proportions { display: flex; align-items: center; gap: 5px; font-size: 11px; }
