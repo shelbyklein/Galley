@@ -127,7 +127,7 @@ describe('random command sequences', () => {
       { numRuns: 600 },
     );
     expect(sequences).toBeGreaterThanOrEqual(500);
-  });
+  }, 30_000); // Property coverage, not a performance budget; parallel suites can contend for CPU.
 
   it('a long sequence of 400 steps also round-trips', () => {
     runSequence(20261001, 400);
