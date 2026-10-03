@@ -20,6 +20,8 @@ export { readPackageFiles as readPackage };
 
 let activePackageDir: string | null = null;
 let scratchPackage = false;
+let packageEpoch = 0;
+export const getPackageEpoch = (): number => packageEpoch;
 let missingLinks: MissingLink[] = [];
 
 /** The folder `galley-asset://pkg/...` serves, or null for an untitled document that has no images yet. */
@@ -39,6 +41,7 @@ export function ensureActivePackage(): string {
 
 /** Make `dir` the active package (a document was opened or saved there). A scratch package it replaces is deleted. */
 export function setActivePackage(dir: string | null): void {
+  packageEpoch++;
   const previous = activePackageDir;
   const wasScratch = scratchPackage;
   activePackageDir = dir ? path.resolve(dir) : null;
@@ -120,7 +123,7 @@ export function handleAssetProtocol(): void {
     const file = path.resolve(root, relative);
     // never serve anything outside the package folder
     if (file !== root && !file.startsWith(root + path.sep)) return new Response('Forbidden', { status: 403 });
-    if (!fs.existsSync(file)) return placeholder();
+    if (!fs.existsSync(file) || missingLinks.some((link) => link.path === relative)) return placeholder();
     return net.fetch(pathToFileURL(file).toString());
   });
 }

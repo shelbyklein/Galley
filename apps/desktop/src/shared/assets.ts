@@ -7,6 +7,9 @@
 export const ASSET_SCHEME = 'galley-asset';
 
 let generation = 0;
+const listeners = new Set<() => void>();
+export const getAssetGeneration = () => generation;
+export function subscribeAssets(listener: () => void): () => void { listeners.add(listener); return () => { listeners.delete(listener); }; }
 
 /**
  * Call when a different package becomes the open one. Image URLs then change (`?v=n`), so an `<img>` whose path is
@@ -15,6 +18,7 @@ let generation = 0;
  */
 export function bumpAssetGeneration(): void {
   generation++;
+  for (const listener of listeners) listener();
 }
 
 export function assetUrl(relativePath: string): string {

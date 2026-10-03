@@ -348,3 +348,13 @@
 .gl-image-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .gl-image-grid .gl-field { min-width: 0; }
 .gl-image-proportions { display: flex; align-items: center; gap: 5px; font-size: 11px; }
+.gl-links-actions { padding: 0 8px 8px; }
+.gl-link-row { padding: 8px; border-top: 1px solid #414141; display: grid; gap: 5px; font-size: 11px; }
+.gl-link-heading { display: flex; justify-content: space-between; gap: 8px; }
+.gl-link-heading strong { overflow: hidden; text-overflow: ellipsis; }
+.gl-link-status { flex: none; color: #aab5c5; }
+.gl-link-status.is-missing, .gl-link-status.is-unreadable { color: #f48981; }
+.gl-link-status.is-changed { color: #e6bf73; }
+.gl-link-path, .gl-link-detail { margin: 0; color: #9a9a9a; overflow-wrap: anywhere; }
+.gl-link-usage { color: #c9defc; padding: 4px 0; border: 0; background: transparent; text-align: left; font: inherit; cursor: pointer; }
+.gl-link-usage:hover { text-decoration: underline; }

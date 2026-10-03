@@ -1,7 +1,7 @@
 import { PageView, sheetGeometry } from '@galley/render';
 import { sheetInsets, type Asset } from '@galley/model';
-import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { assetUrl } from '../../shared/assets';
+import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSyncExternalStore } from 'react';
+import { assetUrl, getAssetGeneration, subscribeAssets } from '../../shared/assets';
 import { selectDoc, useEditorStore } from '../store';
 import { beginToolGesture, cursorFor, handleDoubleClick, normalizeTool } from '../tools/tools';
 import { GuideCreateGesture } from '../tools/gestures/guides';
@@ -19,7 +19,6 @@ import { BaselineGrid } from './text/BaselineGrid';
 import './text/register';
 
 /** Stable so the memoized page view does not re-render when only the view changes. */
-const assetUrlFn = (asset: Asset) => assetUrl(asset.path);
 const MemoPageView = memo(PageView);
 
 /**
@@ -35,6 +34,8 @@ const MemoPageView = memo(PageView);
  * window size and writes it back, so everything else reads one source of truth.
  */
 export function Canvas() {
+  const assetGeneration = useSyncExternalStore(subscribeAssets, getAssetGeneration);
+  const assetUrlFn = useCallback((asset: Asset) => assetUrl(asset.path), [assetGeneration]);
   const doc = useEditorStore(selectDoc);
   const pageId = useEditorStore((s) => s.currentPageId);
   const stored = useEditorStore((s) => s.viewport);

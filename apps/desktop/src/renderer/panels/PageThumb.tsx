@@ -1,7 +1,7 @@
 import { isLayerVisible, paintOrder, paragraphAttrs, resolveParagraph, type BoxFrame, type GalleyDocument, type Id } from '@galley/model';
 import type { ColorResolver } from '@galley/render';
-import type { CSSProperties } from 'react';
-import { assetUrl } from '../../shared/assets';
+import { useSyncExternalStore, type CSSProperties } from 'react';
+import { assetUrl, getAssetGeneration, subscribeAssets } from '../../shared/assets';
 
 /**
  * A page thumbnail for the Pages panel: the page's frames as simple colored boxes (fills, strokes, text as faint
@@ -9,6 +9,7 @@ import { assetUrl } from '../../shared/assets';
  * renderer: the real page is only ever drawn by `PageView` in @galley/render.
  */
 export function PageThumb({ doc, pageId, colors, maxW, maxH }: { doc: GalleyDocument; pageId: Id; colors: ColorResolver; maxW: number; maxH: number }) {
+  useSyncExternalStore(subscribeAssets, getAssetGeneration);
   const page = doc.pages[pageId]!;
   const scale = Math.min(maxW / page.width, maxH / page.height);
   const frames = paintOrder(doc, pageId).filter((f) => isLayerVisible(doc, f.layerId));

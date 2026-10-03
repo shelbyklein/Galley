@@ -1,6 +1,7 @@
 import { ParagraphStylesPanel } from '../panels/paragraph-styles/StylePanel';
 import { CharacterStylesPanel } from '../panels/character-styles/CharacterStylesPanel';
 import { LayersPanel, PagesPanel, SwatchesPanel } from '../panels';
+import { LinksPanel } from '../panels/LinksPanel';
 import { ImageContentPanel } from '../panels/ImageContentPanel';
 import {TextWrapPanel} from '../panels/text-wrap/TextWrapPanel';
 
@@ -18,6 +19,7 @@ export function Dock() {
       <CharacterStylesPanel />
       <TextWrapPanel />
       <ImageContentPanel />
+      <LinksPanel />
     </div>
   );
 }

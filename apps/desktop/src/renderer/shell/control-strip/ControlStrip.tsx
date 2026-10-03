@@ -1,5 +1,5 @@
 import { TypeControlStrip } from './type/TypeControlStrip';
-import { moveFrames, setFrameProps, type Frame, type GalleyDocument, type Id } from '@galley/model';
+import { effectiveImagePpi, moveFrames, setFrameProps, type Frame, type GalleyDocument, type Id } from '@galley/model';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { commands } from '../../commands/registry';
 import { selectDoc, useEditorStore } from '../../store';
@@ -356,8 +356,8 @@ export function describeSelection(doc: GalleyDocument, selection: readonly Id[],
     case 'image': {
       const asset = f.assetId ? doc.assets[f.assetId] : undefined;
       if (!asset || !f.content) return 'Image frame · empty';
-      const ppi = asset.width / (f.content.w / 72);
-      return `Image frame · ${asset.path.split('/').pop()} · ${trimNumber(ppi, 0)} ppi effective`;
+      const ppi = effectiveImagePpi(asset, f)!;
+      return `Image frame · ${asset.path.split('/').pop()} · ${trimNumber(ppi.x, 0)}${Math.abs(ppi.x - ppi.y) > 0.5 ? ` × ${trimNumber(ppi.y, 0)}` : ''} ppi effective`;
     }
     case 'text':
       return 'Text frame';

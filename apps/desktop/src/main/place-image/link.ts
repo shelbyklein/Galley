@@ -14,14 +14,16 @@ export function safeAssetName(name: string): string {
 }
 
 /** Copy `source` into `<pkg>/assets/` (reusing an identical file, renaming on a clash) and describe it. */
-export function linkImage(pkg: string, source: string): PlacedImage {
+export function linkImage(pkg: string, source: string, decodes?: (bytes: Buffer) => boolean): PlacedImage {
   const bytes = fs.readFileSync(source);
   const info = readImageInfo(bytes);
-  if (!info) throw new Error(`"${path.basename(source)}" is not a PNG or JPEG image, the formats Galley can place`);
+  if (!info || (decodes && !decodes(bytes))) throw new Error(`"${path.basename(source)}" is not a PNG or JPEG image, the formats Galley can place`);
   const hash = sha256(bytes);
 
   const dir = path.join(pkg, 'assets');
   fs.mkdirSync(dir, { recursive: true });
+  const root = fs.realpathSync(pkg);
+  if (!fs.realpathSync(dir).startsWith(root + path.sep)) throw new Error('The package assets folder escapes its package');
   const base = safeAssetName(path.basename(source));
   const ext = path.extname(base);
   const stem = base.slice(0, base.length - ext.length);
@@ -32,7 +34,7 @@ export function linkImage(pkg: string, source: string): PlacedImage {
       fs.writeFileSync(target, bytes);
       break;
     }
-    if (sha256(fs.readFileSync(target)) === hash) break; // the same file is already linked
+    if (fs.lstatSync(target).isFile() && sha256(fs.readFileSync(target)) === hash) break; // the same file is already linked
     name = `${stem}-${n}${ext}`;
   }
   return { path: `assets/${name}`, hash, width: info.width, height: info.height, ppi: info.ppi, colorSpace: info.colorSpace };

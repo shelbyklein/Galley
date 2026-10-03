@@ -1,4 +1,5 @@
 // Types and channel names shared by the main process, the preload script and the renderer windows.
+import type { Asset } from '@galley/model';
 import type { FontBridge } from '@galley/fonts/types';
 import type { PressBridge } from './export-ipc';
 // Lane C owns the file, menu and window parts. Lanes A and B add their own sections (export, place image) below the
@@ -25,6 +26,13 @@ export interface PlacedImage {
 }
 
 // ------------------------------------------------------------------------------------------------ files (lane C)
+
+export interface LinkStatus {
+  assetId: string;
+  path: string;
+  status: 'ok' | 'missing' | 'changed' | 'unreadable';
+  detail?: string;
+}
 
 /** An image link whose file is not where links.json says it is. The editor shows a placeholder and a warning. */
 export interface MissingLink {
@@ -135,6 +143,11 @@ export interface GalleyApi {
   /** File > Place: show the open dialog, link the chosen image into the package, describe it. Null when cancelled. */
   placeImage(): Promise<PlacedImage | null>;
 
+  images: {
+    check(assets: Asset[]): Promise<LinkStatus[]>;
+    relink(asset: Asset): Promise<PlacedImage | null>;
+  };
+
   /** File commands. The renderer parses and serializes documents; main does the dialogs and the disk. */
   files: {
     /** The Open panel. Reads the package but does not activate it. Resolves null when cancelled; rejects with a readable message for a folder that is not a package. */
@@ -177,6 +190,8 @@ export const IPC = {
   getInitialDocument: 'galley:get-initial-document',
   // lane B: place image
   placeImage: 'galley:place-image',
+  imagesCheck: 'galley:images-check',
+  imagesRelink: 'galley:images-relink',
   // lane C: files
   filesOpen: 'galley:files-open',
   filesOpenPath: 'galley:files-open-path',

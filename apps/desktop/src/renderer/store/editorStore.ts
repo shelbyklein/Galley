@@ -76,6 +76,7 @@ export interface TextSelection {
 
 export interface EditorState {
   // ----- document and history
+  documentGeneration: number;
   history: HistoryState;
   /** `historyRevision` at the last save (or open). The document is dirty when it differs from the current revision. */
   savedRevision: number;
@@ -167,6 +168,7 @@ export function createEditorState(initial: GalleyDocument = blankDocument()) {
       if (next !== get().history) set((s) => reconcile(s, next));
     };
     return {
+      documentGeneration: 0,
       history: history0,
       savedRevision: historyRevision(history0),
       dispatch: (command, args, options) => update(applyCommand(get().history, command, args, options)),
@@ -178,6 +180,7 @@ export function createEditorState(initial: GalleyDocument = blankDocument()) {
       redo: () => update(redo(get().history)),
       openDocument: (doc) => {
         const history = resetHistory(get().history, doc);
+        set({ documentGeneration: get().documentGeneration + 1 });
         set({ history, savedRevision: historyRevision(history), selection: [], currentPageId: doc.pageOrder[0]!, activeLayerId: topLayerId(doc), viewport: { zoom: 1, panX: 0, panY: 0, fit: true }, textSelection: null });
       },
       markSaved: () => {

@@ -12,6 +12,7 @@ import {
   setMeta,
   type GalleyDocument,
 } from '@galley/model';
+import { historyAssetPaths } from './historyAssets';
 import { bumpAssetGeneration } from '../../../shared/assets';
 import type { GalleyApi, OpenedPackage } from '../../../shared/ipc';
 import { pageFromSpec, type NewDocumentSpec } from '../../dialogs/presets';
@@ -143,7 +144,7 @@ async function writeDocument(saveAs: boolean): Promise<boolean> {
   const doc = selectDoc(state);
   const revision = historyRevision(state.history);
   const files = serializeDocument(doc, { engineVersion: api.engineVersion });
-  const result = await api.files.save({ files, assetPaths: Object.values(doc.assets).map((a) => a.path), path: target });
+  const result = await api.files.save({ files, assetPaths: historyAssetPaths(state.history), path: target });
   // an edit made while the files were being written leaves the document dirty, which is right
   if (historyRevision(useEditorStore.getState().history) === revision) useEditorStore.getState().markSaved();
   useShellStore.getState().setFileState({ packagePath: result.path, missingLinks: result.missingLinks, recents: result.recents });

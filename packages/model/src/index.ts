@@ -20,3 +20,4 @@ export * from './sentinels';
 export * from './commands';
 
 export { normalizeNativeStoryDoc } from './text/native';
+export * from './image';

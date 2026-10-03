@@ -17,7 +17,7 @@ export function Notices() {
           <div className="gl-notice-text">
             <strong>{missing.length === 1 ? '1 linked image is missing' : `${missing.length} linked images are missing`}</strong>
             <span className="gl-notice-detail">{missing.map((m) => m.path).join(', ')}</span>
-            <span className="gl-notice-detail">A placeholder is shown in its frame. Put the file back, then reopen the document.</span>
+            <span className="gl-notice-detail">Use Window &gt; Links to relink, or restore the packaged file and choose Check Links.</span>
           </div>
           <button type="button" className="gl-notice-close" aria-label="Dismiss" onClick={() => setFileState({ linkWarningDismissed: true })}>
             {'×'}

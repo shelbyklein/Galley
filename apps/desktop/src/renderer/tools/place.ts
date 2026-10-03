@@ -90,7 +90,9 @@ export interface PlaceApi {
  */
 export async function placeImage(store: StoreLike, api: PlaceApi | undefined = (globalThis as { window?: { galley?: PlaceApi } }).window?.galley): Promise<Id | null> {
   if (!api?.placeImage) throw new Error('Placing images needs the Galley app (window.galley.placeImage is missing)');
+  const generation = store.getState().documentGeneration;
   const placed = await api.placeImage();
+  if (store.getState().documentGeneration !== generation) return null;
   if (!placed) return null;
 
   const s = store.getState();
