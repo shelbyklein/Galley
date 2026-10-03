@@ -1,4 +1,5 @@
 // Types and channel names shared by the main process, the preload script and the renderer windows.
+import type { SwatchLibrary } from './swatch-library';
 import type { Asset } from '@galley/model';
 import type { FontBridge } from '@galley/fonts/types';
 import type { PressBridge } from './export-ipc';
@@ -143,6 +144,11 @@ export interface GalleyApi {
   /** File > Place: show the open dialog, link the chosen image into the package, describe it. Null when cancelled. */
   placeImage(): Promise<PlacedImage | null>;
 
+  swatches: {
+    loadLibrary(): Promise<SwatchLibrary | null>;
+    saveLibrary(library: SwatchLibrary): Promise<boolean>;
+  };
+
   images: {
     check(assets: Asset[]): Promise<LinkStatus[]>;
     relink(asset: Asset): Promise<PlacedImage | null>;
@@ -190,6 +196,8 @@ export const IPC = {
   getInitialDocument: 'galley:get-initial-document',
   // lane B: place image
   placeImage: 'galley:place-image',
+  swatchesLoadLibrary: 'galley:swatches-load-library',
+  swatchesSaveLibrary: 'galley:swatches-save-library',
   imagesCheck: 'galley:images-check',
   imagesRelink: 'galley:images-relink',
   // lane C: files

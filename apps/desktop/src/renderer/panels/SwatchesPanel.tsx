@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { loadSwatchLibrary, saveSwatchLibrary } from './swatch-libraries';
 import { addSwatch, createId, isBuiltinSwatch, removeSwatch, type GalleyDocument, type Id, type Swatch } from '@galley/model';
 import { selectDoc, useEditorStore } from '../store';
 import { Field } from '../shell/control-strip/Field';
@@ -55,6 +57,12 @@ export function deleteSelectedSwatch(): void {
  * current swatch at the new tint.
  */
 export function SwatchesPanel() {
+  const [libraryBusy, setLibraryBusy] = useState(false);
+  const runLibrary = async (action: () => Promise<void>) => {
+    if (libraryBusy) return;
+    setLibraryBusy(true);
+    try { await action(); } finally { setLibraryBusy(false); }
+  };
   const doc = useEditorStore(selectDoc);
   const selection = useEditorStore((s) => s.selection);
   const colors = useScreenColors();
@@ -86,10 +94,13 @@ export function SwatchesPanel() {
   return (
     <Panel
       id="swatches"
+      busy={libraryBusy}
       menu={[
         { label: 'New Swatch…', onSelect: () => openDialog({ kind: 'swatch', swatchId: null }) },
         { label: 'New Tint Swatch', onSelect: newTintSwatch, disabled: !selectedSwatch },
         { label: 'Swatch Options…', onSelect: () => selectedId && openDialog({ kind: 'swatch', swatchId: selectedId }), disabled: !selectedSwatch },
+        { label: 'Load Swatch Library…', onSelect: () => void runLibrary(loadSwatchLibrary), disabled: libraryBusy },
+        { label: 'Save Swatch Library…', onSelect: () => void runLibrary(saveSwatchLibrary), disabled: libraryBusy },
         { label: 'Delete Swatch', onSelect: deleteSelectedSwatch, disabled: !selectedSwatch || isBuiltinSwatch(selectedSwatch.id) },
       ]}
       footer={

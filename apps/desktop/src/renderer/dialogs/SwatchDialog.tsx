@@ -1,6 +1,6 @@
-import { addSwatch, CommandError, createId, isBuiltinSwatch, setSwatchProps, type Cmyk, type Id, type Swatch } from '@galley/model';
-import { naiveCmykToRgb } from '@galley/render';
-import { useRef, useState } from 'react';
+import { addSwatch, CommandError, createId, isBuiltinSwatch, setSwatchProps, type Cmyk, type Id, type Ink, type Swatch } from '@galley/model';
+import { defaultSoftProof, getSoftProofEpoch, naiveCmykToRgb, subscribeSoftProof } from '@galley/render';
+import { useRef, useState, useSyncExternalStore } from 'react';
 import { Field } from '../shell/control-strip/Field';
 import { parsePercent, trimNumber } from '../shell/control-strip/units';
 import { selectDoc, useEditorStore } from '../store';
@@ -27,6 +27,7 @@ function freshName(base: string, swatches: Record<Id, Swatch>): string {
  */
 export function SwatchDialog({ swatchId, onDone }: { swatchId: Id | null; onDone(): void }) {
   const doc = useEditorStore(selectDoc);
+  const documentGeneration = useRef(useEditorStore.getState().documentGeneration);
   const existing = swatchId ? doc.swatches[swatchId] : undefined;
   const editing = existing !== undefined;
   const [name, setName] = useState(existing?.name ?? freshName('New Swatch', doc.swatches));
@@ -41,6 +42,7 @@ export function SwatchDialog({ swatchId, onDone }: { swatchId: Id | null; onDone
   const setChannel = (i: number, v: number) => setValues((vs) => vs.map((x, j) => (j === i ? Math.min(100, Math.max(0, v)) : x)) as Cmyk);
 
   const submit = () => {
+    if (useEditorStore.getState().documentGeneration !== documentGeneration.current) { onDone(); return; }
     if (name.trim() === '') {
       setError('A swatch needs a name.');
       return;
@@ -65,7 +67,10 @@ export function SwatchDialog({ swatchId, onDone }: { swatchId: Id | null; onDone
   const enter = () => setTimeout(() => submitRef.current(), 0);
 
   const base = existing?.type === 'tint' ? doc.swatches[existing.baseId] : undefined;
-  const [r, g, b] = naiveCmykToRgb({ values: base && base.type !== 'tint' ? base.values : values, tint: isTint ? percent : 100 });
+  useSyncExternalStore(subscribeSoftProof, getSoftProofEpoch);
+  const ink: Ink = { swatchId: existing?.id ?? 'draft', name, model: base?.type === 'spot' || type === 'spot' ? 'spot' : 'cmyk', values: base && base.type !== 'tint' ? base.values : values, tint: isTint ? percent : 100, overprint: false };
+  const proofed = defaultSoftProof(ink);
+  const [r, g, b] = proofed ?? naiveCmykToRgb(ink);
   const preview = `rgb(${r} ${g} ${b})`;
 
   return (
@@ -75,7 +80,7 @@ export function SwatchDialog({ swatchId, onDone }: { swatchId: Id | null; onDone
           Name
         </label>
         <input id="sw-name" className="gl-input" data-field="name" value={name} disabled={locked} spellCheck={false} onChange={(e) => { setName(e.target.value); setError(''); }} onKeyDown={(e) => { if ((e.metaKey || e.ctrlKey) && /^[acvxz]$/i.test(e.key)) e.stopPropagation(); }} />
-        <span className="gl-swatch-preview" style={{ background: preview }} data-testid="swatch-preview" />
+        <span className="gl-swatch-preview" style={{ background: preview }} data-testid="swatch-preview" data-proofed={proofed !== undefined} title={proofed ? 'Preview through the output profile' : 'Approximate preview while proofing is unavailable or pending'} />
       </div>
       {!isTint && (
         <>

@@ -13,6 +13,11 @@ const api: GalleyApi = {
   getInitialDocument: () => ipcRenderer.invoke(IPC.getInitialDocument),
   placeImage: () => ipcRenderer.invoke(IPC.placeImage),
 
+  swatches: {
+    loadLibrary: () => ipcRenderer.invoke(IPC.swatchesLoadLibrary),
+    saveLibrary: (library) => ipcRenderer.invoke(IPC.swatchesSaveLibrary, library),
+  },
+
   images: {
     check: (assets) => ipcRenderer.invoke(IPC.imagesCheck, assets),
     relink: (asset) => ipcRenderer.invoke(IPC.imagesRelink, asset),

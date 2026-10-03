@@ -12,12 +12,12 @@ export interface PanelMenuItem {
  * A docked panel: a header (click to collapse or expand, panel menu on the right), a scrolling body and an optional
  * footer. Visibility and collapsed state live in the shell store (and are remembered); a hidden panel renders nothing.
  */
-export function Panel({ id, children, footer, menu }: { id: PanelId; children: ReactNode; footer?: ReactNode; menu?: PanelMenuItem[] }) {
+export function Panel({ id, children, footer, menu, busy }: { id: PanelId; children: ReactNode; footer?: ReactNode; menu?: PanelMenuItem[]; busy?: boolean }) {
   const { visible, collapsed } = useShellStore((s) => s.panels[id]);
   const setPanel = useShellStore((s) => s.setPanel);
   if (!visible) return null;
   return (
-    <section className={`gl-panel${collapsed ? ' is-collapsed' : ''}`} data-panel={id} data-collapsed={collapsed}>
+    <section className={`gl-panel${collapsed ? ' is-collapsed' : ''}`} data-panel={id} data-collapsed={collapsed} aria-busy={busy ?? false}>
       <header className="gl-panel-header" onClick={() => setPanel(id, { collapsed: !collapsed })}>
         <button type="button" className="gl-panel-toggle" aria-expanded={!collapsed} aria-label={`${collapsed ? 'Expand' : 'Collapse'} ${PANEL_TITLES[id]}`}>
           <span className={`gl-panel-caret${collapsed ? ' is-collapsed' : ''}`} />

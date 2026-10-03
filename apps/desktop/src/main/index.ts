@@ -11,6 +11,7 @@ import { discardScratchPackage, handleAssetProtocol, initialPackagePath, registe
 import { RecentFiles } from './recents';
 import { registerExportHandlers } from './export';
 import { registerFontScheme, registerFontHandlers } from './fonts';
+import { registerSwatchLibraries } from './swatch-libraries';
 import { registerPlaceImage } from './place-image';
 
 /** Set by Playwright e2e runs (apps/desktop/e2e/helpers/launch.ts). */
@@ -153,6 +154,7 @@ app.whenReady().then(() => {
       return null;
     }
   });
+  registerSwatchLibraries();
   registerPlaceImage(); // lane B: File > Place (main/place-image)
 
   ipcMain.on(IPC.setDocumentState, (event, state: DocumentState) => {
